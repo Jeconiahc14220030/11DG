@@ -8,6 +8,18 @@
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						colors: {
+							base: '#F0A242'
+						}
+					}
+				}
+			};
+		</script>
+
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>
