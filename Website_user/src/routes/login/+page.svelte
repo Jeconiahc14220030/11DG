@@ -9,15 +9,21 @@
         <div class="flex justify-center">
             <p class="text-white w-1/5">Enter your Username to Login for this app</p>
         </div>
-        <div class="flex justify-center mt-4">
-            <input id="" type="text" placeholder="Username" class="w-1/5 placeholder-black">
-        </div>
-        <div class="flex justify-center mt-4">
-            <input id="" type="password" placeholder="Password" class="w-1/5 placeholder-black">
-        </div>
-        <div class="flex justify-center mt-6">
-            <button class="bg-[#F9C067] px-8 py-2 rounded hover:bg-[#F8B048] font-bold">Login</button>
-        </div>
+
+        <!-- Form Login -->
+        <form class="flex flex-col items-center">
+            <div class="flex justify-center mt-4">
+                <input id="username" type="text" placeholder="Username" class="placeholder-black" required>
+            </div>
+            <div class="flex justify-center mt-4">
+                <input id="password" type="password" placeholder="Password" class="placeholder-black" required>
+            </div>
+            <div class="flex justify-center mt-6">
+                <button type="submit" class="bg-[#F9C067] px-8 py-2 rounded hover:bg-[#F8B048] font-bold">Login</button>
+            </div>
+        </form>
+        <!-- Akhir form -->
+
         <div class="flex justify-center mt-2">
             <a href="forgot_password" class="text-[#F9C067] underline">Forgot Password</a>
         </div>
