@@ -1,4 +1,4 @@
-<div class="h-screen w-screen flex flex-col" style="background-image: url('../src/lib/image/salib.jpg'); background-size: cover;">
+<div class="h-screen w-screen flex flex-col overflow-x-hidden" style="background-image: url('../src/lib/image/salib.jpg'); background-size: cover;">
     <div class="flex justify-center items-center flex-1">
         <img src="../src/lib/image/logo_white.png" alt="logo">
     </div>

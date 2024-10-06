@@ -1,4 +1,4 @@
-<div class="h-screen w-screen flex flex-col bg-[#F4F4F4]">
+<div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
         <div class="flex items-center"></div>
     </header> 
@@ -8,7 +8,7 @@
         </div>
 
         <!-- Visi Misi -->
-        <div class="bg-[#FEFEFE] flex flex-col">
+        <div class="bg-[#FEFEFE] flex flex-col rounded">
             <div class="m-4">
                 <div class="text-[#F0A242] font-bold ml-4 text-2xl">
                     <h1>Visi Misi</h1>
@@ -20,7 +20,7 @@
         </div>
 
         <!-- Pesan Ketua -->
-        <div class="bg-[#FEFEFE] flex flex-col mt-6">
+        <div class="bg-[#FEFEFE] flex flex-col rounded mt-6">
             <div class="m-4">
                 <div class="text-[#F0A242] font-bold ml-4 text-2xl">
                     <h1>Pesan Ketua</h1>
@@ -51,7 +51,7 @@
         <div class="relative bg-cover bg-center w-full h-64 rounded-lg shadow-lg flex flex-row mt-6" style="background-image: url('../src/lib/image/pemandangan.jpg');">
             <!-- Bagian Kiri (Renungan) -->
             <div class="flex items-center justify-center bg-black bg-opacity-50 text-white w-1/2 rounded-lg">
-                <h1 class="text-2xl font-bold">Renungan</h1>
+                
             </div>
             <!-- Bagian Kanan (Deskripsi) dengan Background Putih Transparan -->
             
