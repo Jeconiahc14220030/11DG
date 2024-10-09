@@ -1,3 +1,11 @@
+<script>
+    function handleLogin(event) {
+        event.preventDefault(); // Mencegah form melakukan submit default
+        // Anda bisa menambahkan validasi login di sini
+        window.location.href = '/homepage'; // Mengarahkan ke halaman homepage
+    }
+</script>
+
 <div class="h-screen w-screen flex flex-col overflow-x-hidden" style="background-image: url('../src/lib/image/salib.jpg'); background-size: cover;">
     <div class="flex justify-center items-center flex-1">
         <img src="../src/lib/image/logo_white.png" alt="logo">
@@ -11,7 +19,7 @@
         </div>
 
         <!-- Form Login -->
-        <form class="flex flex-col items-center">
+        <form class="flex flex-col items-center" on:submit={handleLogin}>
             <div class="flex justify-center mt-4">
                 <input id="username" type="text" placeholder="Username" class="placeholder-black" required>
             </div>
