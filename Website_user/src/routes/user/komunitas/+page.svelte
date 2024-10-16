@@ -1,6 +1,6 @@
 <script>
     function goToMultimediaPage() {
-        window.location.href = '/komunitas/multimedia';
+        window.location.href = '/user/komunitas/multimedia';
     }
 </script>
 
@@ -12,7 +12,7 @@
     </header> 
     <div class="flex flex-col ml-6 mr-6">
         <div class="flex justify-end -mt-16">
-            <img src="../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
+            <img src="../../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
         </div>
         
         <!-- List Komunitas -->

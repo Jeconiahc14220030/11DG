@@ -3,14 +3,14 @@
         <div class="flex items-center">
             <!-- Back ke halaman sebelumnya -->
             <a href="#" on:click|preventDefault="{() => window.history.back()}">
-                <img src="../src/lib/image/return.svg" alt="return" class="w-6 h-6">
+                <img src="../../src/lib/image/return.svg" alt="return" class="w-6 h-6">
             </a>
             <h1 class="ml-2 text-lg md:text-xl font-bold">Multimedia</h1>
         </div>
     </header>
     <div class="flex flex-col ml-6 mr-6">
         <div class="flex justify-end -mt-16">
-            <img src="../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
+            <img src="../../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
         </div>
         
         <div class="flex flex-col ml-24 mr-24 mb-6">
@@ -40,7 +40,7 @@
             </div>
             
             <div class="flex justify-center mb-6">
-                <img src="../src/lib/image/multimedia.jpg" alt="Gambar Multimedia" class="w-4/5 h-auto rounded-lg">
+                <img src="../../src/lib/image/multimedia.jpg" alt="Gambar Multimedia" class="w-4/5 h-auto rounded-lg">
             </div>
 
             <div class="flex justify-center">
