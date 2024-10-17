@@ -1,14 +1,17 @@
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
-        <div class="flex items-center"></div>
+        <div class="flex items-center">
+        </div>
     </header> 
-    <div class="flex flex-col ml-6 mr-6">
+  
+    <!-- Konten utama dengan full screen height dan padding di bawah -->
+    <div class="flex flex-col flex-grow ml-6 mr-6 pb-16"> <!-- Tambahkan flex-grow dan pb-16 di sini -->
         <div class="flex justify-end -mt-16"> <!-- Menggunakan margin negatif untuk menggeser gambar ke atas -->
             <img src="../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
         </div>
-
+  
         <!-- Visi Misi -->
-        <div class="bg-[#FEFEFE] flex flex-col rounded">
+        <div class="bg-[#FEFEFE] flex flex-col rounded mt-4">
             <div class="m-4">
                 <div class="text-[#F0A242] font-bold ml-4 text-2xl">
                     <h1>Visi Misi</h1>
@@ -18,7 +21,7 @@
                 </div>
             </div>
         </div>
-
+  
         <!-- Pesan Ketua -->
         <div class="bg-[#FEFEFE] flex flex-col rounded mt-6">
             <div class="m-4">
@@ -30,7 +33,7 @@
                 </div>
             </div>
         </div>
-
+  
         <!-- Renungan -->
         <div class="relative bg-cover bg-center w-full h-64 rounded-lg shadow-lg flex flex-row mt-6" style="background-image: url('../src/lib/image/pemandangan.jpg');">
             <!-- Bagian Kiri (Renungan) -->
@@ -39,19 +42,15 @@
             </div>
             <!-- Bagian Kanan (Deskripsi) dengan Background Putih Transparan -->
             <div class="bg-white bg-opacity-50 p-4 w-1/2 rounded-r-lg overflow-auto">
-                <p>Suatu kali saya mendapatkan panggilan masuk dari sebuah nomor yang tidak dikenal. Ia memperkenalkan diri sebagai 
-                    seorang teman di luar kota yang baru saja berganti nomor. Ia menyebut nama diri dengan lengkap, beserta alamat rumahnya. 
-                    Dilihat dari media sosialnya pun, foto profilnya sesuai. Meski demikian, kami mencurigainya karena suara dan gaya 
-                    bicaranya sangat berbeda. Dugaan kami terbukti setelah kami menelepon teman kami yang nama dan fotonya dibajak.</p>
+                <p>Suatu kali saya mendapatkan panggilan masuk dari sebuah nomor yang tidak dikenal...</p>
             </div>
         </div>
-        
-
-        <!-- Highlight acara -->
+  
+        <!-- Highlight Acara -->
         <div class="flex justify-center mt-6 mb-6">
             <span class="text-3xl font-bold">Highlight Acara</span>
         </div>
-
+  
         <div id="default-carousel" class="relative w-full" data-carousel="slide">
             <!-- Carousel wrapper -->
             <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
@@ -102,12 +101,12 @@
                 </span>
             </button>
         </div>
-
+  
         <!-- Berita -->
         <div class="flex justify-center mt-6 mb-6">
             <span class="text-3xl font-bold">Berita</span>
         </div>
-
+  
         <div id="accordion-collapse" data-accordion="collapse" class="mb-6">
             <h2 id="accordion-collapse-heading-1">
                 <button type="button" class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3" data-accordion-target="#accordion-collapse-body-1" aria-expanded="true" aria-controls="accordion-collapse-body-1">
@@ -145,9 +144,9 @@
             </h2>
             <div id="accordion-collapse-body-3" class="hidden" aria-labelledby="accordion-collapse-heading-3">
                 <div class="p-5 border border-t-0 border-gray-200 dark:border-gray-700">
-                    <p class="mb-2 text-gray-500 dark:text-gray-400">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    <p class="mb-2 text-gray-500 dark:text-gray-400">Lore Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+  </div>
