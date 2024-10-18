@@ -7,7 +7,7 @@
             <h1 class="ml-2 text-lg md:text-xl font-bold">Poin</h1>
         </div>
     </header> 
-    <div class="flex flex-col ml-6 mr-6 pb-16">
+    <div class="flex flex-col ml-6 mr-6">
         <div class="flex justify-end -mt-16"> <!-- Menggunakan margin negatif untuk menggeser gambar ke atas -->
             <img src="../../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
         </div>
@@ -24,7 +24,7 @@
     </div>
     
     <!-- Voucher -->
-    <div class="flex flex-col p-4">
+    <div class="flex flex-col p-4 pb-16">
         <h2 class="text-lg font-bold mb-4">Voucher</h2>
         <div class="relative">
             <div class="voucher-container flex overflow-x-auto snap-x snap-mandatory space-x-4">
