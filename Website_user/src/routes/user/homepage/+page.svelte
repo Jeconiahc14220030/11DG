@@ -7,7 +7,7 @@
     <!-- Konten utama dengan full screen height dan padding di bawah -->
     <div class="flex flex-col flex-grow ml-6 mr-6 pb-16"> <!-- Tambahkan flex-grow dan pb-16 di sini -->
         <div class="flex justify-end -mt-16"> <!-- Menggunakan margin negatif untuk menggeser gambar ke atas -->
-            <img src="../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
+            <img src="/src/lib/image/logo.png" alt="logo" class="w-16 h-16">
         </div>
   
         <!-- Visi Misi -->
@@ -35,14 +35,14 @@
         </div>
   
         <!-- Renungan -->
-        <div class="relative bg-cover bg-center w-full h-64 rounded-lg shadow-lg flex flex-row mt-6" style="background-image: url('../src/lib/image/pemandangan.jpg');">
+        <div class="relative bg-cover bg-center w-full h-64 rounded-lg shadow-lg flex flex-row mt-6" style="background-image: url('/src/lib/image/pemandangan.jpg');">
             <!-- Bagian Kiri (Renungan) -->
             <div class="flex items-center justify-center bg-black bg-opacity-50 text-white w-1/2 rounded-l-lg">
                 <h1 class="text-2xl font-bold">Renungan</h1>
             </div>
             <!-- Bagian Kanan (Deskripsi) dengan Background Putih Transparan -->
             <div class="bg-white bg-opacity-50 p-4 w-1/2 rounded-r-lg overflow-auto">
-                <p>Suatu kali saya mendapatkan panggilan masuk dari sebuah nomor yang tidak dikenal...</p>
+                <p>Suatu kali saya mendapatkan panggilan masuk dari sebuah nomor yang tidak dikenal.</p>
             </div>
         </div>
   
@@ -56,23 +56,23 @@
             <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
                 <!-- Item 1 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="../src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                    <img src="/src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt=".">
                 </div>
                 <!-- Item 2 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="../src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                    <img src="/src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt=".">
                 </div>
                 <!-- Item 3 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="../src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                    <img src="/src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt=".">
                 </div>
                 <!-- Item 4 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="../src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                    <img src="/src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt=".">
                 </div>
                 <!-- Item 5 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                    <img src="../src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                    <img src="/src/lib/image/coin.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt=".">
                 </div>
             </div>
             <!-- Slider indicators -->

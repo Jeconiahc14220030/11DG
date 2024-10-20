@@ -25,14 +25,15 @@
     </header> 
     <div class="flex flex-col ml-6 mr-6 pb-16">
         <!-- poin -->
-        <button class="flex justify-end">
+        <a href="poin" class="flex justify-end">
             <div class="flex bg-[#F3DDD1] justify-center rounded-lg border-4 border-[#F3DDD1] w-30">
                 <div class="flex bg-[#F0A242] justify-center text-white rounded-lg p-2 border-[#F3DDD1] w-full">
-                    <img src="../../src/lib/image/coin.png" alt="icon" class="w-6 h-6">
+                    <img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6">
                     <span class="mx-2">150000</span>
                 </div>
             </div>
-        </button>
+        </a>
+        
 
         <!-- Profil Detail -->
         <div class="flex flex-col justify-center items-center mb-4">
@@ -79,7 +80,7 @@
         <!-- Logout Button -->
         <div class="flex justify-center">
             <button class="bg-[#F3DDD1] text-red-600 py-2 px-6 rounded-lg flex items-center">
-                <img src="../../src/lib/image/shutdown.png" alt="Logout" class="w-4 h-4 mr-2" />
+                <img src="/src/lib/image/shutdown.png" alt="Logout" class="w-4 h-4 mr-2" />
                 <span class="text-[#DB1616] font-bold">Logout</span>
             </button>
         </div>

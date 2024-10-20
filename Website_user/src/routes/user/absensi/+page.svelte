@@ -8,7 +8,7 @@
     <!-- Konten utama dengan full screen height dan padding di bawah -->
     <div class="flex flex-col flex-grow ml-6 mr-6 pb-16"> <!-- Tambahkan flex-grow dan pb-16 di sini -->
         <div class="flex justify-end -mt-16"> <!-- Menggunakan margin negatif untuk menggeser gambar ke atas -->
-            <img src="../src/lib/image/logo.png" alt="logo" class="w-16 h-16">
+            <img src="/src/lib/image/logo.png" alt="logo" class="w-16 h-16">
         </div>
   
           <!-- Absensi Items -->
