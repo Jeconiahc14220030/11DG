@@ -38,8 +38,7 @@
         <!-- Profil Detail -->
         <div class="flex flex-col justify-center items-center mb-4">
             <div class="flex flex-col w-full text-center items-center">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxnIGZpbGw9ImN1cnJlbnRDb2xvciIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNiA5YTQgNCAwIDEgMS04IDBhNCA0IDAgMCAxIDggMG0tMiAwYTIgMiAwIDEgMS00IDBhMiAyIDAgMCAxIDQgMCIvPjxwYXRoIGQ9Ik0xMiAxQzUuOTI1IDEgMSA1LjkyNSAxIDEyczQuOTI1IDExIDExIDExczExLTQuOTI1IDExLTExUzE4LjA3NSAxIDEyIDFNMyAxMmMwIDIuMDkuNzEzIDQuMDE0IDEuOTA4IDUuNTQyQTguOTkgOC45OSAwIDAgMSAxMi4wNjUgMTRhOC45OCA4Ljk4IDAgMCAxIDcuMDkyIDMuNDU4QTkgOSAwIDEgMCAzIDEybTkgOWE4Ljk2IDguOTYgMCAwIDEtNS42NzItMi4wMTJBNi45OSA2Ljk5IDAgMCAxIDEyLjA2NSAxNmE2Ljk5IDYuOTkgMCAwIDEgNS42ODkgMi45MkE4Ljk2IDguOTYgMCAwIDEgMTIgMjEiLz48L2c+PC9zdmc+" 
-                alt="" class="w-10 h-10 md:w-16 md:h-16" />
+                <img src="/src/lib/image/pp.jpg" alt="" class="w-10 h-10 md:w-24 md:h-24 rounded-full"/>
                 <h1 class="text-lg md:text-xl font-bold">{user.name} (ID: {user.id})</h1>
                 <p class="text-[#515151]">{user.phone}</p>
                 <p class="text-[#515151]">{user.email}</p>
@@ -56,7 +55,7 @@
         </div>
 
         <!-- Detail Lainnya -->
-        <div class="flex flex-col justify-between items-center p-4 mb-4">
+        <div class="flex flex-col justify-between items-center p-2 mb-2">
             <div class="flex flex-col w-full">
                 <div class="flex justify-between items-center border-b border-black pb-2 mb-2">
                     <span>Detail Poin</span>

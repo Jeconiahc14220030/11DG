@@ -7,17 +7,6 @@
             </a>
             <h1 class="ml-2 text-lg md:text-xl font-bold">Multimedia</h1>
         </div>
-        <div class="flex">
-            <a href="/user/komunitas/multimedia/anggota" class="p-2">
-                <img src="/src/lib/image/list_person.svg" alt="return" class="w-6 h-6">
-            </a>
-            <a href="/user/komunitas/multimedia/jadwal" class="p-2">
-                <img src="/src/lib/image/create_jadwal.svg" alt="return" class="w-6 h-6">
-            </a>
-            <a href="https://web.whatsapp.com/" class="p-2" target="_blank" rel="noopener noreferrer">
-                <img src="/src/lib/image/link.svg" alt="Link" class="w-6 h-6">
-            </a>            
-        </div>
     </header>
 
     <div class="flex flex-col ml-6 mr-6 pb-16">
@@ -106,7 +95,7 @@
             </div>
 
             <div class="flex justify-center">
-                <button id="request" class="border border-black rounded-full bg-[#F9C067] px-8 py-2 hover:bg-[#F8B048] font-bold">Request</button>
+                <button id="request" class="border border-black rounded-full bg-[#F9C067] px-8 py-2 hover:bg-[#F8B048] font-bold">Simpan</button>
             </div>
         </div>        
     </div>
