@@ -42,7 +42,7 @@
                     <h3 class="font-semibold text-center">Milo</h3>
                     <div class="mt-4 flex justify-between">
                         <span class="font-bold">100 Poin</span>
-                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Milo', 'Voucher untuk produk Milo.');">Tukar</button>
+                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Milo', 'Voucher untuk produk Milo.', 100);">Tukar</button>
                     </div>
                 </div>
 
@@ -52,7 +52,7 @@
                     <h3 class="font-semibold text-center">Oreo</h3>
                     <div class="mt-4 flex justify-between">
                         <span class="font-bold">200 Poin</span>
-                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Oreo', 'Voucher untuk produk Oreo.');">Tukar</button>
+                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Oreo', 'Voucher untuk produk Oreo.', 200);">Tukar</button>
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@
                     <h3 class="font-semibold text-center">Botol Minum</h3>
                     <div class="mt-4 flex justify-between">
                         <span class="font-bold">300 Poin</span>
-                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Botol Minum', 'Voucher untuk botol minum.');">Tukar</button>
+                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Botol Minum', 'Voucher untuk botol minum.', 300);">Tukar</button>
                     </div>
                 </div>
 
@@ -72,14 +72,14 @@
                     <h3 class="font-semibold text-center">Sunlight</h3>
                     <div class="mt-4 flex justify-between">
                         <span class="font-bold">150 Poin</span>
-                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Sunlight', 'Voucher untuk produk Sunlight.');">Tukar</button>
+                        <button class="bg-[#F0A242] text-white rounded px-2 py-1" onclick="openModal('Sunlight', 'Voucher untuk produk Sunlight.', 150);">Tukar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Pertama -->
     <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="flex flex-col bg-white rounded-lg p-6 w-2/4">
             <div class="flex justify-center">
@@ -100,30 +100,53 @@
             </div>
             <div class="flex flex-col">
                 <span class="font-bold">Tanggal Kadaluarsa</span>
-                <p id="" class="mb-4">17 Agustus 2024.</p>
+                <p id="expiry-date" class="mb-4">17 Agustus 2024.</p>
             </div>
             <div class="flex justify-center items-center">
-                <button id="close-modal" class="bg-base border border-black text-white rounded px-4 py-2">Tukar</button>
+                <button id="open-confirm-modal" class="rounded-full bg-base border border-black px-8 py-2 font-bold text-black">Tukar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Kedua (Penukaran Sukses) -->
+    <div id="success-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-8 rounded-lg text-center">
+            <!-- Ikon sukses dengan centang -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4m-6 6l-6-6m0 0l6 6m-6-6l6 6" />
+            </svg>
             
+            <h1 class="text-xl mb-4">Berhasil menukar!</h1>
+            <button id="backButton" class="rounded-full bg-[#F9C067] border border-black px-8 py-2 hover:bg-[#F8B048] font-bold">Kembali</button>
         </div>
     </div>
 
     <script>
         // Ambil elemen modal dan tombol
         const modal = document.getElementById('modal');
-        const closeModal = document.getElementById('close-modal');
-
-        // Fungsi untuk membuka modal
-        function openModal(itemName, itemDescription) {
+        const successModal = document.getElementById('success-modal');
+        const openConfirmModal = document.getElementById('open-confirm-modal');
+        const closeSuccessModal = document.getElementById('backButton');
+    
+        let selectedVoucherPoints = 0; // Menyimpan poin voucher yang dipilih
+    
+        // Fungsi untuk membuka modal pertama
+        function openModal(itemName, itemDescription, itemPoints) {
             document.getElementById('item-name').innerText = itemName;
             document.getElementById('item-description').innerText = itemDescription;
+            selectedVoucherPoints = itemPoints; // Simpan poin voucher yang dipilih
             modal.classList.remove('hidden'); // Tampilkan modal
         }
-
-        // Fungsi untuk menutup modal
-        closeModal.addEventListener('click', () => {
-            modal.classList.add('hidden'); // Sembunyikan modal
+    
+        // Event listener untuk membuka modal konfirmasi (modal kedua)
+        openConfirmModal.addEventListener('click', () => {
+            modal.classList.add('hidden'); // Tutup modal pertama
+            successModal.classList.remove('hidden'); // Tampilkan modal kedua
+        });
+    
+        // Fungsi untuk menutup modal kedua
+        closeSuccessModal.addEventListener('click', () => {
+            successModal.classList.add('hidden'); // Sembunyikan modal sukses
         });
     </script>
 </div>
