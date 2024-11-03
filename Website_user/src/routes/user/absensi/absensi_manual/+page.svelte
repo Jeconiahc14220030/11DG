@@ -32,22 +32,15 @@
 
 		<!-- Daftar peserta -->
 		<div class="flex flex-col w-full space-y-2 mt-4">
-			<!-- Peserta 1 -->
+			<!-- Peserta -->
 			<div class="flex justify-between items-center">
 				<p class="text-sm font-semibold">ID</p>
 				<p class="text-sm">Bambang</p>
-				<button class="text-black hover:text-red-500">
-					<img src="/bin.png" alt="delete" class="w-5 h-5" />
+				<button class="text-black hover:text-red-500" aria-label="Hapus peserta">
+					<img src="/src/lib/image/delete.svg" alt="delete" class="w-5 h-5" />
 				</button>
 			</div>
-			<!-- Peserta 2 -->
-			<div class="flex justify-between items-center">
-				<p class="text-sm font-semibold">ID</p>
-				<p class="text-sm">Bambang</p>
-				<button class="text-black hover:text-red-500">
-					<img src="/bin.png" alt="delete" class="w-5 h-5" />
-				</button>
-			</div>
+			<!-- Peserta lainnya bisa ditambahkan secara dinamis di sini -->
 		</div>
 
 		<!-- Tombol Simpan -->

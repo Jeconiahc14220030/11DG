@@ -23,23 +23,23 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td class="px-4 py-2 border-t border-r">1</td>
+					<td class="px-4 py-2 border-t border-r text-center">1</td>
 					<td class="px-4 py-2 border-t border-r">Jeconiah Jehian</td>
-					<td class="px-4 py-2 border-t border-r">
+					<td class="px-4 py-2 border-t border-r text-center">
 						<input type="checkbox" checked class="form-checkbox h-5 w-5 text-green-500" />
 					</td>
-					<td class="px-4 py-2 border-t">
-						<input type="checkbox" class="form-checkbox h-5 w-5 text-green-500" />
+					<td class="px-4 py-2 border-t text-center">
+						<input type="checkbox" class="form-checkbox h-5 w-5 text-red-500" />
 					</td>
 				</tr>
 				<tr>
-					<td class="px-4 py-2 border-t border-r">2</td>
+					<td class="px-4 py-2 border-t border-r text-center">2</td>
 					<td class="px-4 py-2 border-t border-r">Christian Adi</td>
-					<td class="px-4 py-2 border-t border-r">
+					<td class="px-4 py-2 border-t border-r text-center">
 						<input type="checkbox" checked class="form-checkbox h-5 w-5 text-green-500" />
 					</td>
-					<td class="px-4 py-2 border-t">
-						<input type="checkbox" class="form-checkbox h-5 w-5 text-green-500" />
+					<td class="px-4 py-2 border-t text-center">
+						<input type="checkbox" class="form-checkbox h-5 w-5 text-red-500" />
 					</td>
 				</tr>
 			</tbody>
@@ -53,7 +53,7 @@
 			<input type="date" id="tanggal" class="w-full mt-1 p-2 border border-gray-300 rounded-md" />
 		</div>
 		<div>
-			<label for="topic" class="font-bold">Topic HF</label>
+			<label for="topic" class="font-bold">Topik HF</label>
 			<input
 				type="text"
 				id="topic"
