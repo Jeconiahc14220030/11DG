@@ -1,88 +1,256 @@
 <script>
-    function editProfile() {
-        // Aksi untuk mengubah profil
-    }
+	// Functions to handle profile edit and password change
+	function editProfile() {
+		window.location.href = '/user/profile/ubah_profile';
+	}
 
-    function changePassword() {
-        // Aksi untuk mengganti password
-    }
+	function changePassword() {
+		window.location.href = '/user/profile/ganti_password';
+	}
 
-    let user = {
-      name: "Christian Adi",
-      id: "240409",
-      phone: "0821-4186-3444",
-      email: "C14200028@john.petra.ac.id",
-      birthdate: "20/02/2000",
-      points: 150000
-    };
+	let user = {
+		name: 'Christian Adi',
+		id: '240409',
+		phone: '0821-4186-3444',
+		email: 'C14200028@john.petra.ac.id',
+		birthdate: '20/02/2000',
+		points: 150000
+	};
+
+	let showModal = false; // Control for logout modal
+	let showPointsDetail = false; // Control for points detail
+	let showVoucherHistory = false; // Control for voucher history
+	let showRoles = false; // Control for roles detail
+
+	const handleYes = () => {
+		console.log('Logout dikonfirmasi!');
+		// Add logout logic here
+	};
+
+	const handleNo = () => {
+		console.log('Logout dibatalkan!');
+		showModal = false; // Close modal
+	};
+
+	let points = [
+		{
+			title: 'Ibadah Raya - Bersama Tuhan Kita Bebas',
+			date: '10 Agustus 2024, 10:48',
+			role: 'PAW',
+			point: '+ 4 Point'
+		},
+		{
+			title: 'Komunitasku - Tuhan Akan Pasti Menolong',
+			date: '13 Agustus 2024, 10:48',
+			role: 'Anggota',
+			point: '+ 2 Point'
+		},
+		{
+			title: 'Ibadah Raya - Iman Yang Memerdekakan',
+			date: '17 Agustus 2024, 10:48',
+			role: 'Anggota',
+			point: '+ 2 Point'
+		},
+		{
+			title: 'Komunitasku - Tepat Pada Waktu Tuhan',
+			date: '20 Agustus 2024, 10:48',
+			role: 'Anggota',
+			point: '+ 2 Point'
+		},
+		{
+			title: 'Ibadah Raya - Bebas dari belenggu Dosa',
+			date: '24 Agustus 2024, 10:48',
+			role: 'PAW',
+			point: '+ 4 Point'
+		}
+	];
+
+	let vouchers = [
+		{
+			title: 'Voucher Makanan',
+			date: '1 Desember 2024'
+		},
+		{
+			title: 'Voucher Dana',
+			date: '8 Desember 2024'
+		},
+		{
+			title: 'Voucher Barang',
+			date: '1 Desember 2024'
+		}
+	];
+
+	let roles = [
+		{ title: 'BPH' },
+		{ title: 'Koordinator' },
+		{ title: 'Fasilitator HF' },
+		{ title: 'Usher' },
+		{ title: 'Anggota' }
+	];
 </script>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
-    <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
-        <div class="flex items-center">
-            <h1 class="ml-2 text-lg md:text-xl font-bold">Profile</h1>
-        </div>
-    </header> 
-    <div class="flex flex-col ml-6 mr-6 pb-16">
-        <!-- poin -->
-        <button class="flex justify-end">
-            <div class="flex bg-[#F3DDD1] justify-center rounded-lg border-4 border-[#F3DDD1] w-30">
-                <div class="flex bg-[#F0A242] justify-center text-white rounded-lg p-2 border-[#F3DDD1] w-full">
-                    <img src="../../src/lib/image/coin.png" alt="icon" class="w-6 h-6">
-                    <span class="mx-2">150000</span>
-                </div>
-            </div>
-        </button>
+	<header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
+		<div class="flex items-center">
+			<h1 class="ml-2 text-lg md:text-xl font-bold">Profile</h1>
+		</div>
+	</header>
 
-        <!-- Profil Detail -->
-        <div class="flex flex-col justify-center items-center mb-4">
-            <div class="flex flex-col w-full text-center items-center">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxnIGZpbGw9ImN1cnJlbnRDb2xvciIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNiA5YTQgNCAwIDEgMS04IDBhNCA0IDAgMCAxIDggMG0tMiAwYTIgMiAwIDEgMS00IDBhMiAyIDAgMCAxIDQgMCIvPjxwYXRoIGQ9Ik0xMiAxQzUuOTI1IDEgMSA1LjkyNSAxIDEyczQuOTI1IDExIDExIDExczExLTQuOTI1IDExLTExUzE4LjA3NSAxIDEyIDFNMyAxMmMwIDIuMDkuNzEzIDQuMDE0IDEuOTA4IDUuNTQyQTguOTkgOC45OSAwIDAgMSAxMi4wNjUgMTRhOC45OCA4Ljk4IDAgMCAxIDcuMDkyIDMuNDU4QTkgOSAwIDEgMCAzIDEybTkgOWE4Ljk2IDguOTYgMCAwIDEtNS42NzItMi4wMTJBNi45OSA2Ljk5IDAgMCAxIDEyLjA2NSAxNmE2Ljk5IDYuOTkgMCAwIDEgNS42ODkgMi45MkE4Ljk2IDguOTYgMCAwIDEgMTIgMjEiLz48L2c+PC9zdmc+" 
-                alt="" class="w-10 h-10 md:w-16 md:h-16" />
-                <h1 class="text-lg md:text-xl font-bold">{user.name} (ID: {user.id})</h1>
-                <p class="text-[#515151]">{user.phone}</p>
-                <p class="text-[#515151]">{user.email}</p>
-                <p class="text-[#515151]">{user.birthdate}</p>
-            </div>
-        </div>             
+	<div class="flex flex-col ml-6 mr-6 pb-16">
+		<!-- Points Display -->
+		<a href="/user/profile/poin" class="flex justify-end">
+			<div class="flex bg-[#F3DDD1] justify-center rounded-lg border-4 border-[#F3DDD1] w-30">
+				<div
+					class="flex bg-[#F0A242] justify-center text-white rounded-lg p-2 border-[#F3DDD1] w-full"
+				>
+					<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
+					<span class="mx-2">{user.points}</span>
+				</div>
+			</div>
+		</a>
 
-        <!-- Poin dan Tombol Aksi -->
-        <div class="flex justify-center items-center mb-4">
-            <div class="flex space-x-4">
-                <button class="bg-[#F9C067] px-4 py-2 rounded-xl" onClick="editProfile()">Ubah Profil</button>
-                <button class="bg-[#F9C067] px-4 py-2 rounded-xl" onClick="changePassword()">Ganti Password</button>
-            </div>
-        </div>
+		<!-- Profile Detail -->
+		<div class="flex flex-col justify-center items-center mb-4">
+			<div class="flex flex-col w-full text-center items-center">
+				<img
+					src="/src/lib/image/pp.jpg"
+					alt="Profile"
+					class="w-10 h-10 md:w-24 md:h-24 rounded-full"
+				/>
+				<h1 class="text-lg md:text-xl font-bold">{user.name} (ID: {user.id})</h1>
+				<p class="text-[#515151]">{user.phone}</p>
+				<p class="text-[#515151]">{user.email}</p>
+				<p class="text-[#515151]">{user.birthdate}</p>
+			</div>
+		</div>
 
-        <!-- Detail Lainnya -->
-        <div class="flex flex-col justify-between items-center p-4 mb-4">
-            <div class="flex flex-col w-full">
-                <div class="flex justify-between items-center border-b border-black pb-2 mb-2">
-                    <span>Detail Poin</span>
-                    <span>&gt;</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-black pb-2 mb-2">
-                    <span>Riwayat Penukaran Voucher</span>
-                    <span>&gt;</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-black pb-2 mb-2">
-                    <span>Roles</span>
-                    <span>&gt;</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-black pb-2 mb-2">
-                    <span>Software Version</span>
-                    <span>V 1.2.2(67)</span>
-                </div>
-            </div>
-        </div>
+		<!-- Action Buttons -->
+		<div class="flex justify-center items-center mb-4">
+			<div class="flex space-x-4">
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={editProfile}>Ubah Profil</button
+				>
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={changePassword}
+					>Ganti Password</button
+				>
+			</div>
+		</div>
 
-        <!-- Logout Button -->
-        <div class="flex justify-center">
-            <button class="bg-[#F3DDD1] text-red-600 py-2 px-6 rounded-lg flex items-center">
-                <img src="../../src/lib/image/shutdown.png" alt="Logout" class="w-4 h-4 mr-2" />
-                <span class="text-[#DB1616] font-bold">Logout</span>
-            </button>
-        </div>
-        
-    </div>
+		<!-- Points Detail Section -->
+		<div class="flex flex-col justify-between items-center p-4">
+			<div class="flex flex-col w-full">
+				<div
+					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
+					on:click={() => (showPointsDetail = !showPointsDetail)}>
+					<span>Detail Poin</span>
+					<span>&gt;</span>
+				</div>
+				<div
+					class={`max-h-0 overflow-hidden transition-all duration-500 ${showPointsDetail ? 'max-h-screen' : ''}`}>
+					{#each points as point}
+						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+							<h2 class="font-semibold">{point.title}</h2>
+							<div class="flex justify-between items-center mt-2">
+								<div class="flex flex-col">
+									<p class="text-sm text-gray-500">{point.date}</p>
+								</div>
+								<div class="flex items-center">
+									<span class="text-xs text-gray-600 mr-4">{point.role}</span>
+									<span class="text-green-600 font-bold">{point.point}</span>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+
+				<!-- Voucher History Section -->
+				<div
+					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
+					on:click={() => (showVoucherHistory = !showVoucherHistory)}
+				>
+					<span>Riwayat Penukaran Voucher</span>
+					<span>&gt;</span>
+				</div>
+				<div
+					class={`max-h-0 overflow-hidden transition-all duration-500 ${showVoucherHistory ? 'max-h-screen' : ''}`}
+				>
+					{#each vouchers as voucher, index}
+						<div
+							class={`p-4 rounded-xl mb-3 border-2 border-black ${index === 0 ? 'bg-green-300' : index === 1 ? 'bg-gray-300' : 'bg-red-300'}`}
+						>
+							<h2 class="font-semibold">{voucher.title}</h2>
+							<div class="flex justify-between items-center mt-2">
+								<div class="flex flex-col">
+									<p class="text-sm text-gray-500">Tanggal Penukaran Voucher : {voucher.date}</p>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+
+				<!-- Roles Section -->
+				<div
+					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
+					on:click={() => (showRoles = !showRoles)}
+				>
+					<span>Roles</span>
+					<span>&gt;</span>
+				</div>
+				<div
+					class={`max-h-0 overflow-hidden transition-all duration-500 ${showRoles ? 'max-h-screen' : ''}`}
+				>
+					{#each roles as role}
+						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+							<h2 class="font-semibold">{role.title}</h2>
+						</div>
+					{/each}
+				</div>
+
+				<div class="flex justify-between items-center border-b border-black pb-2 mb-2">
+					<span>Software Version</span>
+					<span>V 1.2.2(67)</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Logout Button -->
+		<div class="flex justify-center">
+			<button
+				class="bg-[#F3DDD1] text-red-600 py-2 px-6 rounded-lg flex items-center"
+				on:click={() => (showModal = true)}
+			>
+				<img src="/src/lib/image/shutdown.png" alt="Logout" class="w-4 h-4 mr-2" />
+				<span class="text-[#DB1616] font-bold">Logout</span>
+			</button>
+		</div>
+
+		<!-- Logout Confirmation Modal -->
+		{#if showModal}
+			<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+				<div class="bg-white p-6 rounded-lg shadow-lg w-80">
+					<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4">
+						<img
+							src="/src/lib/image/warning.png"
+							alt="Warning Icon"
+							class="w-full h-full rounded-full"
+						/>
+					</div>
+					<p class="text-center text-lg font-bold text-gray-800 mb-6">Apakah ingin Log Out?</p>
+					<div class="flex justify-between">
+						<button
+							class="flex-1 px-6 py-2 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition duration-300 mr-2"
+							on:click={handleYes}
+						>
+							Ya
+						</button>
+						<button
+							class="flex-1 px-6 py-2 bg-red-500 text-white font-semibold rounded-full hover:bg-red-600 transition duration-300 ml-2"
+							on:click={handleNo}
+						>
+							Tidak
+						</button>
+					</div>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
