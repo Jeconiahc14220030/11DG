@@ -1,10 +1,10 @@
-<!-- <script>
-    import profile from '../lib/image/profil.jpg';
-</script> -->
+<style>
+
+</style>
 
 <div class="bg-background w-screen h-screen flex flex-col items-center justify-center">
     <div class="flex justify-center mb-8">
-        <div class="w-24 h-24 rounded-full bg-cover bg-center" style="background-image: url('profile');"></div>
+        <img src="/src/lib/image/profil.jpg" alt="profile" class="w-20 h-20 rounded-full items-center">
     </div>
 
     <form class="flex flex-row space-x-8">
@@ -45,10 +45,31 @@
             
     </form>
 
-    <button id="isi" type="submit" class="bg-base text-2xl font-semibold px-6 py-2 rounded-lg mt-8 flex items-center space-x-2 hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400 max-w-lg">
+    <button id="button" type="submit" class="bg-base text-2xl font-semibold px-4 py-1.5 rounded-lg mt-8 flex items-center space-x-2 hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400 max-w-lg">
         <svg class="w-15 h-15 mr-0.5 mt-1" xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="1 1 25 25">
             <path fill="currentColor" d="M12 4c4.411 0 8 3.589 8 8s-3.589 8-8 8s-8-3.589-8-8s3.589-8 8-8m0-2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10S17.523 2 12 2m5 9h-4V7h-2v4H7v2h4v4h2v-4h4z"/>
         </svg>
         <span>Create</span>
     </button>
 </div>
+
+<script>
+    import { onMount } from "svelte";
+    import { goto } from '$app/navigation';
+
+    onMount(() => {
+        const createBtn = document.getElementById('button');
+        if (createBtn) {
+            createBtn.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Create Success',
+                    text: 'Data pengguna berhasil ditambahkan',
+                    icon: 'success',
+                    confirmButtonColor: '#F0A242',
+                }).then(() => {
+                    goto('/admin/pengguna');
+                });
+            });
+        }
+    });
+</script>

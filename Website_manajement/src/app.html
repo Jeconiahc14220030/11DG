@@ -1,45 +1,55 @@
 <!doctype html>
 <html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-	<!-- Tailwind CSS -->
-	<script src="https://cdn.tailwindcss.com"></script>
+		<!-- Tailwind CSS -->
+		<script src="https://cdn.tailwindcss.com"></script>
 
-	<!-- Flowbite CSS and JS  -->
-	<link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
-	<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-	%sveltekit.head%
+		<!-- Flowbite CSS and JS  -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 
-	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+		<!-- Chart.js -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-	#isi{
-		font-family: "Inknut Antiqua", serif;
-	}
-	</style>
-</head>
+		<!-- Sweet Alert -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		%sveltekit.head%
 
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-<body class="overflow-x-hidden" data-sveltekit-preload-data="hover">
-	<script>
-		tailwind.config = {
-			theme: {
-				extend: {
-					colors: {
-						base: '#F0A242',
-						background: '#F0F0F0',
-						alert: '#f87171',
-						field: '#EFEFEF',
-						head: '#DCE7EA',
+			#isi { 
+				font-family: 'Inknut Antiqua', serif;
+			}
+		</style>
+	</head>
+
+	<body class="overflow-x-hidden" data-sveltekit-preload-data="hover">
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						colors: {
+							base: '#F0A242',
+							background: '#F0F0F0',
+							alert: '#f87171',
+							field: '#EFEFEF',
+							head: '#DCE7EA',
+							success: '#68B854',
+							card: '#F3DDD1'
+						}
 					}
 				}
-			}
-		};
-	</script>
+			};
+		</script>
 
-	<div style="display: contents">%sveltekit.body%</div>
-</body>
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
 </html>

@@ -69,12 +69,12 @@
                     <td class="py-3 px-6 text-left text-black">17-9-2024</td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center">
-                            <a href ="/admin/pengguna/edit pengguna" class="w-4 mr-4 transform hover:text-blue-500 hover:alert">
+                            <a href ="/admin/pengguna/edit pengguna" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
                                     <path fill="currentColor" d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"/>
                                 </svg>
                             </a>
-                            <a href="#" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
+                            <a id="delete1" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M7 6V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6zm6.414 8l1.768-1.768l-1.414-1.414L12 12.586l-1.768-1.768l-1.414 1.414L10.586 14l-1.768 1.768l1.414 1.414L12 15.414l1.768 1.768l1.414-1.414zM9 4v2h6V4z"/>
                                 </svg>
@@ -95,7 +95,7 @@
                                     <path fill="currentColor" d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"/>
                                 </svg>
                             </a>
-                            <a href="#" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110" >
+                            <a id="delete2" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110" >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
                                     <path fill="currentColor" d="M7 6V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6zm6.414 8l1.768-1.768l-1.414-1.414L12 12.586l-1.768-1.768l-1.414 1.414L10.586 14l-1.768 1.768l1.414 1.414L12 15.414l1.768 1.768l1.414-1.414zM9 4v2h6V4z"/>
                                 </svg>
@@ -109,5 +109,57 @@
 </div>
 
 <script>
+    import { onMount } from "svelte";
 
+onMount(() => {
+    const createBtn = document.getElementById('delete1');
+    if (createBtn) {
+        createBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success",
+                        confirmButtonColor: "#F0A242",
+                    });
+                }
+            });
+        });
+    }
+});
+
+onMount(() => {
+    const createBtn = document.getElementById('delete2');
+    if (createBtn) {
+        createBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success",
+                        confirmButtonColor: "#F0A242",
+                    });
+                }
+            });
+        });
+    }
+});
 </script>
