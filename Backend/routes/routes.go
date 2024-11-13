@@ -18,10 +18,10 @@ func Init() *echo.Echo {
 	e.POST("/register", controllers.Register)
 
 	// Fetch Data
-	e.GET("/anggota", controllers.FetchAllAnggota)
+	e.GET("/anggota", controllers.FetchAllAnggota) //error column
 	e.GET("/anggota/:id", controllers.FetchAnggotaById)
 
-	e.GET("/jadwal", controllers.FetchAllJadwal)
+	e.GET("/jadwal", controllers.FetchAllJadwal) //error 
 
 	e.GET("/jadwallatihan", controllers.FetchAllJadwalLatihan)
 
@@ -33,7 +33,7 @@ func Init() *echo.Echo {
 
 	e.GET("/dashboard", controllers.FetchKontenGereja)
 
-	e.GET("/laporankeuangan", controllers.FetchAllLaporanKeuangan)
+	e.GET("/laporankeuangan", controllers.FetchAllLaporanKeuangan) //error nama tidak sesuai dengan yang ada di DB
 	e.GET("/laporankeuangan/:id", controllers.FetchLaporanKeuanganById)
 
 	e.GET("/carousel", controllers.FetchAllCarousel)
