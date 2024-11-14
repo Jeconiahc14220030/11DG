@@ -57,3 +57,38 @@ func GETAllBerita() (models.Response, error) {
 	
 	return response, err
 }
+func AddBerita(c echo.Context) error {
+	var berita models.Berita
+
+	if err := c.Bind(&berita); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTBerita(berita)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTBerita(berita models.Berita) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO berita (deskripsi) VALUES (?)"
+	_, err := con.Exec(sqlStatement, berita.Deskripsi)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Berita berhasil ditambahkan"
+	res.Data = berita
+
+	return res, nil
+}

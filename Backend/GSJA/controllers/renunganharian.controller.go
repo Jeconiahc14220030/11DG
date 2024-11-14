@@ -59,3 +59,40 @@ func GETAllRenunganHarian() (models.Response, error) {
 
 	return response, err
 }
+
+func AddRenunganHarian(c echo.Context) error {
+	var renunganHarian models.RenunganHarian
+
+	if err := c.Bind(&renunganHarian); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTRenunganHarian(renunganHarian)
+	
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO renungan_harian (status, isi) VALUES (?, ?)"
+
+	_, err := con.Exec(sqlStatement, renunganHarian.Status, renunganHarian.Isi)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Renungan harian berhasil ditambahkan"
+	res.Data = renunganHarian
+
+	return res, nil
+}

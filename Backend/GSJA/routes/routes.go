@@ -60,5 +60,13 @@ func Init() *echo.Echo {
 
 	e.POST("/anggota/add", controllers.AddAnggota)
 
+	e.POST("renunganharian/add", controllers.AddRenunganHarian)
+
+	e.POST("jadwal/add", controllers.AddJadwal)
+
+	e.POST("/berita/add", controllers.AddBerita)
+
+	e.POST("kutipanharian/add", controllers.AddKutipanHarian)
+
 	return e
 }
