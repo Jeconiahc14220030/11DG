@@ -1,62 +1,20 @@
-<div class="bg-background w-screen h-screen justify-center items-center">
-    <div class="gap-6 max-w-8xl mx-auto py-6">
-        <div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
-            <div class="grid md:grid-cols-2 gap-6 mt-6">
-                <h1 class="text-4xl font-bold text-center" id="isi">Grafik Bulanan</h1>
-
-                <div>
-                    <table class="w-full border-collapse border border-black">
-                        <thead>
-                            <tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
-                                <th class="py-3 px-6 text-left text-black w-1/2">Nama Kelompok</th>
-                                <th class="py-3 px-6 text-center text-black w-1/2">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-gray-600 text-sm">
-                            <tr class="bg border-b border-black hover:bg-gray-100">
-                                <td class="py-3 px-6 text-left text-black">Kelompok 1</td>
-                                <td class="py-3 px-6 text-center">
-                                    <div class="flex item-center justify-center">
-                                        <a href="#" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
-                                                <path fill="currentColor" d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-black hover:bg-gray-100">
-                                <td class="py-3 px-6 text-left text-black">Kelompok 2</td>
-                                <td class="py-3 px-6 text-center">
-                                    <div class="flex item-center justify-center">
-                                        <a id="edit" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
-                                                <path fill="currentColor" d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>                    
-                    
-                    <div class="flex justify-center mt-32">
-                        <a id="create">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 16 16">
-                                <path fill="#0000000" fill-rule="evenodd" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1m-.5 3v3.5H4v1h3.5V12h1V8.5H12v-1H8.5V4z" clip-rule="evenodd"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-    onMount(() => {
+	let namakelompok = [];
+	let anggota = [];
+
+    async function fetchdata() {
+        try{
+            const response = await fetch('http://localhost:8080/kelompok');
+            kelompok = await response.json();
+            kelompok = kelompok.data;
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+	onMount(() => {
 		const createBtn = document.getElementById('create');
 		if (createBtn) {
 			createBtn.addEventListener('click', () => {
@@ -92,7 +50,7 @@
 							return false;
 						}
 
-						return { anggota, kelompok};
+						return { anggota, kelompok };
 					}
 				}).then((result) => {
 					if (result.isConfirmed) {
@@ -112,7 +70,7 @@
 		}
 	});
 
-    onMount(() => {
+	onMount(() => {
 		const createBtn = document.getElementById('edit');
 		if (createBtn) {
 			createBtn.addEventListener('click', () => {
@@ -144,7 +102,7 @@
 							return false;
 						}
 
-						return { topic, date};
+						return { topic, date };
 					}
 				}).then((result) => {
 					if (result.isConfirmed) {
@@ -164,3 +122,84 @@
 		}
 	});
 </script>
+
+<div class="bg-background w-screen h-screen justify-center items-center">
+	<div class="gap-6 max-w-8xl mx-auto py-6">
+		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
+			<div class="grid md:grid-cols-2 gap-6 mt-6">
+				<h1 class="text-4xl font-bold text-center" id="isi">Grafik Bulanan</h1>
+
+				<div>
+					<table class="w-full border-collapse border border-black">
+						<thead>
+							<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
+								<th class="py-3 px-6 text-left text-black w-1/2">Nama Kelompok</th>
+								<th class="py-3 px-6 text-center text-black w-1/2">Aksi</th>
+							</tr>
+						</thead>
+						<tbody class="text-gray-600 text-sm">
+							<tr class="bg border-b border-black hover:bg-gray-100">
+								<td class="py-3 px-6 text-left text-black">Kelompok 1</td>
+								<td class="py-3 px-6 text-center">
+									<div class="flex item-center justify-center">
+										<a href="#" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.5em"
+												height="1.5em"
+												viewBox="0 0 16 16"
+											>
+												<path
+													fill="currentColor"
+													d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
+												/>
+											</svg>
+										</a>
+									</div>
+								</td>
+							</tr>
+							<tr class="border-b border-black hover:bg-gray-100">
+								<td class="py-3 px-6 text-left text-black">Kelompok 2</td>
+								<td class="py-3 px-6 text-center">
+									<div class="flex item-center justify-center">
+										<a id="edit" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.5em"
+												height="1.5em"
+												viewBox="0 0 16 16"
+											>
+												<path
+													fill="currentColor"
+													d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
+												/>
+											</svg>
+										</a>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="flex justify-center mt-32">
+						<a id="create">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="2.5em"
+								height="2.5em"
+								viewBox="0 0 16 16"
+							>
+								<path
+									fill="#0000000"
+									fill-rule="evenodd"
+									d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1m-.5 3v3.5H4v1h3.5V12h1V8.5H12v-1H8.5V4z"
+									clip-rule="evenodd"
+								/>
+							</svg>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
