@@ -5,10 +5,18 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func Init() *echo.Echo {
 	e := echo.New()
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+        AllowOrigins:     []string{"*"},                           // Allow all origins
+        AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType}, // Allowed headers
+        AllowMethods:     []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete}, // Allowed methods
+        AllowCredentials: true,                                    // Allow credentials (cookies, authorization headers, etc.)
+    }))
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Berhasil terkoneksi dengan database!")
