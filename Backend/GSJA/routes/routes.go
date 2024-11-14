@@ -60,6 +60,8 @@ func Init() *echo.Echo {
 
 	e.GET("/hf", controllers.FetchAllHf) //error
 
+	e.GET("/requestkomunitas", controllers.FetchAllRequestKomunitas)
+
 	e.POST("/anggota/add", controllers.AddAnggota)
 
 	e.POST("renunganharian/add", controllers.AddRenunganHarian)
@@ -73,6 +75,7 @@ func Init() *echo.Echo {
 	e.POST("absensihf/add", controllers.AddVoucher)
 
 	e.POST("carousel/add", controllers.AddCarousel)
+
 
 	// e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
 
