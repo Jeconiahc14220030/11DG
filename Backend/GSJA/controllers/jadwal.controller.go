@@ -38,7 +38,7 @@ func GETAllJadwal() (models.Response, error) {
 		err = rows.Scan(
 			&jadwal.Id, 
 			&jadwal.Tanggal, 
-			&jadwal.Topic, 
+			&jadwal.Topik, 
 			&jadwal.JenisIbadah, 
 			&jadwal.JumlahPoin,
 			&jadwal.CreatedAt,
@@ -58,4 +58,40 @@ func GETAllJadwal() (models.Response, error) {
 	res.Data = arrJadwal
 
 	return res, err
+}
+func AddJadwal(c echo.Context) error {
+	var jadwal models.Jadwal
+
+	if err := c.Bind(&jadwal); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTJadwal(jadwal)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTJadwal(jadwal models.Jadwal) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO jadwal (tanggal, topik, jenis_ibadah, jumlah_poin) VALUES (?, ?, ?, ?)"
+
+	_, err := con.Exec(sqlStatement, jadwal.Tanggal, jadwal.Topik, jadwal.JenisIbadah, jadwal.JumlahPoin)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Jadwal berhasil ditambahkan"
+	res.Data = jadwal
+
+	return res, nil
 }

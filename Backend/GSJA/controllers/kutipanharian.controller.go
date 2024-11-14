@@ -58,3 +58,39 @@ func GETAllKutipanHarian() (models.Response, error) {
 
 	return response, err
 }
+
+func AddKutipanHarian(c echo.Context) error {
+	var kutipanHarian models.KutipanHarian
+
+	if err := c.Bind(&kutipanHarian); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTKutipanHarian(kutipanHarian)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTKutipanHarian(kutipanHarian models.KutipanHarian) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO kutipan_harian (status, isi) VALUES (?, ?)"
+	_, err := con.Exec(sqlStatement, kutipanHarian.Status, kutipanHarian.Isi)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Kutipan harian berhasil ditambahkan"
+	res.Data = kutipanHarian
+
+	return res, nil
+}

@@ -26,10 +26,10 @@ func Init() *echo.Echo {
 	e.POST("/register", controllers.Register)
 
 	// Fetch Data
-	e.GET("/anggota", controllers.FetchAllAnggota) //error column
+	e.GET("/anggota", controllers.FetchAllAnggota) //error
 	e.GET("/anggota/:id", controllers.FetchAnggotaById)
 
-	e.GET("/jadwal", controllers.FetchAllJadwal) //error 
+	e.GET("/jadwal", controllers.FetchAllJadwal)
 
 	e.GET("/jadwallatihan", controllers.FetchAllJadwalLatihan)
 
@@ -58,7 +58,26 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
+	e.GET("/hf", controllers.FetchAllHf) //error
+
 	e.POST("/anggota/add", controllers.AddAnggota)
 
+	e.POST("renunganharian/add", controllers.AddRenunganHarian)
+
+	e.POST("jadwal/add", controllers.AddJadwal)
+
+	e.POST("/berita/add", controllers.AddBerita)
+
+	e.POST("kutipanharian/add", controllers.AddKutipanHarian)
+
+	e.POST("absensihf/add", controllers.AddVoucher)
+
+	e.POST("carousel/add", controllers.AddCarousel)
+
+	// e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
+
+	// e.POST("absensihf/add", controllers.AddAbsensiHf)
+
+	// e.POST("jadwallatihan/add", controllers.AddJadwalLatihan)
 	return e
 }

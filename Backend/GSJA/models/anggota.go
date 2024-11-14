@@ -2,8 +2,6 @@ package models
 
 import (
 	_ "database/sql"
-	"database/sql/driver"
-	"fmt"
 	"time"
 )
 
@@ -63,4 +61,5 @@ func (c *CustomDate) Scan(value interface{}) error {
         return fmt.Errorf("unable to scan type %T into CustomDate", value)
     }
     return nil
+
 }
