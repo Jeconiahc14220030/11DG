@@ -8,6 +8,8 @@ import (
 type Anggota struct {
 	Id           int        `json:"id" db:"id"`
 	Nama         string     `json:"nama" db:"nama"`
+	Username     string     `json:"username" db:"username"`
+	Password     string     `json:"password" db"password"`
 	Email        string     `json:"email" db:"email"`
 	NomorTelepon string     `json:"nomor_telepon" db:"nomor_telepon"`
 	TanggalLahir string     `json:"tanggal_lahir" db:"tanggal_lahir"`
