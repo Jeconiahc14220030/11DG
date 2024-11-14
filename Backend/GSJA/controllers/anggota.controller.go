@@ -40,6 +40,8 @@ func GETAllAnggota() (models.Response, error) {
 		err = rows.Scan(
 			&anggota.Id, 
 			&anggota.Nama, 
+			&anggota.Username,
+			&anggota.Password,
 			&anggota.Email, 
 			&anggota.NomorTelepon, 
 			&anggota.TanggalLahir,
