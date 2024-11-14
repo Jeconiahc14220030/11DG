@@ -2,6 +2,8 @@ package models
 
 import (
 	_ "database/sql"
+    "database/sql/driver"
+    "fmt"
 	"time"
 )
 
