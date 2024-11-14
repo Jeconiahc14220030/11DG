@@ -39,6 +39,9 @@ func GETAllHf() (models.Response, error) {
 		err = rows.Scan(
 			&hf.Id,
 			&hf.Nama,
+			&hf.CreatedAt,
+			&hf.UpdatedAt,
+			&hf.DeletedAt,
 		)
 
 		if err != nil {
