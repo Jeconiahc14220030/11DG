@@ -121,3 +121,38 @@ func GETCarouselById(id int) (models.Response, error) {
 
 	return response, err
 }
+
+func AddCarousel(c echo.Context) error {
+	var carousel models.Carousel
+
+	if err := c.Bind(&carousel); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTCarousel(carousel)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTCarousel(carousel models.Carousel) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4, carousel.StatusCarousel)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Carousel added successfully"
+	res.Data = carousel
+
+	return res, nil
+}

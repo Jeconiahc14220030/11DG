@@ -68,5 +68,9 @@ func Init() *echo.Echo {
 
 	e.POST("kutipanharian/add", controllers.AddKutipanHarian)
 
+	e.POST("absensihf/add", controllers.AddVoucher)
+
+	e.POST("carousel/add", controllers.AddCarousel)
+
 	return e
 }
