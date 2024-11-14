@@ -61,4 +61,15 @@ func (c *CustomDate) Scan(value interface{}) error {
         return fmt.Errorf("unable to scan type %T into CustomDate", value)
     }
     return nil
+	Id           int        `json:"id" db:"id"`
+	Nama         string     `json:"nama" db:"nama"`
+	Email        string     `json:"email" db:"email"`
+	NomorTelepon string     `json:"nomor_telepon" db:"nomor_telepon"`
+	TanggalLahir string     `json:"tanggal_lahir" db:"tanggal_lahir"`
+	Poin         int        `json:"poin" db:"poin"`
+	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
+	IdKomunitas  int        `json:"id_komunitas" db:"id_komunitas"`
+	IdHf         int        `json:"id_hf" db:"id_hf"`
 }
