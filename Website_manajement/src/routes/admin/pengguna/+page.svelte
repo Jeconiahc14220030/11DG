@@ -15,20 +15,20 @@
 
 	function deleteanggota() {
 		Swal.fire({
-			title: 'Are you sure?',
-			text: "You won't be able to revert this!",
+			title: 'Apakah Anda yakin?',
+			text: 'Anda tidak akan dapat mengembalikannya!',
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',
-			confirmButtonText: 'Yes, delete it!'
+			confirmButtonText: 'Hapus!'
 		}).then((result) => {
 			if (result.isConfirmed) {
 				Swal.fire({
-					title: 'Deleted!',
-					text: 'Your file has been deleted.',
+					title: 'Hapus!',
+					text: 'Pengguna berhasil dihapus.',
 					icon: 'success',
-					confirmButtonColor: '#F0A242'
+					showConfirmButton: false
 				});
 			}
 		});
@@ -178,7 +178,7 @@
 						<td class="py-3 px-6 text-left text-black">{item.id}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nama}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nomor_telepon}</td>
-						<td class="py-3 px-6 text-left text-black">17-9-2024</td>
+						<td class="py-3 px-6 text-left text-black">{item.created_at}</td>
 						<td class="py-3 px-6 text-center">
 							<div class="flex item-center justify-center">
 								<a
