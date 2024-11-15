@@ -1,3 +1,127 @@
+<script>
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		const createBtn = document.getElementById('create');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Tambah Data Pengguna',
+					width: '600px',
+					padding: '1em',
+					customClass: {
+						popup: 'fixed-swal'
+					},
+					html: `
+		<div style="text-align: left; max-width: 500px; margin: 0 auto;">
+			<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
+			<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
+
+			<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
+			<input type="text" id="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
+
+			<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
+			<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
+		</div>
+	`,
+					confirmButtonText: 'Create',
+					confirmButtonColor: '#F0A242',
+					focusConfirm: false,
+					preConfirm: () => {
+						const tanggal = document.getElementById('tanggal').value;
+						const nominal = document.getElementById('nominal').value;
+						const laporan = document.getElementById('laporan').value;
+
+						if (!tanggal || !nominal || !laporan) {
+							Swal.showValidationMessage('Semua input harus diisi');
+							return false;
+						}
+
+						return { tanggal, nominal, laporan };
+					}
+				}).then((result) => {
+					if (result.isConfirmed) {
+						const dataInput = result.value;
+						console.log('Tanggal:', dataInput.tanggal);
+						console.log('Nominal Uang:', dataInput.nominal);
+						console.log('Laporan:', dataInput.laporan);
+
+						Swal.fire({
+							icon: 'success',
+							title: 'Data Berhasil Disimpan!',
+							showConfirmButton: false,
+							timer: 1500
+						});
+					}
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const editBtn = document.getElementById('edit');
+		if (editBtn) {
+			editBtn.addEventListener('click', () => {
+				const existingData = {
+					tanggal: '17-9-2024',
+					nominal: 'Rp 500.000',
+					laporan: 'John Doe'
+				};
+
+				Swal.fire({
+					title: 'Edit Data Pengguna',
+					width: '600px',
+					padding: '1em',
+					customClass: {
+						popup: 'fixed-swal'
+					},
+					html: `
+					<div style="text-align: left; max-width: 500px; margin: 0 auto;">
+						<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
+						<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" value="${existingData.tanggal}" required>
+
+						<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
+						<input type="text" id="nominal" class="swal2-input" style="width: 80%;" value="${existingData.nominal}" placeholder="Masukkan nominal uang" required>
+
+						<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
+						<input type="text" id="laporan" class="swal2-input" style="width: 80%;" value="${existingData.laporan}" placeholder="Masukkan Nama Penulis" required>
+					</div>
+				`,
+					confirmButtonText: 'Update',
+					confirmButtonColor: '#F0A242',
+					focusConfirm: false,
+					preConfirm: () => {
+						const tanggal = document.getElementById('tanggal').value;
+						const nominal = document.getElementById('nominal').value;
+						const laporan = document.getElementById('laporan').value;
+
+						if (!tanggal || !nominal || !laporan) {
+							Swal.showValidationMessage('Semua input harus diisi');
+							return false;
+						}
+
+						return { tanggal, nominal, laporan };
+					}
+				}).then((result) => {
+					if (result.isConfirmed) {
+						const dataInput = result.value;
+						console.log('Tanggal:', dataInput.tanggal);
+						console.log('Nominal Uang:', dataInput.nominal);
+						console.log('Laporan:', dataInput.laporan);
+
+						Swal.fire({
+							icon: 'success',
+							title: 'Data Berhasil Diperbarui!',
+							showConfirmButton: false,
+							timer: 1500
+						});
+					}
+				});
+			});
+		}
+	});
+</script>
+
 <div class="bg-background w-screen h-screen justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
 		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
@@ -23,7 +147,7 @@
 								<td class="py-3 px-6 text-left text-black">Rp 500.000</td>
 								<td class="py-3 px-6 text-center">
 									<div class="flex item-center justify-center">
-										<a id="" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
+										<a id="#" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												width="1.5em"
@@ -87,129 +211,3 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		const createBtn = document.getElementById('create');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Tambah Data Pengguna',
-					width: '600px',
-					padding: '1em',
-					customClass: {
-						popup: 'fixed-swal'
-					},
-					html: `
-		<div style="text-align: left; max-width: 500px; margin: 0 auto;">
-			<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
-			<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
-
-			<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
-			<input type="text" id="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
-
-			<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
-			<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
-		</div>
-	`,
-					confirmButtonText: 'Create',
-					confirmButtonColor: '#F0A242',
-					focusConfirm: false,
-					preConfirm: () => {
-						const tanggal = document.getElementById('tanggal').value;
-						const nominal = document.getElementById('nominal').value;
-						const laporan = document.getElementById('laporan').value;
-
-						if (!tanggal || !nominal || !laporan) {
-							Swal.showValidationMessage('Semua input harus diisi');
-							return false;
-						}
-
-						return { tanggal, nominal, laporan };
-					}
-				}).then((result) => {
-					if (result.isConfirmed) {
-						const dataInput = result.value;
-						console.log('Tanggal:', dataInput.tanggal);
-						console.log('Nominal Uang:', dataInput.nominal);
-						console.log('Laporan:', dataInput.laporan);
-
-						Swal.fire({
-							icon: 'success',
-							title: 'Data Berhasil Disimpan!',
-							showConfirmButton: false,
-							timer: 1500
-						});
-					}
-				});
-			});
-		}
-	});
-
-
-onMount(() => {
-	const editBtn = document.getElementById('edit');
-	if (editBtn) {
-		editBtn.addEventListener('click', () => {
-			const existingData = {
-				tanggal: '17-9-2024', 
-				nominal: 'Rp 500.000',
-				laporan: 'John Doe'
-			};
-
-			Swal.fire({
-				title: 'Edit Data Pengguna',
-				width: '600px',
-				padding: '1em',
-				customClass: {
-					popup: 'fixed-swal'
-				},
-				html: `
-					<div style="text-align: left; max-width: 500px; margin: 0 auto;">
-						<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
-						<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" value="${existingData.tanggal}" required>
-
-						<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
-						<input type="text" id="nominal" class="swal2-input" style="width: 80%;" value="${existingData.nominal}" placeholder="Masukkan nominal uang" required>
-
-						<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
-						<input type="text" id="laporan" class="swal2-input" style="width: 80%;" value="${existingData.laporan}" placeholder="Masukkan Nama Penulis" required>
-					</div>
-				`,
-				confirmButtonText: 'Update',
-				confirmButtonColor: '#F0A242',
-				focusConfirm: false,
-				preConfirm: () => {
-					const tanggal = document.getElementById('tanggal').value;
-					const nominal = document.getElementById('nominal').value;
-					const laporan = document.getElementById('laporan').value;
-
-					if (!tanggal || !nominal || !laporan) {
-						Swal.showValidationMessage('Semua input harus diisi');
-						return false;
-					}
-
-					return { tanggal, nominal, laporan };
-				}
-			}).then((result) => {
-				if (result.isConfirmed) {
-					const dataInput = result.value;
-					console.log('Tanggal:', dataInput.tanggal);
-					console.log('Nominal Uang:', dataInput.nominal);
-					console.log('Laporan:', dataInput.laporan);
-
-					Swal.fire({
-						icon: 'success',
-						title: 'Data Berhasil Diperbarui!',
-						showConfirmButton: false,
-						timer: 1500
-					});
-				}
-			});
-		});
-	}
-});
-
-</script>
