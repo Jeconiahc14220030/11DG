@@ -58,7 +58,7 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
-	e.GET("/hf", controllers.FetchAllHf) //error
+	e.GET("/hf", controllers.FetchAllHf)
 
 	e.GET("/requestkomunitas", controllers.FetchAllRequestKomunitas)
 
