@@ -76,6 +76,10 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
+	e.POST("requestkomunitas/add", controllers.POSTRequestKomunitas)
+
+	e.PUT("requestkomunitas/status", controllers.ReceiveRequestKomunitas)
+
 
 	// e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
 
