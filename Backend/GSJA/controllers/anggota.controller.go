@@ -212,7 +212,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO anggota (nama, username, password, email, nomor_telepon, tanggal_lahir, poin,) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO anggota (nama, username, password, email, nomor_telepon, tanggal_lahir, poin) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir, anggota.Poin)
 
 	if err != nil {
