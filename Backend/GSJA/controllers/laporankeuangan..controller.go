@@ -26,7 +26,7 @@ func GETLaporanKeuangan() (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM laporankeuangan "
+	sqlStatement := "SELECT * FROM laporan_keuangan "
 
 	rows, err := con.Query(sqlStatement)
 
@@ -86,7 +86,7 @@ func GETLaporanKeuanganById(id int) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM laporankeuangan WHERE id = ?"
+	sqlStatement := "SELECT * FROM laporan_keuangan WHERE id = ?"
 
 	rows, err := con.Query(sqlStatement, id)
 
