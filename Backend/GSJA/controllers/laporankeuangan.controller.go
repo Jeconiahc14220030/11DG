@@ -121,3 +121,39 @@ func GETLaporanKeuanganById(id int) (models.Response, error) {
 
 	return response, err
 }
+
+func AddLaporanKeuangan(c echo.Context) error {
+	var laporanKeuangan models.LaporanKeuangan
+
+	if err := c.Bind(&laporanKeuangan); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTLaporanKeuangan(laporanKeuangan)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTLaporanKeuangan(laporanKeuangan models.LaporanKeuangan) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO laporan_keuangan (tanggal, jenis, nominal, id_pembuat) VALUES (?, ?, ?, ?)"
+
+	_, err := con.Exec(sqlStatement, laporanKeuangan.Tanggal, laporanKeuangan.Jenis, laporanKeuangan.Nominal, laporanKeuangan.IdPembuat)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Laporan keuangan berhasil ditambahkan"
+	res.Data = laporanKeuangan
+
+	return res, nil
+}

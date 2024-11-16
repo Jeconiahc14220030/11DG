@@ -81,7 +81,7 @@ func Init() *echo.Echo {
 	e.PUT("requestkomunitas/status", controllers.ReceiveRequestKomunitas)
 
 
-	// e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
+	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
 
 	// e.POST("absensihf/add", controllers.AddAbsensiHf)
 
