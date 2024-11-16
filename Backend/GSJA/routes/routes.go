@@ -79,11 +79,13 @@ func Init() *echo.Echo {
 	e.POST("requestkomunitas/add", controllers.POSTRequestKomunitas)
 
 	e.PUT("requestkomunitas/status", controllers.ReceiveRequestKomunitas)
+ 
+	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
-	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
+	e.POST("absensihf/add", controllers.AddAbsensiHf) // perlu dipikirkan lagi struktur tanggal
 
-	e.POST("absensihf/add", controllers.AddAbsensiHf) // perlu dipikirkan lagi struktur datanya
+	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan) // perlu dipikirkan lagi struktur tanggal
 
-	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan)
+	e.POST("komunitas/:id/pengumuman/tambah", controllers.AddPengumuman)
 	return e
 }
