@@ -83,7 +83,7 @@ func Init() *echo.Echo {
 
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
 
-	// e.POST("absensihf/add", controllers.AddAbsensiHf)
+	e.POST("absensihf/add", controllers.AddAbsensiHf)
 
 	// e.POST("jadwallatihan/add", controllers.AddJadwalLatihan)
 	return e
