@@ -80,11 +80,10 @@ func Init() *echo.Echo {
 
 	e.PUT("requestkomunitas/status", controllers.ReceiveRequestKomunitas)
 
-
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
 
-	e.POST("absensihf/add", controllers.AddAbsensiHf)
+	e.POST("absensihf/add", controllers.AddAbsensiHf) // perlu dipikirkan lagi struktur datanya
 
-	// e.POST("jadwallatihan/add", controllers.AddJadwalLatihan)
+	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan)
 	return e
 }
