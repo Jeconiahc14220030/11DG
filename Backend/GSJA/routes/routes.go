@@ -66,7 +66,7 @@ func Init() *echo.Echo {
 
 	e.POST("renunganharian/add", controllers.AddRenunganHarian)
 
-	e.POST("jadwal/add", controllers.AddJadwal)
+	e.POST("jadwal/add", controllers.AddJadwal) // perlu dipikirkan lagi format tanggal
 
 	e.POST("/berita/add", controllers.AddBerita)
 
@@ -86,6 +86,6 @@ func Init() *echo.Echo {
 
 	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan) // perlu dipikirkan lagi struktur tanggal
 
-	e.POST("komunitas/:id/pengumuman/tambah", controllers.AddPengumuman)
+	e.POST("komunitas/:id/pengumuman/tambah", controllers.AddPengumuman) // perlu dipikirkan lagi struktur tanggal, ga perlu tanggal ga si, tinggal ambil dari created_at
 	return e
 }
