@@ -26,7 +26,7 @@ func GETLaporanKeuangan() (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM laporan_keuangan "
+	sqlStatement := "SELECT * FROM laporan_keuangan"
 
 	rows, err := con.Query(sqlStatement)
 

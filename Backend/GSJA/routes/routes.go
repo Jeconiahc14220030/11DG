@@ -41,7 +41,7 @@ func Init() *echo.Echo {
 
 	e.GET("/dashboard", controllers.FetchKontenGereja)
 
-	e.GET("/laporankeuangan", controllers.FetchAllLaporanKeuangan) //error nama tidak sesuai dengan yang ada di DB
+	e.GET("/laporankeuangan", controllers.FetchAllLaporanKeuangan) 
 	e.GET("/laporankeuangan/:id", controllers.FetchLaporanKeuanganById)
 
 	e.GET("/carousel", controllers.FetchAllCarousel)
@@ -58,7 +58,7 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
-	e.GET("/hf", controllers.FetchAllHf) //error
+	e.GET("/hf", controllers.FetchAllHf) 
 
 	e.GET("/requestkomunitas", controllers.FetchAllRequestKomunitas)
 
