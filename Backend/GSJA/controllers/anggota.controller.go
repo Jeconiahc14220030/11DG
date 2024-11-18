@@ -192,10 +192,27 @@ func GETRiwayatVoucherAnggota(id int) (models.Response, error) {
 }
 
 func AddAnggota(c echo.Context) error {
-	var anggota models.Anggota
+	nama := c.FormValue("nama")
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	email := c.FormValue("email")
+	nomorTelepon := c.FormValue("nomor_telepon")
+	tanggalLahir := c.FormValue("tanggal_lahir")
+	poinStr := c.FormValue("poin")
 
-	if err := c.Bind(&anggota); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	poin, err := strconv.Atoi(poinStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid poin"})
+	}
+
+	anggota := models.Anggota{
+		Nama:         nama,
+		Username:     username,
+		Password:     password,
+		Email:        email,
+		NomorTelepon: nomorTelepon,
+		TanggalLahir: tanggalLahir,
+		Poin:         poin,
 	}
 
 	result, err := POSTAnggota(anggota)
