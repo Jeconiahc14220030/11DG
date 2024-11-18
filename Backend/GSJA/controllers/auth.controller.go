@@ -10,13 +10,14 @@ import (
 )
 
 func Login(c echo.Context) error {
-	var user models.User
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	if username == "" || password == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Username and password are required"})
 	}
 
-	result, err := AuthenticateUser(user.Username, user.Password)
+	result, err := AuthenticateUser (username, password)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid credentials"})
 	}
@@ -52,11 +53,14 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 }
 
 func Register(c echo.Context) error {
-	var user models.User
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	if username == "" || password == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Username and password are required"})
 	}
+
+	user := models.User{Username: username, Password: password}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -64,7 +68,7 @@ func Register(c echo.Context) error {
 	}
 	user.Password = string(hashedPassword)
 
-	result, err := POSTUser(user)
+	result, err := POSTUser (user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
