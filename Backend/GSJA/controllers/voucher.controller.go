@@ -123,3 +123,38 @@ func GETVoucherById(id int) (models.Response, error) {
 
 	return response, err
 }
+
+func AddVoucher(c echo.Context) error {
+	var voucher models.Voucher
+
+	if err := c.Bind(&voucher); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTVoucher(voucher)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTVoucher(voucher models.Voucher) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO voucher (nama_voucher, status, harga, foto) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, voucher.NamaVoucher, voucher.Status, voucher.Harga, voucher.Foto)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Voucher added successfully"
+	res.Data = voucher
+
+	return res, nil
+}

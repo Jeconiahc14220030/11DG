@@ -4,57 +4,52 @@
 	let komunitas = [];
 	let anggota = [];
 
-    async function fetchdata() {
-        try{
-            const response = await fetch('http://localhost:8080/komunitas');
-            komunitas = await response.json();
-            komunitas = komunitas.data;
-        }catch(err){
-            console.log(err);
-        }
-    }
+	async function fetchdata() {
+		try {
+			const response = await fetch('http://localhost:8080/komunitas');
+			komunitas = await response.json();
+			komunitas = komunitas.data;
 
+			const anggotaResponse = await fetch('http://localhost:8080/anggota');
+			anggota = await anggotaResponse.json();
+			anggota = anggota.data;
+		} catch (err) {
+			console.log(err);
+		}
+	}
 
-	onMount(() => {
-        fetchdata();
+	function terima() {
+		Swal.fire({
+			title: 'Success',
+			text: 'Pengguna berhasil ditambahkan',
+			icon: 'success',
+			showConfirmButton: false
+		});
+	}
 
-		const createBtn = document.getElementById('accept');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
+	function hapus() {
+		Swal.fire({
+			title: 'Apakah Anda yakin?',
+			text: 'Anda tidak akan dapat mengembalikannya!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Hapus!'
+		}).then((result) => {
+			if (result.isConfirmed) {
 				Swal.fire({
-					title: 'Success',
-					text: 'Pengguna berhasil ditambahkan',
+					title: 'Hapus!',
+					text: 'Pengguna berhasil dihapus.',
 					icon: 'success',
 					showConfirmButton: false
 				});
-			});
-		}
-	});
+			}
+		});
+	}
 
 	onMount(() => {
-		const createBtn = document.getElementById('delete');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Apakah Anda yakin?',
-					text: 'Anda tidak akan dapat mengembalikannya!',
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Hapus!'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						Swal.fire({
-							title: 'Hapus!',
-							text: 'Pengguan berhasil dihapus.',
-							icon: 'success',
-							showConfirmButton: false
-						});
-					}
-				});
-			});
-		}
+		fetchdata();
 	});
 
 	onMount(() => {
@@ -116,7 +111,6 @@
 
 <div class="h-screen w-screen flex justify-center items-center bg-background">
 	<div class="flex flex-col mx-6 pb-16 justify-center w-full max-w-3xl">
-		<!-- List Komunitas -->
 		{#each komunitas as item}
 			{#if item.judul != 'Acara'}
 				<div class="flex flex-col mt-5">
@@ -150,13 +144,13 @@
 				<div class="flex flex-col sm:w-2/3 w-full">
 					<h1 class="text-lg md:text-xl text-center font-bold">{item.nama}</h1>
 					<p class="text-black text-center overflow-hidden overflow-ellipsis whitespace-nowrap">
-						{item.divisi}
+						{item.id_komunitas}
 					</p>
 				</div>
 
 				<div class="flex justify-between items-center">
 					<div class="flex items-center">
-						<a id="accept1">
+						<button on:click={terima}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="2.5em"
@@ -173,11 +167,11 @@
 									/>
 								</g>
 							</svg>
-						</a>
+						</button>
 					</div>
 
 					<div class="flex items-center">
-						<a id="delete1">
+						<button on:click={hapus}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="2.5em"
@@ -189,7 +183,7 @@
 									d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-3.4 14L12 13.4L8.4 17L7 15.6l3.6-3.6L7 8.4L8.4 7l3.6 3.6L15.6 7L17 8.4L13.4 12l3.6 3.6z"
 								/>
 							</svg>
-						</a>
+						</button>
 					</div>
 				</div>
 			</div>

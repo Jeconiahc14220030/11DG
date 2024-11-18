@@ -2,14 +2,16 @@ package models
 
 import (
 	_ "database/sql"
-	"database/sql/driver"
-	"fmt"
+    "database/sql/driver"
+    "fmt"
 	"time"
 )
 
 type Anggota struct {
 	Id            int        `json:"id" db:"id"`
 	Nama          string     `json:"nama" db:"nama"`
+	Username	  string     `json:"username" db:"username"`
+	Password      string     `json:"password" db:"password"`
 	Email         string     `json:"email" db:"email"`
 	NomorTelepon  string     `json:"nomor_telepon" db:"nomor_telepon"`
 	TanggalLahir  CustomDate  `json:"tanggal_lahir" db:"tanggal_lahir"`
@@ -47,9 +49,18 @@ func (c *CustomDate) Value() (driver.Value, error) {
 }
 
 func (c *CustomDate) Scan(value interface{}) error {
-    if t, ok := value.(time.Time); ok {
+    switch v := value.(type) {
+    case time.Time:
+        c.Time = v
+    case []byte:
+        // Convert byte array to string and parse it as date
+        t, err := time.Parse(dateFormat, string(v))
+        if err != nil {
+            return fmt.Errorf("unable to parse date from byte array: %w", err)
+        }
         c.Time = t
-        return nil
+    default:
+        return fmt.Errorf("unable to scan type %T into CustomDate", value)
     }
-    return fmt.Errorf("unable to scan type %T into CustomDate", value)
+    return nil
 }
