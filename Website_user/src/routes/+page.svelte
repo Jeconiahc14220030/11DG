@@ -1,10 +1,34 @@
 <script>
-    function handleLogin(event) {
+    async function handleLogin(event) {
         event.preventDefault(); // Mencegah form melakukan submit default
-        // Anda bisa menambahkan validasi login di sini
-        window.location.href = '/user/homepage'; // Mengarahkan ke halaman homepage
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('http://localhost:8080/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log(result.message);
+                // Jika login berhasil, arahkan ke halaman homepage
+                window.location.href = '/user/homepage';
+            } else {
+                alert("Login gagal: Username atau Password salah");
+            }
+        } catch (error) {
+            console.error("Error saat login:", error);
+            alert("Terjadi kesalahan. Silakan coba lagi.");
+        }
     }
 </script>
+
 
 <div class="h-screen w-screen flex flex-col overflow-x-hidden" style="background-image: url('../src/lib/image/salib.jpg'); background-size: cover;">
     <div class="flex justify-center items-center flex-1">
