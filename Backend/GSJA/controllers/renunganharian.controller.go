@@ -61,7 +61,13 @@ func GETAllRenunganHarian() (models.Response, error) {
 }
 
 func AddRenunganHarian(c echo.Context) error {
-	var renunganHarian models.RenunganHarian
+	status := c.FormValue("status")
+	isi := c.FormValue("isi")
+	
+	renunganHarian := models.RenunganHarian{
+		Status: status,
+		Isi: isi,
+	}
 
 	if err := c.Bind(&renunganHarian); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
