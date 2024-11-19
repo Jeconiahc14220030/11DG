@@ -13,6 +13,7 @@
                 },
                 body: JSON.stringify({ username, password })
             });
+            console.log(JSON.stringify({ username, password }));
 
             if (response.ok) {
                 const result = await response.json();
@@ -20,6 +21,7 @@
                 // Jika login berhasil, arahkan ke halaman homepage
                 window.location.href = '/user/homepage';
             } else {
+                console.log(await response.text());  // Untuk melihat pesan kesalahan lebih lengkap
                 alert("Login gagal: Username atau Password salah");
             }
         } catch (error) {
@@ -28,7 +30,6 @@
         }
     }
 </script>
-
 
 <div class="h-screen w-screen flex flex-col overflow-x-hidden" style="background-image: url('../src/lib/image/salib.jpg'); background-size: cover;">
     <div class="flex justify-center items-center flex-1">
@@ -48,7 +49,7 @@
         </div>
 
         <!-- Form Login -->
-        <form class="flex flex-col items-center" on:submit={handleLogin}>
+        <form class="flex flex-col items-center" on:submit={handleLogin} method="POST">
             <div class="flex justify-center mt-4">
                 <input id="username" type="text" placeholder="Username" class="placeholder-black px-4 py-2 rounded" required>
             </div>

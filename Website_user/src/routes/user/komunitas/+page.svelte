@@ -1,23 +1,16 @@
 <script>
 	import { onMount } from 'svelte';
 
-	function goToMultimediaPage() {
-		window.location.href = '/user/komunitas/multimedia';
-	}
-
 	let komunitasList = [];
+	let selectedKomunitasId = null; // Variabel untuk menyimpan id komunitas yang dipilih
 
 	// Fungsi untuk mengambil data komunitas dari API
 	async function fetchKomunitas() {
 		try {
-			// Mengambil data dari endpoint API
 			const response = await fetch('http://localhost:8080/komunitas');
 
-			// Mengecek apakah respons dari API berhasil (status 200)
 			if (response.ok) {
 				const result = await response.json();
-
-				// Mengecek dan menyimpan data jika struktur yang diterima valid
 				if (result.status === 200 && Array.isArray(result.data)) {
 					komunitasList = result.data;
 				} else {
@@ -30,6 +23,15 @@
 			console.error('Terjadi kesalahan:', error);
 			komunitasList = [];
 		}
+	}
+
+	// Fungsi untuk menangani klik tombol
+	function handleButtonClick(id) {
+		selectedKomunitasId = id; // Simpan id komunitas yang diklik
+		console.log('Komunitas ID yang dipilih:', selectedKomunitasId);
+
+		// Navigasi ke halaman detail (opsional)
+		window.location.href = `/user/komunitas/${id}`;
 	}
 
 	// Ambil data komunitas saat komponen dimuat
@@ -51,7 +53,6 @@
 
 		<!-- List Komunitas -->
 		{#if komunitasList.length > 0}
-			<!-- List Komunitas -->
 			<div class="flex flex-col gap-4">
 				{#each komunitasList as komunitas}
 					<div class="bg-[#FEFEFE] flex flex-col sm:flex-row justify-between items-center p-4 mb-4">
@@ -64,7 +65,7 @@
 						<div class="mt-4 sm:mt-0">
 							<button
 								class="bg-[#F9C067] px-4 py-2 rounded-full w-full sm:w-auto"
-								on:click={() => (window.location.href = `/user/komunitas/${komunitas.id}`)}
+								on:click={() => handleButtonClick(komunitas.id)}
 							>
 								Detail
 							</button>
