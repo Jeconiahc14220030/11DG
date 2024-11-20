@@ -23,7 +23,6 @@ func Init() *echo.Echo {
 	})
 
 	e.POST("/login", controllers.Login)
-	e.POST("/register", controllers.Register)
 
 	// Fetch Data
 	e.GET("/anggota", controllers.FetchAllAnggota) //error

@@ -126,7 +126,7 @@ func GETKomunitasById(id int) (models.Response, error) {
 
 func AddPengumuman(c echo.Context) error {
 	konten := c.FormValue("konten")
-	tanggal := c.FormValue("tanggal")
+	// tanggal := c.FormValue("tanggal")
 	strIdKomunitas := c.FormValue("id_komunitas")
 
 	idKomunitas, err := strconv.Atoi(strIdKomunitas)
@@ -137,7 +137,7 @@ func AddPengumuman(c echo.Context) error {
 
 	pengumuman := models.Pengumuman{
 		Konten: konten,
-		Tanggal: tanggal,
+		// Tanggal: tanggal,
 		Id_komunitas: idKomunitas,
 	}
 
