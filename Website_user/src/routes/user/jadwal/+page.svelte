@@ -55,7 +55,7 @@
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
 	<header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
 		<div class="flex items-center">
-			<h1 class="ml-2 text-lg md:text-xl font-bold">Jadwal {monthName} {currentYear}</h1>
+			<h1 class="ml-2 text-lg md:text-xl font-bold">Jadwal</h1>
 		</div>
 		<div class="flex">
 			<a href="/user/jadwal/buat_jadwal" class="p-2">
