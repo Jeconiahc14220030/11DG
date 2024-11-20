@@ -66,12 +66,6 @@
 	}
 
 	function editlaporan() {
-		const existingData = {
-			tanggal: '2024-11-15',
-			nominal: '500000',
-			laporan: 'Laporan Bulanan'
-		};
-
 		Swal.fire({
 			title: 'Edit Data Pengguna',
 			width: '600px',
@@ -82,13 +76,13 @@
 			html: `
 					<div style="text-align: left; max-width: 500px; margin: 0 auto;">
 						<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
-						<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" value="${existingData.tanggal}" required>
+						<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
 
 						<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
-						<input type="text" id="nominal" class="swal2-input" style="width: 80%;" value="${existingData.nominal}" placeholder="Masukkan nominal uang" required>
+						<input type="text" id="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
 
 						<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
-						<input type="text" id="laporan" class="swal2-input" style="width: 80%;" value="${existingData.laporan}" placeholder="Masukkan Nama Penulis" required>
+						<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
 					</div>
 				`,
 			confirmButtonText: 'Update',
