@@ -26,7 +26,7 @@ func Init() *echo.Echo {
 	e.POST("/register", controllers.Register)
 
 	// Fetch Data
-	e.GET("/anggota", controllers.FetchAllAnggota) //error
+	e.GET("/anggota", controllers.FetchAllAnggota)
 	e.GET("/anggota/:id", controllers.FetchAnggotaById)
 
 	e.GET("/jadwal", controllers.FetchAllJadwal)
@@ -58,7 +58,11 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
+<<<<<<< HEAD
 	e.GET("/hf", controllers.FetchAllHf) 
+=======
+	e.GET("/hf", controllers.FetchAllHf)
+>>>>>>> main
 
 	e.GET("/requestkomunitas", controllers.FetchAllRequestKomunitas)
 
