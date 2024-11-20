@@ -60,7 +60,13 @@ func GETAllKutipanHarian() (models.Response, error) {
 }
 
 func AddKutipanHarian(c echo.Context) error {
-	var kutipanHarian models.KutipanHarian
+	status := c.FormValue("status")
+	isi := c.FormValue("isi")
+
+	kutipanHarian := models.KutipanHarian{
+		Status: status,
+		Isi: isi,
+	}
 
 	if err := c.Bind(&kutipanHarian); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})

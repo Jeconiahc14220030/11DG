@@ -125,7 +125,21 @@ func GETKomunitasById(id int) (models.Response, error) {
 }
 
 func AddPengumuman(c echo.Context) error {
-	var pengumuman models.Pengumuman
+	konten := c.FormValue("konten")
+	tanggal := c.FormValue("tanggal")
+	strIdKomunitas := c.FormValue("id_komunitas")
+
+	idKomunitas, err := strconv.Atoi(strIdKomunitas)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id komunitas"})
+	}
+
+	pengumuman := models.Pengumuman{
+		Konten: konten,
+		Tanggal: tanggal,
+		Id_komunitas: idKomunitas,
+	}
 
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)

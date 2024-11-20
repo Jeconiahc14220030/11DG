@@ -57,11 +57,12 @@ func GETAllBerita() (models.Response, error) {
 	
 	return response, err
 }
-func AddBerita(c echo.Context) error {
-	var berita models.Berita
 
-	if err := c.Bind(&berita); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+func AddBerita(c echo.Context) error {
+	deskripsi := c.FormValue("deskripsi")
+
+	berita := models.Berita{
+		Deskripsi: deskripsi,
 	}
 
 	result, err := POSTBerita(berita)

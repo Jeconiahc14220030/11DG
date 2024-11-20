@@ -125,7 +125,23 @@ func GETVoucherById(id int) (models.Response, error) {
 }
 
 func AddVoucher(c echo.Context) error {
-	var voucher models.Voucher
+	namaVoucher := c.FormValue("nama_voucher")
+	status := c.FormValue("status")
+	strHarga := c.FormValue("harga")
+	foto := c.FormValue("foto")
+
+	harga, err := strconv.Atoi(strHarga)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid harga"})
+	}
+
+	voucher := models.Voucher{
+		NamaVoucher: namaVoucher,
+		Status: status,
+		Harga: harga,
+		Foto: foto,
+	}
 
 	if err := c.Bind(&voucher); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
