@@ -14,7 +14,7 @@ type Anggota struct {
 	Password     string     `json:"password" db:"password"`
 	Email        string     `json:"email" db:"email"`
 	NomorTelepon string     `json:"nomor_telepon" db:"nomor_telepon"`
-	TanggalLahir string `json:"tanggal_lahir" db:"tanggal_lahir"`
+	TanggalLahir string     `json:"tanggal_lahir" db:"tanggal_lahir"`
 	Poin         int        `json:"poin" db:"poin"`
 	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
