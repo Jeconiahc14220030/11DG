@@ -25,7 +25,7 @@ func Init() *echo.Echo {
 	e.POST("/login", controllers.Login)
 
 	// Fetch Data
-	e.GET("/anggota", controllers.FetchAllAnggota) //error
+	e.GET("/anggota", controllers.FetchAllAnggota)
 	e.GET("/anggota/:id", controllers.FetchAnggotaById)
 
 	e.GET("/jadwal", controllers.FetchAllJadwal)
