@@ -63,7 +63,7 @@ func GETJadwalLatihan() (models.Response, error) {
 } 	
 
 func AddJadwalLatihan(c echo.Context) error {
-	tanggal := c.FormValue("tanggal")
+	// tanggal := c.FormValue("tanggal")
 	lokasi := c.FormValue("lokasi")
 	strIdAnggota := c.FormValue("id_anggota")
 	strIdKomunitas := c.FormValue("id_komunitas")
@@ -81,7 +81,7 @@ func AddJadwalLatihan(c echo.Context) error {
 	}
 
 	jadwalLatihan := models.JadwalLatihan{
-		Tanggal: tanggal,
+		// Tanggal: tanggal,
 		Lokasi: lokasi,
 		IdAnggota: idAnggota,
 		IdKomunitas: idKomunitas,
