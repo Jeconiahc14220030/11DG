@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(c echo.Context) error {
@@ -37,12 +36,15 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, fmt.Errorf("user not found")
+		}
 		return res, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		return res, err
+	// Directly compare the stored password with the input password
+	if user.Password != password {
+		return res, fmt.Errorf("invalid password")
 	}
 
 	res.Status = http.StatusOK
@@ -62,12 +64,7 @@ func Register(c echo.Context) error {
 
 	user := models.User{Username: username, Password: password}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Could not hash password"})
-	}
-	user.Password = string(hashedPassword)
-
+	// No hashing, store password as plain text
 	result, err := POSTUser (user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
