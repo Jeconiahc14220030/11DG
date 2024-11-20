@@ -38,11 +38,11 @@ func GETAllKomunitas() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&komunitas.Id, 
-			&komunitas.NamaKomunitas, 
-			&komunitas.Deskripsi, 
-			&komunitas.Snk, 
-			&komunitas.Manfaat, 
+			&komunitas.Id,
+			&komunitas.NamaKomunitas,
+			&komunitas.Deskripsi,
+			&komunitas.Snk,
+			&komunitas.Manfaat,
 			&komunitas.Gambar,
 			&komunitas.CreatedAt,
 			&komunitas.UpdatedAt,
@@ -99,11 +99,11 @@ func GETKomunitasById(id int) (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&komunitas.Id, 
-			&komunitas.NamaKomunitas, 
-			&komunitas.Deskripsi, 
-			&komunitas.Snk, 
-			&komunitas.Manfaat, 
+			&komunitas.Id,
+			&komunitas.NamaKomunitas,
+			&komunitas.Deskripsi,
+			&komunitas.Snk,
+			&komunitas.Manfaat,
 			&komunitas.Gambar,
 			&komunitas.CreatedAt,
 			&komunitas.UpdatedAt,
@@ -122,4 +122,47 @@ func GETKomunitasById(id int) (models.Response, error) {
 	response.Data = arrayKomunitas
 
 	return response, err
+}
+
+func AddPengumuman(c echo.Context) error {
+	var pengumuman models.Pengumuman
+
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err := c.Bind(&pengumuman); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTPengumuman(pengumuman, id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTPengumuman(pengumuman models.Pengumuman, id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO pengumuman(konten, tanggal, id_komunitas) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, pengumuman.Konten, pengumuman.Tanggal, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Pengumuman berhasil ditambahkan"
+	res.Data = pengumuman
+
+	return res, nil
 }

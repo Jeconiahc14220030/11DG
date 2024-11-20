@@ -20,8 +20,8 @@ func FetchAllAbsensihf(c echo.Context) error {
 }
 
 func GETAllAbsensihf() (models.Response, error) {
-	var absensihf models.Absensihf
-	var arrayAbsensihf []models.Absensihf
+	var absensihf models.AbsensiHf
+	var arrayAbsensihf []models.AbsensiHf
 	var response models.Response
 
 	con := db.CreateCon()
@@ -79,8 +79,8 @@ func FetchAbsensihfById(c echo.Context) error {
 }
 
 func GETAbsensihfById(id int) (models.Response, error) {
-	var absensihf models.Absensihf
-	var arrayAbsensihf []models.Absensihf
+	var absensihf models.AbsensiHf
+	var arrayAbsensihf []models.AbsensiHf
 	var response models.Response
 
 	con := db.CreateCon()
@@ -120,3 +120,38 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	return response, err
 }
 
+func AddAbsensiHf(c echo.Context) error {
+	var absensiHf models.AbsensiHf
+
+	if err := c.Bind(&absensiHf); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTAbsensiHf(absensiHf)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO absensi_hf (status, id_anggota, id_jadwal) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.Status, absensiHf.IdAnggota, absensiHf.IdJadwal)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Absensi hf berhasil ditambahkan"
+	res.Data = absensiHf
+
+	return res, nil
+}

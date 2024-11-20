@@ -11,7 +11,7 @@ import (
 
 func Login(c echo.Context) error {
 	var user models.User
-
+	
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 	}

@@ -41,7 +41,7 @@ func Init() *echo.Echo {
 
 	e.GET("/dashboard", controllers.FetchKontenGereja)
 
-	e.GET("/laporankeuangan", controllers.FetchAllLaporanKeuangan) //error nama tidak sesuai dengan yang ada di DB
+	e.GET("/laporankeuangan", controllers.FetchAllLaporanKeuangan) 
 	e.GET("/laporankeuangan/:id", controllers.FetchLaporanKeuanganById)
 
 	e.GET("/carousel", controllers.FetchAllCarousel)
@@ -58,7 +58,7 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
-	e.GET("/hf", controllers.FetchAllHf)
+	e.GET("/hf", controllers.FetchAllHf) 
 
 	e.GET("/requestkomunitas", controllers.FetchAllRequestKomunitas)
 
@@ -66,7 +66,7 @@ func Init() *echo.Echo {
 
 	e.POST("renunganharian/add", controllers.AddRenunganHarian)
 
-	e.POST("jadwal/add", controllers.AddJadwal)
+	e.POST("jadwal/add", controllers.AddJadwal) // perlu dipikirkan lagi format tanggal
 
 	e.POST("/berita/add", controllers.AddBerita)
 
@@ -79,12 +79,13 @@ func Init() *echo.Echo {
 	e.POST("requestkomunitas/add", controllers.POSTRequestKomunitas)
 
 	e.PUT("requestkomunitas/status", controllers.ReceiveRequestKomunitas)
+ 
+	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
+	e.POST("absensihf/add", controllers.AddAbsensiHf) // perlu dipikirkan lagi struktur tanggal
 
-	// e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan)
+	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan) // perlu dipikirkan lagi struktur tanggal
 
-	// e.POST("absensihf/add", controllers.AddAbsensiHf)
-
-	// e.POST("jadwallatihan/add", controllers.AddJadwalLatihan)
+	e.POST("komunitas/:id/pengumuman/tambah", controllers.AddPengumuman) // perlu dipikirkan lagi struktur tanggal, ga perlu tanggal ga si, tinggal ambil dari created_at
 	return e
 }

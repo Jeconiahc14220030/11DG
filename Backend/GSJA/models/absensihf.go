@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Absensihf struct {
+type AbsensiHf struct {
 	Id          int        `json:"id" db:"id"`
 	Status      string     `json:"status" db:"status"`
 	IdAnggota   int        `json:"id_anggota" db:"id_anggota"`

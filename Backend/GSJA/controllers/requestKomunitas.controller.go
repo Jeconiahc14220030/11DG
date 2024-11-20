@@ -29,9 +29,9 @@ func GETAllRequest() (models.Response, error) {
 			&Requestkomunitas.Id_komunitas, 
 			&Requestkomunitas.Id_anggota,
 			&Requestkomunitas.RequestAt,
-			&Requestkomunitas.Status, 
 			&Requestkomunitas.UpdatedAt,
 			&Requestkomunitas.DeletedAt,
+            &Requestkomunitas.Status, 
 		)
 		
 		if err != nil {

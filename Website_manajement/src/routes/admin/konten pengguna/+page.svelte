@@ -7,7 +7,7 @@
 		<h1 id="isi" class="text-3xl text-center font-bold mb-4">Edit Halaman Utama</h1>
 
 		<div class="grid grid-cols-1 gap-6 mb-6">
-			<div class="bg-white p-4 rounded-md shadow-md">
+			<form class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Visi Misi</h2>
 				<textarea
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
@@ -41,8 +41,8 @@
 						</svg>
 					</a>
 				</div>
-			</div>
-			<div class="bg-white p-4 rounded-md shadow-md">
+			</form>
+			<form class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Pesan Ketua</h2>
 				<textarea
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
@@ -76,8 +76,8 @@
 						</svg>
 					</a>
 				</div>
-			</div>
-			<div class="bg-white p-4 rounded-md shadow-md">
+			</form>
+			<form class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Tujuan</h2>
 				<textarea
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
@@ -111,7 +111,7 @@
 						</svg>
 					</a>
 				</div>
-			</div>
+			</form>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
