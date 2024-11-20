@@ -88,6 +88,6 @@ func Init() *echo.Echo {
 
 	e.POST("komunitas/:id/pengumuman/tambah", controllers.AddPengumuman) // perlu dipikirkan lagi struktur tanggal, ga perlu tanggal ga si, tinggal ambil dari created_at
 
-	
+	e.POST("kontengereja/add", controllers.AddKontenGereja)
 	return e
 }

@@ -32,7 +32,7 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "SELECT * FROM users WHERE username = ?"
+	sqlStatement := "SELECT * FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
 
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
@@ -82,7 +82,7 @@ func POSTUser (user models.User) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO users (username, password) VALUES (?, ?)"
+	sqlStatement := "INSERT INTO anggota (username, password) VALUES (?, ?)"
 	_, err := con.Exec(sqlStatement, user.Username, user.Password)
 
 	if err != nil {
