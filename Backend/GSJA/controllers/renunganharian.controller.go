@@ -102,3 +102,35 @@ func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, 
 
 	return res, nil
 }
+
+func SoftDeletedataRenunganHarian(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtRenunganHarian(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtRenunganHarian(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE renungan_harian SET deleted_at = NOW() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Renungan harian berhasil dihapus"
+
+	return res, nil
+}

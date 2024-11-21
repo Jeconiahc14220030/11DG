@@ -1,13 +1,207 @@
-<style>
-    
-</style>
+<script>
+	import { onMount } from 'svelte';
+
+	async function tambahberita(event) {
+		event.preventDefault();
+
+		const formData = new FormData(document.getElementById('tambahberita'));
+
+		try {
+			const response = await fetch('http://localhost:8080/berita/add', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			Swal.fire({
+				title: 'Berhasil Ditambahkan',
+				text: 'Berita berhasil ditambahkan ke sistem',
+				icon: 'success',
+				confirmButtonColor: '#F0A242'
+			});
+		} catch (err) {
+			console.error('Terjadi kesalahan saat menambahkan berita:', err);
+			Swal.fire({
+				title: 'Gagal',
+				text: 'Terjadi kesalahan silakan coba lagi.',
+				icon: 'error',
+				confirmButtonColor: '#F0A242'
+			});
+		}
+	}
+
+	onMount(() => {
+		const createBtn = document.getElementById('accept1');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Success',
+					text: 'Visi misi berhasil ditambahkan',
+					icon: 'success',
+					showConfirmButton: false
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('accept2');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Success',
+					text: 'Pesan ketua berhasil ditambahkan',
+					icon: 'success',
+					showConfirmButton: false
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('accept3');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Success',
+					text: 'Tujuan berhasil ditambahkan',
+					icon: 'success',
+					showConfirmButton: false
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('accept4');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Success',
+					text: 'Renungan berhasil ditambahkan',
+					icon: 'success',
+					showConfirmButton: false
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('delete1');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Apakah Anda yakin?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Yes, delete it!'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						Swal.fire({
+							title: 'Deleted!',
+							text: 'Visi misi berhasil dihapus',
+							icon: 'success',
+							showConfirmButton: false
+						});
+					}
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('delete2');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Yes, delete it!'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						Swal.fire({
+							title: 'Deleted!',
+							text: 'Pesan ketua berhasil dihapus',
+							icon: 'success',
+							showConfirmButton: false
+						});
+					}
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('delete3');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Yes, delete it!'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						Swal.fire({
+							title: 'Deleted!',
+							text: 'Tujuan berhasil dihapus',
+							icon: 'success',
+							showConfirmButton: false
+						});
+					}
+				});
+			});
+		}
+	});
+
+	onMount(() => {
+		const createBtn = document.getElementById('delete4');
+		if (createBtn) {
+			createBtn.addEventListener('click', () => {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Yes, delete it!'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						Swal.fire({
+							title: 'Deleted!',
+							text: 'Renungan berhasil dihapus',
+							icon: 'success',
+							showConfirmButton: false
+						});
+					}
+				});
+			});
+		}
+	});
+</script>
 
 <div class="bg-background w-screen min-h-screen">
 	<div class="bg-background max-w-7xl mx-auto px-4 py-6">
 		<h1 id="isi" class="text-3xl text-center font-bold mb-4">Edit Halaman Utama</h1>
 
 		<div class="grid grid-cols-1 gap-6 mb-6">
-			<div class="bg-white p-4 rounded-md shadow-md">
+			<form class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Visi Misi</h2>
 				<textarea
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
@@ -41,8 +235,8 @@
 						</svg>
 					</a>
 				</div>
-			</div>
-			<div class="bg-white p-4 rounded-md shadow-md">
+			</form>
+			<form class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Pesan Ketua</h2>
 				<textarea
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
@@ -76,8 +270,8 @@
 						</svg>
 					</a>
 				</div>
-			</div>
-			<div class="bg-white p-4 rounded-md shadow-md">
+			</form>
+			<form class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Tujuan</h2>
 				<textarea
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
@@ -111,12 +305,12 @@
 						</svg>
 					</a>
 				</div>
-			</div>
+			</form>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 			<div class="bg-white shadow-md rounded-md p-4 items-center justify-center flex">
-                <input class="" type="file" name="file">
+				<input class="" type="file" name="file" />
 			</div>
 			<div class="bg-white shadow-md rounded-md p-4">
 				<label for="tanggal" class="block font-bold text-1xl" id="isi">Set Tanggal</label>
@@ -134,7 +328,7 @@
 					<option>Pilih Jadwal</option>
 				</select>
 
-                <div class="mt-7 flex justify-end">
+				<div class="mt-7 flex justify-end">
 					<a id="accept4" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -165,48 +359,62 @@
 			</div>
 		</div>
 
-		<div class="bg-white shadow-md rounded-md p-4">
+		<form id="tambahberita" class="bg-white shadow-md rounded-md p-4" on:submit={tambahberita}>
 			<label for="berita" class="block font-bold text-2xl" id="isi">Berita</label>
-			<select id="berita" class="bg-field mt-2 w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-base">
+			<select
+				id="berita"
+				class="bg-field mt-2 w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-base"
+			>
 				<option>Berita 1</option>
 				<option>Berita 2</option>
 				<option>Berita 3</option>
 			</select>
 
 			<div class="mt-4">
-				<textarea class="bg-field w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-base" rows="3"></textarea>
+				<textarea
+					class="bg-field w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-base"
+					rows="3"
+				></textarea>
 			</div>
-			<button class="mt-4 bg-base hover:bg-slate-300 text-black items-center justify-center py-2 px-4 rounded hover:bg-slate-300 hover:border-black ease-in duration-400 flex">Post</button>
-		</div>
+			<button
+				class="mt-4 bg-base hover:bg-slate-300 text-black items-center justify-center py-2 px-4 rounded hover:bg-slate-300 hover:border-black ease-in duration-400 flex"
+				>Post</button
+			>
+		</form>
 
 		<div class="grid grid-cols-1 mt-6 mb-6">
-			<div class="bg-white p-6 rounded-md shadow-md items-center justify-center flex flex-col space-y-4">
+			<div
+				class="bg-white p-6 rounded-md shadow-md items-center justify-center flex flex-col space-y-4"
+			>
 				<h2 id="isi" class="block font-bold text-2xl">Edit Gambar Carousel</h2>
-		
-				<input 
-					id="carouselImageInput" 
-					class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 me-auto" 
-					type="file" 
-					name="file" 
+
+				<input
+					id="carouselImageInput"
+					class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 me-auto"
+					type="file"
+					name="file"
 					accept="image/*"
 					hidden
+				/>
+
+				<div
+					id="carouselImagePreview"
+					class="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden"
 				>
-		
-				<div id="carouselImagePreview" class="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
 					<span class="text-gray-500">Preview gambar akan muncul di sini</span>
 				</div>
-		
+
 				<div class="flex space-x-4 me-auto">
-					<button 
-						id="addCarouselImageButton" 
+					<button
+						id="addCarouselImageButton"
 						class="bg-base font-semibold py-2 px-6 rounded-md hover:bg-slate-300 text-white transition duration-400"
 						onclick="document.getElementById('carouselImageInput').click()"
 					>
 						Tambah Gambar
 					</button>
-		
-					<button 
-						id="editCarouselImageButton" 
+
+					<button
+						id="editCarouselImageButton"
 						class="bg-base font-semibold py-2 px-10 rounded-md hover:bg-slate-300 text-white transition duration-400 hidden"
 						onclick="document.getElementById('carouselImageInput').click()"
 					>
@@ -215,18 +423,18 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<script>
 			const imageInput = document.getElementById('carouselImageInput');
 			const imagePreview = document.getElementById('carouselImagePreview');
 			const addButton = document.getElementById('addCarouselImageButton');
 			const editButton = document.getElementById('editCarouselImageButton');
-		
+
 			imageInput.addEventListener('change', (event) => {
 				const file = event.target.files[0];
-				if (file && file.type.startsWith('image/')) { 
+				if (file && file.type.startsWith('image/')) {
 					const reader = new FileReader();
-					reader.onload = function(e) {
+					reader.onload = function (e) {
 						imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="object-cover w-full h-full">`;
 						addButton.classList.add('hidden');
 						editButton.classList.remove('hidden');
@@ -236,179 +444,12 @@
 					resetPreview();
 				}
 			});
-		
+
 			function resetPreview() {
 				imagePreview.innerHTML = `<span class="text-gray-500">Preview gambar akan muncul di sini</span>`;
 				addButton.classList.remove('hidden');
 				editButton.classList.add('hidden');
 			}
-		</script>				
+		</script>
 	</div>
 </div>
-
-
-
-<script>
-	import { onMount } from "svelte";
-
-onMount(() => {
-	const createBtn = document.getElementById('accept1');
-	if (createBtn) {
-		createBtn.addEventListener('click', () => {
-			Swal.fire({
-				title: 'Success',
-				text: 'Visi misi berhasil ditambahkan',
-				icon: 'success',
-				showConfirmButton: false,
-			});
-		});
-	}
-});
-
-onMount(() => {
-	const createBtn = document.getElementById('accept2');
-	if (createBtn) {
-		createBtn.addEventListener('click', () => {
-			Swal.fire({
-				title: 'Success',
-				text: 'Pesan ketua berhasil ditambahkan',
-				icon: 'success',
-				showConfirmButton: false,
-			});
-		});
-	}
-});
-
-onMount(() => {
-	const createBtn = document.getElementById('accept3');
-	if (createBtn) {
-		createBtn.addEventListener('click', () => {
-			Swal.fire({
-				title: 'Success',
-				text: 'Tujuan berhasil ditambahkan',
-				icon: 'success',
-				showConfirmButton: false,
-			});
-		});
-	}
-});
-
-onMount(() => {
-	const createBtn = document.getElementById('accept4');
-	if (createBtn) {
-		createBtn.addEventListener('click', () => {
-			Swal.fire({
-				title: 'Success',
-				text: 'Renungan berhasil ditambahkan',
-				icon: 'success',
-				showConfirmButton: false,
-			});
-		});
-	}
-});
-
-
-onMount(() => {
-    const createBtn = document.getElementById('delete1');
-    if (createBtn) {
-        createBtn.addEventListener('click', () => {
-            Swal.fire({
-                title: "Apakah Anda yakin?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Visi misi berhasil dihapus",
-                        icon: "success",
-                        showConfirmButton: false,
-                    });
-                }
-            });
-        });
-    }
-});
-
-onMount(() => {
-    const createBtn = document.getElementById('delete2');
-    if (createBtn) {
-        createBtn.addEventListener('click', () => {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Pesan ketua berhasil dihapus",
-                        icon: "success",
-                        showConfirmButton: false,
-                    });
-                }
-            });
-        });
-    }
-});
-
-onMount(() => {
-    const createBtn = document.getElementById('delete3');
-    if (createBtn) {
-        createBtn.addEventListener('click', () => {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Tujuan berhasil dihapus",
-                        icon: "success",
-                        showConfirmButton: false,
-                    });
-                }
-            });
-        });
-    }
-});
-
-onMount(() => {
-    const createBtn = document.getElementById('delete4');
-    if (createBtn) {
-        createBtn.addEventListener('click', () => {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Renungan berhasil dihapus",
-                        icon: "success",
-                        showConfirmButton: false,
-                    });
-                }
-            });
-        });
-    }
-});
-</script>

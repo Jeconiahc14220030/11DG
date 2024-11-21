@@ -105,3 +105,34 @@ func POSTKontenGereja(kontenGereja models.KontenGereja) (models.Response, error)
 
 	return res, nil
 }
+
+func SoftDeletedataKontenGereja(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtKontenGereja(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtKontenGereja(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE konten_gereja SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Konten gereja deleted successfully"
+
+	return res, nil
+}

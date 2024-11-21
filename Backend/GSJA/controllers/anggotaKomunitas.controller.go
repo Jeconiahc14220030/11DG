@@ -7,13 +7,13 @@ import(
 )
 
 func GETAllRequest() (models.Response, error) {
-	var Requestkomunitas models.Requestkomunitas
-	var arrayRequestkomunitas []models.Requestkomunitas
+	var AnggotaKomunitas models.AnggotaKomunitas
+	var arrayAnggotaKomunitas []models.AnggotaKomunitas
 	var res models.Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM request_komunitas"
+	sqlStatement := "SELECT * FROM anggota_komunitas"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -25,30 +25,30 @@ func GETAllRequest() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&Requestkomunitas.Id, 
-			&Requestkomunitas.Id_komunitas, 
-			&Requestkomunitas.Id_anggota,
-			&Requestkomunitas.RequestAt,
-			&Requestkomunitas.UpdatedAt,
-			&Requestkomunitas.DeletedAt,
-            &Requestkomunitas.Status, 
+			&AnggotaKomunitas.Id, 
+			&AnggotaKomunitas.IdKomunitas, 
+			&AnggotaKomunitas.IdAnggota,
+			&AnggotaKomunitas.RequestAt,
+			&AnggotaKomunitas.UpdatedAt,
+			&AnggotaKomunitas.DeletedAt,
+            &AnggotaKomunitas.Status, 
 		)
 		
 		if err != nil {
 			return res, err
 		}
 
-		arrayRequestkomunitas = append(arrayRequestkomunitas, Requestkomunitas)
+		arrayAnggotaKomunitas = append(arrayAnggotaKomunitas, AnggotaKomunitas)
 	}
 
 	res.Status = http.StatusOK
 	res.Message = "Success"
-	res.Data = arrayRequestkomunitas
+	res.Data = arrayAnggotaKomunitas
 
 	return res, nil
 }	
 
-func FetchAllRequestKomunitas(c echo.Context) error {
+func FetchAllAnggotaKomunitas(c echo.Context) error {
 	result, err := GETAllRequest()
 
 	if err != nil {
@@ -58,16 +58,16 @@ func FetchAllRequestKomunitas(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func POSTRequestKomunitas(c echo.Context) error {
-    var Requestkomunitas models.Requestkomunitas
+func POSTAnggotaKomunitas(c echo.Context) error {
+    var AnggotaKomunitas models.AnggotaKomunitas
     var res models.Response
 
     con := db.CreateCon()
-    if err := c.Bind(&Requestkomunitas); err != nil {
+    if err := c.Bind(&AnggotaKomunitas); err != nil {
         return err
     }
 
-    sqlStatement := "INSERT INTO request_komunitas (id_komunitas, id_anggota) VALUES (?, ?)"
+    sqlStatement := "INSERT INTO anggota_komunitas (id, id_anggota) VALUES (?, ?)"
 
     stmt, err := con.Prepare(sqlStatement)
     if err != nil {
@@ -75,7 +75,7 @@ func POSTRequestKomunitas(c echo.Context) error {
     }
     defer stmt.Close()
 
-    result, err := stmt.Exec(Requestkomunitas.Id_komunitas, Requestkomunitas.Id_anggota)
+    result, err := stmt.Exec(AnggotaKomunitas.Id, AnggotaKomunitas.Id)
     if err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
     }
@@ -85,33 +85,33 @@ func POSTRequestKomunitas(c echo.Context) error {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
     }
 
-    Requestkomunitas.Id = int(lastInsertId)
+    AnggotaKomunitas.Id = int(lastInsertId)
 
     res.Status = http.StatusOK
     res.Message = "Success"
-    res.Data = Requestkomunitas
+    res.Data = AnggotaKomunitas
 
     return c.JSON(http.StatusOK, res)
 }
 
 
-func ReceiveRequestKomunitas(c echo.Context) error {
-    var Requestkomunitas models.Requestkomunitas
+func ReceiveAnggotaKomunitas(c echo.Context) error {
+    var AnggotaKomunitas models.AnggotaKomunitas
     var res models.Response
 
     con := db.CreateCon()
 
-    // Bind the incoming JSON data to the Requestkomunitas struct
-    if err := c.Bind(&Requestkomunitas); err != nil {
+    // Bind the incoming JSON data to the AnggotaKomunitas struct
+    if err := c.Bind(&AnggotaKomunitas); err != nil {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
     }
 
     // Ensure that the `id` and `status` fields are provided in the JSON
-    if Requestkomunitas.Id == 0 || Requestkomunitas.Status == "" {
+    if AnggotaKomunitas.Id == 0 || AnggotaKomunitas.Status == "" {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Missing id or status"})
     }
 
-    sqlStatement := "UPDATE request_komunitas SET status = ?, update_at = NOW() WHERE id_request = ?"
+    sqlStatement := "UPDATE anggota_komunitas SET status = ?, update_at = NOW() WHERE id = ?"
 
     stmt, err := con.Prepare(sqlStatement)
     if err != nil {
@@ -120,14 +120,14 @@ func ReceiveRequestKomunitas(c echo.Context) error {
     defer stmt.Close()
 
     // Execute the update query with the provided `status` and `id`
-    _, err = stmt.Exec(Requestkomunitas.Status, Requestkomunitas.Id)
+    _, err = stmt.Exec(AnggotaKomunitas.Status, AnggotaKomunitas.Id)
     if err != nil {
         return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
     }
 
     res.Status = http.StatusOK
     res.Message = "Status updated successfully"
-    res.Data = Requestkomunitas
+    res.Data = AnggotaKomunitas
 
     return c.JSON(http.StatusOK, res)
 }

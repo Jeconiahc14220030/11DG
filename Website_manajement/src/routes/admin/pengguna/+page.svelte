@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	let anggota = [];
 
@@ -8,8 +9,9 @@
 			const response = await fetch('http://localhost:8080/anggota');
 			anggota = await response.json();
 			anggota = anggota.data;
+			console.log(anggota);
 		} catch (err) {
-			console.log(err);
+			console.log(err.message);
 		}
 	}
 
@@ -32,6 +34,10 @@
 				});
 			}
 		});
+	}
+
+	function tambahangota(){
+		goto('/admin/pengguna/tambah pengguna');
 	}
 
 	onMount(() => {
@@ -94,7 +100,7 @@
 			/>
 		</div>
 
-		<a href="/admin/pengguna/tambah pengguna">
+		<button on:click={tambahangota}>
 			<svg
 				class="ms-20 w-10 h-10 text-gray-500"
 				xmlns="http://www.w3.org/2000/svg"
@@ -156,7 +162,7 @@
 					/>
 				</g>
 			</svg>
-		</a>
+		</button>
 	</div>
 
 	<div class="max-w-4xl mx-auto mt-20 overflow-x-auto flex">
@@ -178,7 +184,7 @@
 						<td class="py-3 px-6 text-left text-black">{item.id}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nama}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nomor_telepon}</td>
-						<td class="py-3 px-6 text-left text-black">{item.created_at}</td>
+						<td class="py-3 px-6 text-left text-black">{item.tanggal_lahir}</td>
 						<td class="py-3 px-6 text-center">
 							<div class="flex item-center justify-center">
 								<a

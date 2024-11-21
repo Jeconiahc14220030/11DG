@@ -53,14 +53,14 @@ func GETJadwalLatihan() (models.Response, error) {
 		}
 
 		arrJadwalLatihan = append(arrJadwalLatihan, jadwalLatihan)
-	} 
+	}
 
 	response.Status = http.StatusOK
 	response.Message = "Berhasil GET semua jadwal latihan"
 	response.Data = arrJadwalLatihan
 
 	return response, err
-} 	
+}
 
 func AddJadwalLatihan(c echo.Context) error {
 	// tanggal := c.FormValue("tanggal")
@@ -68,16 +68,17 @@ func AddJadwalLatihan(c echo.Context) error {
 	strIdAnggota := c.FormValue("id_anggota")
 	strIdKomunitas := c.FormValue("id_komunitas")
 
-	idAnggota, err := strconv.Atoi(strIdAnggota)
+	// idAnggota, err := strconv.Atoi(strIdAnggota)
 
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
+	// }
+
+	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
+
+	formattanggal, err := time.Parse("2024-11-20", tanggal)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
-	}
-
-	idKomunitas, err := strconv.Atoi(strIdKomunitas)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id komunitas"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	}
 
 	jadwalLatihan := models.JadwalLatihan{
@@ -87,16 +88,17 @@ func AddJadwalLatihan(c echo.Context) error {
 		IdKomunitas: idKomunitas,
 	}
 
-	if err := c.Bind(&jadwalLatihan); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
+	// if err := c.Bind(&jadwalLatihan); err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	// }
 
-	result, err := POSTJadwalLatihan(jadwalLatihan)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
+	// result, err := POSTJadwalLatihan(jadwalLatihan)
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	// }
 
-	return c.JSON(http.StatusCreated, result)
+	// return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, map[string]string{"message": "OK"})
 }
 
 func POSTJadwalLatihan(jadwalLatihan models.JadwalLatihan) (models.Response, error) {

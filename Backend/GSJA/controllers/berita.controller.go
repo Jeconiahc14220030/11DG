@@ -93,3 +93,34 @@ func POSTBerita(berita models.Berita) (models.Response, error) {
 
 	return res, nil
 }
+
+func SoftDeletedataBerita(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtBerita(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtBerita(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE berita SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Berita berhasil dihapus"
+
+	return res, nil
+}
