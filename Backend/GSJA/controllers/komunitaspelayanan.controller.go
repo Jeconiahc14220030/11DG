@@ -130,7 +130,7 @@ func AddPengumuman(c echo.Context) error {
 	// tanggal := c.FormValue("tanggal")
 	strIdKomunitas := c.FormValue("id_komunitas")
 
-	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
+	idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
 	formattanggal, err := time.Parse("2024-11-20", tanggal)
 	if err != nil {
