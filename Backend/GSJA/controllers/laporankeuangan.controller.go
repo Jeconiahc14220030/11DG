@@ -123,7 +123,23 @@ func GETLaporanKeuanganById(id int) (models.Response, error) {
 }
 
 func AddLaporanKeuangan(c echo.Context) error {
-	var laporanKeuangan models.LaporanKeuangan
+	tanggal := c.FormValue("tanggal")
+	jenis := c.FormValue("jenis")
+	nominal := c.FormValue("nominal")
+	strIdPembuat := c.FormValue("id_pembuat")
+
+	idPembuat, err := strconv.Atoi(strIdPembuat)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id pembuat"})
+	}
+
+	laporanKeuangan := models.LaporanKeuangan{
+		Tanggal: tanggal,
+		Jenis: jenis,
+		Nominal: nominal,
+		IdPembuat: idPembuat,
+	}
 
 	if err := c.Bind(&laporanKeuangan); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})

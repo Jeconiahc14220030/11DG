@@ -64,3 +64,48 @@ func GETKontenGereja() (models.Response, error) {
 
 	return response, err
 }
+
+func AddKontenGereja(c echo.Context) error {
+	visi := c.FormValue("visi")
+	misi := c.FormValue("misi")
+	tujuan := c.FormValue("tujuan")
+	pesanKetua := c.FormValue("pesanKetua")
+
+	kontenGereja := models.KontenGereja{
+		Visi: visi,
+		Misi: misi,
+		Tujuan: tujuan,
+		PesanKetua: pesanKetua,
+	}
+
+	if err := c.Bind(&kontenGereja); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTKontenGereja(kontenGereja)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTKontenGereja(kontenGereja models.KontenGereja) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO konten_gereja (visi, misi, tujuan, pesan_ketua) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, kontenGereja.Visi, kontenGereja.Misi, kontenGereja.Tujuan, kontenGereja.PesanKetua)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Konten gereja added successfully"
+	res.Data = kontenGereja
+
+	return res, nil
+}

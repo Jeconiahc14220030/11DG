@@ -121,10 +121,24 @@ func GETAbsensihfById(id int) (models.Response, error) {
 }
 
 func AddAbsensiHf(c echo.Context) error {
-	var absensiHf models.AbsensiHf
+	status := c.FormValue("status")
+	idAnggotaStr := c.FormValue("id_anggota")
+	idJadwalStr := c.FormValue("id_jadwal")
 
-	if err := c.Bind(&absensiHf); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	idAnggota, err := strconv.Atoi(idAnggotaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_anggota"})
+	}
+
+	idJadwal, err := strconv.Atoi(idJadwalStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_jadwal"})
+	}
+
+	absensiHf := models.AbsensiHf{
+		Status:    status,
+		IdAnggota: idAnggota,
+		IdJadwal:  idJadwal,
 	}
 
 	result, err := POSTAbsensiHf(absensiHf)

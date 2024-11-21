@@ -4,6 +4,7 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -60,7 +61,23 @@ func GETAllJadwal() (models.Response, error) {
 	return res, err
 }
 func AddJadwal(c echo.Context) error {
-	var jadwal models.Jadwal
+	tanggal := c.FormValue("tanggal")
+	topik := c.FormValue("topik")
+	jenisIbadah := c.FormValue("jenis_ibadah")
+	strJumlahPoin := c.FormValue("jumlah_poin")
+
+	jumlahPoin, err := strconv.Atoi(strJumlahPoin)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Poin"})
+	}
+
+	jadwal := models.Jadwal{
+		Tanggal: tanggal,
+		Topik: topik,
+		JenisIbadah: jenisIbadah,
+		JumlahPoin: jumlahPoin,
+	}
 
 	if err := c.Bind(&jadwal); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
