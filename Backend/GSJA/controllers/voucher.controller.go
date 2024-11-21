@@ -174,3 +174,39 @@ func POSTVoucher(voucher models.Voucher) (models.Response, error) {
 
 	return res, nil
 }
+
+func SoftDeleteVoucher(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := UpdateDeletedAtVoucher(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtVoucher(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE voucher SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Voucher deleted successfully"
+
+	return res, nil
+}

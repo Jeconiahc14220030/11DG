@@ -112,3 +112,35 @@ func POSTJadwal(jadwal models.Jadwal) (models.Response, error) {
 
 	return res, nil
 }
+
+func SoftDeleteJadwal(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtJadwal(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtJadwal(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE jadwal SET deleted_at = CURRENT_TIMESTAMP() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Jadwal berhasil dihapus"
+
+	return res, nil
+}

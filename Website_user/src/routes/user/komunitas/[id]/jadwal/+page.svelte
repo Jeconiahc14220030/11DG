@@ -1,3 +1,12 @@
+<script>
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+        alert($page.params.id);
+    })
+</script>
+
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
         <div class="flex items-center">

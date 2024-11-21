@@ -23,7 +23,6 @@ func Init() *echo.Echo {
 	})
 
 	e.POST("/login", controllers.Login)
-	e.POST("/register", controllers.Register)
 
 	// Fetch Data
 	e.GET("/anggota", controllers.FetchAllAnggota)
@@ -58,9 +57,8 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
-	e.GET("/hf", controllers.FetchAllHf) 
-
-	e.GET("/requestkomunitas", controllers.FetchAllRequestKomunitas)
+	e.GET("/hf", controllers.FetchAllHf)
+	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas)
 
 	e.POST("/anggota/add", controllers.AddAnggota)
 
@@ -76,9 +74,9 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
-	e.POST("requestkomunitas/add", controllers.POSTRequestKomunitas)
+	// e.POST("anggotaKomunitas/request", controllers.POSTAnggotaKomunitas)
 
-	e.PUT("requestkomunitas/status", controllers.ReceiveRequestKomunitas)
+	// e.PUT("anggotaKomunitas/updatestatus", controllers.ReceiveAnggotaKomunitas)
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
@@ -89,5 +87,9 @@ func Init() *echo.Echo {
 	e.POST("komunitas/:id/pengumuman/tambah", controllers.AddPengumuman) // perlu dipikirkan lagi struktur tanggal, ga perlu tanggal ga si, tinggal ambil dari created_at
 
 	e.POST("kontengereja/add", controllers.AddKontenGereja)
+
+	e.PUT("anggota/delete/:id", controllers.SoftDeleteAnggota); e.PUT("anggota/restore/:id", controllers.RestoreDeletedAnggota);
+
+
 	return e
 }
