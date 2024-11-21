@@ -4,7 +4,8 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
-	"strconv"
+
+	// "strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -53,50 +54,51 @@ func GETJadwalLatihan() (models.Response, error) {
 		}
 
 		arrJadwalLatihan = append(arrJadwalLatihan, jadwalLatihan)
-	} 
+	}
 
 	response.Status = http.StatusOK
 	response.Message = "Berhasil GET semua jadwal latihan"
 	response.Data = arrJadwalLatihan
 
 	return response, err
-} 	
+}
 
 func AddJadwalLatihan(c echo.Context) error {
-	tanggal := c.FormValue("tanggal")
-	lokasi := c.FormValue("lokasi")
-	strIdAnggota := c.FormValue("id_anggota")
-	strIdKomunitas := c.FormValue("id_komunitas")
+	// tanggal := c.FormValue("tanggal")
+	// lokasi := c.FormValue("lokasi")
+	// strIdAnggota := c.FormValue("id_anggota")
+	// strIdKomunitas := c.FormValue("id_komunitas")
 
-	idAnggota, err := strconv.Atoi(strIdAnggota)
+	// idAnggota, err := strconv.Atoi(strIdAnggota)
 
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
-	}
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
+	// }
 
-	idKomunitas, err := strconv.Atoi(strIdKomunitas)
+	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id komunitas"})
-	}
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id komunitas"})
+	// }
 
-	jadwalLatihan := models.JadwalLatihan{
-		Tanggal: tanggal,
-		Lokasi: lokasi,
-		IdAnggota: idAnggota,
-		IdKomunitas: idKomunitas,
-	}
+	// jadwalLatihan := models.JadwalLatihan{
+	// 	Tanggal: tanggal,
+	// 	Lokasi: lokasi,
+	// 	IdAnggota: idAnggota,
+	// 	IdKomunitas: idKomunitas,
+	// }
 
-	if err := c.Bind(&jadwalLatihan); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
+	// if err := c.Bind(&jadwalLatihan); err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	// }
 
-	result, err := POSTJadwalLatihan(jadwalLatihan)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
+	// result, err := POSTJadwalLatihan(jadwalLatihan)
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	// }
 
-	return c.JSON(http.StatusCreated, result)
+	// return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, map[string]string{"message": "OK"})
 }
 
 func POSTJadwalLatihan(jadwalLatihan models.JadwalLatihan) (models.Response, error) {

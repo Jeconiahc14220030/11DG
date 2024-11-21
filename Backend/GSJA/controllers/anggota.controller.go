@@ -243,4 +243,79 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	return res, nil
 }
 
+func SoftDeleteAnggota(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	result, err := UpdateDeletedAtAnggota(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtAnggota(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE anggota SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Deleted at updated successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+func RestoreDeletedAnggota(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	result, err := UpdateDeletedAtToNullAnggota(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtToNullAnggota(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE anggota SET deleted_at = NULL WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Deleted at restored successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+
 
