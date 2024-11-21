@@ -184,7 +184,7 @@
 						<td class="py-3 px-6 text-left text-black">{item.id}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nama}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nomor_telepon}</td>
-						<td class="py-3 px-6 text-left text-black">{item.created_at}</td>
+						<td class="py-3 px-6 text-left text-black">{item.tanggal_lahir}</td>
 						<td class="py-3 px-6 text-center">
 							<div class="flex item-center justify-center">
 								<a

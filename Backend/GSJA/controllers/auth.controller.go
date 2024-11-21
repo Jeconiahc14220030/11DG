@@ -4,6 +4,8 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
+	"fmt"
+	"errors"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -32,7 +34,7 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "SELECT * FROM anggota WHERE username = ?"
+	sqlStatement := "SELECT id,username,password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
 
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
@@ -40,10 +42,20 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 		return res, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		return res, err
+	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return res, err
+	// }
+
+	if user.Password == password {
+		fmt.Println("Password cocok")
+		return res, nil
+	} else {
+		fmt.Println("Password tidak cocok")
+		return res, errors.New("password tidak cocok")
 	}
+	
 
 	res.Status = http.StatusOK
 	res.Message = "Login successful"

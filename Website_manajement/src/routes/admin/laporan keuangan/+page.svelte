@@ -13,6 +13,8 @@
 		}
 	}
 
+	
+
 	function cetaklaporan() {
 		Swal.fire({
 			title: 'Tambah Data Pengguna',
@@ -22,7 +24,7 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-		<div style="text-align: left; max-width: 500px; margin: 0 auto;">
+		<form id="laporankeuangan" style="text-align: left; max-width: 500px; margin: 0 auto;">
 			<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
 			<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
 
@@ -31,7 +33,7 @@
 
 			<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
 			<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
-		</div>
+		</form>
 	`,
 			confirmButtonText: 'Create',
 			confirmButtonColor: '#F0A242',
@@ -74,7 +76,7 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-					<div style="text-align: left; max-width: 500px; margin: 0 auto;">
+					<form style="text-align: left; max-width: 500px; margin: 0 auto;">
 						<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
 						<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
 
@@ -83,7 +85,7 @@
 
 						<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
 						<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
-					</div>
+					</form>
 				`,
 			confirmButtonText: 'Update',
 			confirmButtonColor: '#F0A242',

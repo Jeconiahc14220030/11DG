@@ -5,6 +5,7 @@ import (
 	"GSJA/models"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -76,12 +77,13 @@ func AddJadwalLatihan(c echo.Context) error {
 
 	idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
+	formattanggal, err := time.Parse("2024-11-20", tanggal)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id komunitas"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	}
 
 	jadwalLatihan := models.JadwalLatihan{
-		Tanggal: tanggal,
+		Tanggal: formattanggal,
 		Lokasi: lokasi,
 		IdAnggota: idAnggota,
 		IdKomunitas: idKomunitas,

@@ -7,7 +7,7 @@
 		const formdata = new FormData(document.getElementById('tambahanggota'));
 
 		try {
-			const response = await fetch('http://localhost:8080/tambahanggota', {
+			const response = await fetch('http://localhost:8080/anggota/add', {
 				method: 'POST',
 				body: formdata
 			});
