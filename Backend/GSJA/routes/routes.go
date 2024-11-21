@@ -90,6 +90,5 @@ func Init() *echo.Echo {
 
 	e.PUT("anggota/delete/:id", controllers.SoftDeleteAnggota); e.PUT("anggota/restore/:id", controllers.RestoreDeletedAnggota);
 
-
 	return e
 }
