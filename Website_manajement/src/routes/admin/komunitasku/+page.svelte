@@ -6,7 +6,7 @@
 
 	async function fetchdata() {
 		try {
-			const response = await fetch('http://localhost:8080/requestkomunitas');
+			const response = await fetch('http://localhost:8080/komunitas');
 			komunitas = await response.json();
 			komunitas = komunitas.data;
 

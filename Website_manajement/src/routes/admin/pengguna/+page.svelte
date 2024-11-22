@@ -15,10 +15,10 @@
 		}
 	}
 
-	function deleteanggota() {
+	function deleteanggota(id_anggota) {
 		Swal.fire({
 			title: 'Apakah Anda yakin?',
-			text: 'Anda tidak akan dapat mengembalikannya!',
+			text: `Anda tidak akan dapat mengembalikannya! ${id_anggota}`,
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
@@ -170,7 +170,7 @@
 			<thead>
 				<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
 					<th class="py-3 px-6 text-left text-black">No</th>
-					<th class="py-3 px-6 text-left text-black">Id Anggota</th>
+					<th class="py-3 px-6 text-left text-black">Tanggal Lahir</th>
 					<th class="py-3 px-6 text-left text-black">Nama Anggota</th>
 					<th class="py-3 px-6 text-left text-black">No WA</th>
 					<th class="py-3 px-6 text-left text-black">Tanggal Join</th>
@@ -181,10 +181,10 @@
 				<tbody class="text-gray-600 text-sm">
 					<tr class="bg border-b border-black hover:bg-gray-100">
 						<td class="py-3 px-6 text-left text-black">{i + 1}</td>
-						<td class="py-3 px-6 text-left text-black">{item.id}</td>
+						<td class="py-3 px-6 text-left text-black">{item.tanggal_lahir}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nama}</td>
 						<td class="py-3 px-6 text-left text-black">{item.nomor_telepon}</td>
-						<td class="py-3 px-6 text-left text-black">{item.tanggal_lahir}</td>
+						<td class="py-3 px-6 text-left text-black">{item.created_at}</td>
 						<td class="py-3 px-6 text-center">
 							<div class="flex item-center justify-center">
 								<a
@@ -203,7 +203,7 @@
 										/>
 									</svg>
 								</a>
-								<button on:click={deleteanggota} class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
+								<button on:click={deleteanggota(item.id)} class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="1.5em"
