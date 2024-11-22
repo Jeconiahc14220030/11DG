@@ -317,5 +317,62 @@ func UpdateDeletedAtToNullAnggota(id int) (models.Response, error) {
 	return res, nil
 }
 
+func FetchAbsensiById(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam	)
 
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	result, err := GetAbsensiById(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetAbsensiById(id int) (models.Response, error) {
+	var absensi models.Absensi
+	var arrAbsensi []models.Absensi
+	var response models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM absensi WHERE id_anggota = ?"
+
+	rows, err := con.Query(sqlStatement, id)
+
+	if err != nil {
+		return response, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&absensi.Id,
+			&absensi.Status,
+			&absensi.IdAnggota,
+			&absensi.IdJadwal,
+			&absensi.CreatedAt,
+			&absensi.UpdatedAt,
+			&absensi.DeletedAt,
+		)
+
+		if err != nil {
+			return response, err
+		}
+
+		arrAbsensi = append(arrAbsensi, absensi)
+	}
+
+	response.Status = http.StatusOK
+	response.Message = "OK"
+	response.Data = arrAbsensi
+
+	return response, err
+}
 
