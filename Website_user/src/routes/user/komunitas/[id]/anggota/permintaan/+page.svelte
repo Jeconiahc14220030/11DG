@@ -4,7 +4,7 @@
 	import { writable } from 'svelte/store';
 
 	// Store untuk menyimpan daftar permintaan
-	const requests = writable([]);
+	export const requests = writable([]);
 
 	// Fungsi untuk mengambil data permintaan bergabung
 	async function fetchRequest() {
@@ -12,7 +12,13 @@
 
 		try {
 			// Fetch data dari API
-			const response = await fetch('http://localhost:8080/requestkomunitas');
+			const response = await fetch('http://localhost:8080/anggotakomunitas');
+
+			if (!response.ok) {
+				console.error(`Gagal mengambil data. Status HTTP: ${response.status}`);
+				return;
+			}
+
 			const { status, data } = await response.json();
 
 			if (status === 200) {
@@ -23,7 +29,41 @@
 				console.error('Gagal mengambil data, status:', status);
 			}
 		} catch (error) {
-			console.error('Terjadi kesalahan:', error);
+			console.error('Terjadi kesalahan saat mem-fetch data:', error);
+		}
+	}
+
+	async function handleAccept(requestId) {
+		try {
+			const response = await fetch(`http://localhost:8080/anggotakomunitas/${requestId}/accept`, {
+				method: 'POST'
+			});
+
+			if (response.ok) {
+				console.log('Permintaan diterima');
+				fetchRequest(); // Refresh data setelah perubahan
+			} else {
+				console.error(`Gagal menerima permintaan. Status HTTP: ${response.status}`);
+			}
+		} catch (error) {
+			console.error('Kesalahan saat menerima permintaan:', error);
+		}
+	}
+
+	async function handleReject(requestId) {
+		try {
+			const response = await fetch(`http://localhost:8080/anggotakomunitas/${requestId}/reject`, {
+				method: 'POST'
+			});
+
+			if (response.ok) {
+				console.log('Permintaan ditolak');
+				fetchRequest(); // Refresh data setelah perubahan
+			} else {
+				console.error(`Gagal menolak permintaan. Status HTTP: ${response.status}`);
+			}
+		} catch (error) {
+			console.error('Kesalahan saat menolak permintaan:', error);
 		}
 	}
 
@@ -52,44 +92,55 @@
 		</div>
 
 		<!-- Daftar Anggota -->
+
 		{#if $requests.length > 0}
-			{#each $requests as request}
-				<div class="bg-[#FEFEFE] flex flex-col rounded p-4 mb-4">
-					<div class="flex flex-row items-center space-x-8 md:space-x-16">
+			{#each $requests as request (request.id)}
+				<div class="bg-white shadow-md flex flex-col rounded p-4 mb-4">
+					<div class="flex flex-row items-center space-x-8">
 						<!-- Gambar Anggota -->
-						<div class="flex">
+						<div>
 							<img src="/src/lib/image/pp.jpg" alt="Profil" class="w-16 h-16 rounded-full" />
 						</div>
-						<!-- Nama dan Nomor Telepon -->
+
+						<!-- Informasi Anggota -->
 						<div class="flex flex-col">
-							<div class="font-bold">
+							<div class="font-bold text-lg">
 								<span>ID Anggota: {request.id_anggota}</span>
 							</div>
-							<div>
+							<div class="text-gray-600">
 								<span>Status: {request.status}</span>
 							</div>
-							<div>
-								<span>Request Time: {new Date(request.request_at).toLocaleString()}</span>
+							<div class="text-gray-500 text-sm">
+								<span>
+									Request Time: {request.created_at
+										? new Date(request.created_at).toLocaleString()
+										: 'N/A'}
+								</span>
 							</div>
 						</div>
-						<!-- ID Anggota dan Tombol -->
-						<div class="flex flex-row items-center">
+
+						<!-- Tombol Aksi -->
+						<div class="flex flex-row space-x-2">
+							<!-- Tombol Terima -->
 							<button
-								class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center ml-2 hover:bg-green-600"
+								class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+								on:click={() => handleAccept(request.id)}
 							>
-								<img src="/src/lib/image/accept.svg" alt="Terima" class="w-4 h-4" />
+								Terima
 							</button>
+							<!-- Tombol Tolak -->
 							<button
-								class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center ml-2 hover:bg-red-600"
+								class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+								on:click={() => handleReject(request.id)}
 							>
-								<img src="/src/lib/image/cancel.svg" alt="Tolak" class="w-4 h-4" />
+								Tolak
 							</button>
 						</div>
 					</div>
 				</div>
 			{/each}
 		{:else}
-			<p class="text-center">Tidak ada permintaan bergabung untuk komunitas ini.</p>
+			<p class="text-center text-gray-600">Tidak ada permintaan bergabung untuk komunitas ini.</p>
 		{/if}
 	</div>
 </div>

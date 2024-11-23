@@ -6,9 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"fmt"
 	"errors"
-
 	"github.com/labstack/echo/v4"
 )
 
