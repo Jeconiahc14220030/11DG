@@ -5,6 +5,7 @@ import (
 	"GSJA/models"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -125,14 +126,15 @@ func GETKomunitasById(id int) (models.Response, error) {
 }
 
 func AddPengumuman(c echo.Context) error {
-	konten := c.FormValue("konten")
+	// konten := c.FormValue("konten")
 	// tanggal := c.FormValue("tanggal")
-	strIdKomunitas := c.FormValue("id_komunitas")
+	// strIdKomunitas := c.FormValue("id_komunitas")
 
-	idKomunitas, err := strconv.Atoi(strIdKomunitas)
+	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
+	formattanggal, err := time.Parse("2024-11-20", tanggal)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id komunitas"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	}
 
 	pengumuman := models.Pengumuman{
@@ -141,24 +143,25 @@ func AddPengumuman(c echo.Context) error {
 		Id_komunitas: idKomunitas,
 	}
 
-	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam)
+	// idParam := c.Param("id")
+	// id, err := strconv.Atoi(idParam)
 
-	if err := c.Bind(&pengumuman); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
+	// if err := c.Bind(&pengumuman); err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	// }
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	// }
 
-	result, err := POSTPengumuman(pengumuman, id)
+	// result, err := POSTPengumuman(pengumuman, id)
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	// }
 
-	return c.JSON(http.StatusCreated, result)
+	// return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, map[string]string{"message": "OK"})
 }
 
 func POSTPengumuman(pengumuman models.Pengumuman, id int) (models.Response, error) {

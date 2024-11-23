@@ -79,6 +79,45 @@ func FetchVoucherById(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func AddVoucher(c echo.Context) error {
+	namaVoucher := c.FormValue("nama_voucher")
+	status := c.FormValue("status")
+	hargaStr := c.FormValue("harga")
+	harga, err := strconv.Atoi(hargaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Harga harus berupa angka"})
+	}
+	foto := c.FormValue("foto")
+
+	result, err := InsertVoucher(namaVoucher, status, harga, foto)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func InsertVoucher(namaVoucher, status string, harga int, foto string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := `
+		INSERT INTO voucher (nama_voucher, status, harga, foto, created_at, updated_at)
+		VALUES (?, ?, ?, ?, NOW(), NOW())
+	`
+	_, err := con.Exec(sqlStatement, namaVoucher, status, harga, foto)
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Voucher berhasil ditambahkan"
+	return res, nil
+}
+
+
 func GETVoucherById(id int) (models.Response, error) {
 	var voucher models.Voucher
 	var arrayVoucher []models.Voucher
@@ -124,53 +163,38 @@ func GETVoucherById(id int) (models.Response, error) {
 	return response, err
 }
 
-func AddVoucher(c echo.Context) error {
-	namaVoucher := c.FormValue("nama_voucher")
-	status := c.FormValue("status")
-	strHarga := c.FormValue("harga")
-	foto := c.FormValue("foto")
-
-	harga, err := strconv.Atoi(strHarga)
+func SoftDeleteVoucher(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid harga"})
-	}
-
-	voucher := models.Voucher{
-		NamaVoucher: namaVoucher,
-		Status: status,
-		Harga: harga,
-		Foto: foto,
-	}
-
-	if err := c.Bind(&voucher); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 	}
 
-	result, err := POSTVoucher(voucher)
+	result, err := UpdateDeletedAtVoucher(id)
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, result)
 }
 
-func POSTVoucher(voucher models.Voucher) (models.Response, error) {
+func UpdateDeletedAtVoucher(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO voucher (nama_voucher, status, harga, foto) VALUES (?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, voucher.NamaVoucher, voucher.Status, voucher.Harga, voucher.Foto)
+	sqlStatement := "UPDATE voucher SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
 
 	if err != nil {
 		return res, err
 	}
 
-	res.Status = http.StatusCreated
-	res.Message = "Voucher added successfully"
-	res.Data = voucher
+	res.Status = http.StatusOK
+	res.Message = "Voucher deleted successfully"
 
 	return res, nil
 }

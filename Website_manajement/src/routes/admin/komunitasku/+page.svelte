@@ -112,7 +112,6 @@
 <div class="h-screen w-screen flex justify-center items-center bg-background">
 	<div class="flex flex-col mx-6 pb-16 justify-center w-full max-w-3xl">
 		{#each komunitas as item}
-			{#if item.judul != 'Acara'}
 				<div class="flex flex-col mt-5">
 					<div
 						class="bg-card rounded shadow flex flex-col sm:flex-row justify-between items-center p-4 mb-4 border border-black"
@@ -132,7 +131,6 @@
 						</div>
 					</div>
 				</div>
-			{/if}
 		{/each}
 	</div>
 
@@ -142,7 +140,10 @@
 				class="mt-5 bg-white rounded shadow flex flex-col sm:flex-row justify-between items-center p-4 border border-black w-96 h-20"
 			>
 				<div class="flex flex-col sm:w-2/3 w-full">
-					<h1 class="text-lg md:text-xl text-center font-bold">{item.nama}</h1>
+					<h1 class="text-lg md:text-xl text-center font-bold">{item.id}</h1>
+					<p>
+						{item.id_anggota}
+					</p>
 					<p class="text-black text-center overflow-hidden overflow-ellipsis whitespace-nowrap">
 						{item.id_komunitas}
 					</p>

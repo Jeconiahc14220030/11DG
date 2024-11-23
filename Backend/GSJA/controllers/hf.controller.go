@@ -4,6 +4,7 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -56,4 +57,40 @@ func GETAllHf() (models.Response, error) {
 	response.Data = arrayHf
 
 	return response, err
+}
+
+func UpdateDeletedatHf(id int) (models.Response, error) {
+	var response models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE hf SET deleted_at = NOW() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return response, err
+	}
+
+	response.Status = http.StatusOK
+	response.Message = "Berhasil DELETE HF"
+
+	return response, err
+}
+
+func SoftDeleteHF(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := UpdateDeletedatHf(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
