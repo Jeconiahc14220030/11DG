@@ -13,7 +13,6 @@
                 },
                 body: JSON.stringify({ username, password })
             });
-            console.log(JSON.stringify({ username, password }));
 
             if (response.ok) {
                 const result = await response.json();
