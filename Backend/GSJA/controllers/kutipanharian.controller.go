@@ -38,7 +38,6 @@ func GETAllKutipanHarian() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&kutipanHarian.Id,
-			&kutipanHarian.Status,
 			&kutipanHarian.Isi,
 			&kutipanHarian.CreatedAt,
 			&kutipanHarian.UpdatedAt,
@@ -60,11 +59,9 @@ func GETAllKutipanHarian() (models.Response, error) {
 }
 
 func AddKutipanHarian(c echo.Context) error {
-	status := c.FormValue("status")
 	isi := c.FormValue("isi")
 
 	kutipanHarian := models.KutipanHarian{
-		Status: status,
 		Isi: isi,
 	}
 
@@ -87,8 +84,8 @@ func POSTKutipanHarian(kutipanHarian models.KutipanHarian) (models.Response, err
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO kutipan_harian (status, isi) VALUES (?, ?)"
-	_, err := con.Exec(sqlStatement, kutipanHarian.Status, kutipanHarian.Isi)
+	sqlStatement := "INSERT INTO kutipan_harian (isi) VALUES (?)"
+	_, err := con.Exec(sqlStatement, kutipanHarian.Isi)
 
 	if err != nil {
 		return res, err

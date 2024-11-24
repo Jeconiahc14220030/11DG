@@ -127,14 +127,12 @@ func AddCarousel(c echo.Context) error {
 	foto2 := c.FormValue("foto2")
 	foto3 := c.FormValue("foto3")
 	foto4 := c.FormValue("foto4")
-	statusCarousel := c.FormValue("status_carousel")
 
 	carousel := models.Carousel{
 		Foto1:        foto1,
 		Foto2:        foto2,
 		Foto3:        foto3,
 		Foto4:        foto4,
-		StatusCarousel: statusCarousel,
 	}
 
 	result, err := POSTCarousel(carousel)
@@ -151,8 +149,8 @@ func POSTCarousel(carousel models.Carousel) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4, carousel.StatusCarousel)
+	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4)
 
 	if err != nil {
 		return res, err

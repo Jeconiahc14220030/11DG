@@ -63,9 +63,9 @@ func GETJadwalLatihan() (models.Response, error) {
 
 func AddJadwalLatihan(c echo.Context) error {
 	// tanggal := c.FormValue("tanggal")
-	// lokasi := c.FormValue("lokasi")
-	// strIdAnggota := c.FormValue("id_anggota")
-	// strIdKomunitas := c.FormValue("id_komunitas")
+	lokasi := c.FormValue("lokasi")
+	strIdAnggota := c.FormValue("id_anggota")
+	strIdKomunitas := c.FormValue("id_komunitas")
 
 	// idAnggota, err := strconv.Atoi(strIdAnggota)
 

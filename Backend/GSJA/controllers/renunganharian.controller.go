@@ -38,7 +38,6 @@ func GETAllRenunganHarian() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&renungan_harian.Id,
-			// &renungan_harian.Status,
 			&renungan_harian.Isi,
 			&renungan_harian.CreatedAt,
 			&renungan_harian.UpdatedAt,
@@ -61,11 +60,9 @@ func GETAllRenunganHarian() (models.Response, error) {
 }
 
 func AddRenunganHarian(c echo.Context) error {
-	status := c.FormValue("status")
 	isi := c.FormValue("isi")
 	
 	renunganHarian := models.RenunganHarian{
-		Status: status,
 		Isi: isi,
 	}
 
@@ -90,7 +87,7 @@ func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, 
 
 	sqlStatement := "INSERT INTO renungan_harian (status, isi) VALUES (?, ?)"
 
-	_, err := con.Exec(sqlStatement, renunganHarian.Status, renunganHarian.Isi)
+	_, err := con.Exec(sqlStatement, renunganHarian.Isi)
 
 	if err != nil {
 		return res, err

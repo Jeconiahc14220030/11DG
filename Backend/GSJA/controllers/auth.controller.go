@@ -4,9 +4,10 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
-	"errors"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -58,8 +59,9 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 	}
 	
 	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return res, err
+	// 	fmt.Println("Password does not match:", err)
+	// } else {
+	// 	fmt.Println("Password matches!")
 	// }
 
 	if user.Password == password {
