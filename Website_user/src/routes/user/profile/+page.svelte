@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	// Functions to handle profile edit and password change
 	function editProfile() {
 		window.location.href = '/user/profile/ubah_profile';
@@ -8,14 +10,93 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
+	const userId = 1;
+
 	let user = {
-		name: 'Christian Adi',
-		id: '240409',
-		phone: '0821-4186-3444',
-		email: 'C14200028@john.petra.ac.id',
-		birthdate: '20/02/2000',
-		points: 150000
+		name: '',
+		id: '',
+		phone: '',
+		email: '',
+		birthdate: '',
+		points: 0
 	};
+
+	let vouchers = [];
+
+	async function fetchAnggota() {
+		try {
+			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
+
+			if (!response.ok) {
+				throw new Error(`Http error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			// Pastikan data array memiliki elemen
+			if (result.data && result.data.length > 0) {
+				const userData = result.data[0]; // Ambil elemen pertama dalam array
+				user = {
+					name: userData.nama,
+					id: userData.id,
+					phone: userData.nomor_telepon,
+					email: userData.email,
+					birthdate: userData.tanggal_lahir,
+					points: userData.poin
+				};
+			} else {
+				console.error('Data user tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	async function fetchRiwayatVoucher() {
+		try {
+			// Ambil riwayat voucher anggota
+			const responseRiwayat = await fetch(`http://localhost:8080/anggota/${userId}/riwayatvoucher`);
+
+			if (!responseRiwayat.ok) {
+				throw new Error(`Http error! Status: ${responseRiwayat.status}`);
+			}
+
+			const resultRiwayat = await responseRiwayat.json();
+
+			// Jika ada data riwayat voucher
+			if (resultRiwayat.data && resultRiwayat.data.length > 0) {
+				// Ambil data voucher berdasarkan id_voucher di riwayat
+				const voucherIds = resultRiwayat.data.map((item) => item.id_voucher);
+
+				// Ambil data voucher berdasarkan id yang teridentifikasi
+				const responseVoucher = await fetch(
+					`http://localhost:8080/voucher?ids=${voucherIds.join(',')}`
+				);
+
+				if (!responseVoucher.ok) {
+					throw new Error(`Http error! Status: ${responseVoucher.status}`);
+				}
+
+				const resultVoucher = await responseVoucher.json();
+
+				// Gabungkan data voucher dengan riwayat voucher
+				vouchers = resultRiwayat.data.map((item) => {
+					const voucherInfo = resultVoucher.data.find((voucher) => voucher.id === item.id_voucher);
+					return {
+						...item,
+						nama_voucher: voucherInfo?.nama_voucher,
+						status_voucher: voucherInfo?.status,
+						harga_voucher: voucherInfo?.harga,
+						foto_voucher: voucherInfo?.foto
+					};
+				});
+			} else {
+				console.log('Tidak ada riwayat voucher untuk anggota ini');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
 
 	let showModal = false; // Control for logout modal
 	let showPointsDetail = false; // Control for points detail
@@ -24,6 +105,7 @@
 
 	const handleYes = () => {
 		console.log('Logout dikonfirmasi!');
+		window.location.href = '/';
 		// Add logout logic here
 	};
 
@@ -31,6 +113,16 @@
 		console.log('Logout dibatalkan!');
 		showModal = false; // Close modal
 	};
+
+	// Fungsi untuk memformat tanggal menjadi 'tahun-bulan-tanggal'
+	function formatDate(dateString) {
+		const date = new Date(dateString); // Mengonversi string tanggal menjadi objek Date
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero jika bulan kurang dari 10
+		const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero jika tanggal kurang dari 10
+
+		return `${year}-${month}-${day}`; // Mengembalikan format 'YYYY-MM-DD'
+	}
 
 	let points = [
 		{
@@ -65,21 +157,6 @@
 		}
 	];
 
-	let vouchers = [
-		{
-			title: 'Voucher Makanan',
-			date: '1 Desember 2024'
-		},
-		{
-			title: 'Voucher Dana',
-			date: '8 Desember 2024'
-		},
-		{
-			title: 'Voucher Barang',
-			date: '1 Desember 2024'
-		}
-	];
-
 	let roles = [
 		{ title: 'BPH' },
 		{ title: 'Koordinator' },
@@ -87,6 +164,11 @@
 		{ title: 'Usher' },
 		{ title: 'Anggota' }
 	];
+
+	onMount(() => {
+		fetchAnggota();
+		fetchRiwayatVoucher();
+	});
 </script>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
@@ -140,12 +222,14 @@
 			<div class="flex flex-col w-full">
 				<div
 					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
-					on:click={() => (showPointsDetail = !showPointsDetail)}>
+					on:click={() => (showPointsDetail = !showPointsDetail)}
+				>
 					<span>Detail Poin</span>
 					<span>&gt;</span>
 				</div>
 				<div
-					class={`max-h-0 overflow-hidden transition-all duration-500 ${showPointsDetail ? 'max-h-screen' : ''}`}>
+					class={`max-h-0 overflow-hidden transition-all duration-500 ${showPointsDetail ? 'max-h-screen' : ''}`}
+				>
 					{#each points as point}
 						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
 							<h2 class="font-semibold">{point.title}</h2>
@@ -177,10 +261,12 @@
 						<div
 							class={`p-4 rounded-xl mb-3 border-2 border-black ${index === 0 ? 'bg-green-300' : index === 1 ? 'bg-gray-300' : 'bg-red-300'}`}
 						>
-							<h2 class="font-semibold">{voucher.title}</h2>
+							<h2 class="font-semibold">{voucher.nama_voucher}</h2>
 							<div class="flex justify-between items-center mt-2">
 								<div class="flex flex-col">
-									<p class="text-sm text-gray-500">Tanggal Penukaran Voucher : {voucher.date}</p>
+									<p class="text-sm text-gray-500">
+										Tanggal Penukaran Voucher : {formatDate(voucher.created_at)}
+									</p>
 								</div>
 							</div>
 						</div>

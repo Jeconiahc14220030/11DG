@@ -11,18 +11,31 @@ import (
 )
 
 func Login(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+	// Struktur untuk menampung data JSON yang diterima
+	type LoginRequest struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
 
-	if username == "" || password == "" {
+	// Parse JSON request body ke dalam struktur LoginRequest
+	var req LoginRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request format"})
+	}
+
+	// Validasi input
+	if req.Username == "" || req.Password == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Username and password are required"})
 	}
 
-	result, err := AuthenticateUser (username, password)
+
+	// Autentikasi pengguna
+	result, err := AuthenticateUser(req.Username, req.Password)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid credentials"})
 	}
 
+	// Respon sukses
 	return c.JSON(http.StatusOK, result)
 }
 
@@ -43,8 +56,7 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 		}
 		return res, err
 	}
-
-	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	
 	// if err != nil {
 	// 	fmt.Println(err)
 	// 	return res, err

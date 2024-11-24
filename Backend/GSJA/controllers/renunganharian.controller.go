@@ -38,7 +38,7 @@ func GETAllRenunganHarian() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&renungan_harian.Id,
-			&renungan_harian.Status,
+			// &renungan_harian.Status,
 			&renungan_harian.Isi,
 			&renungan_harian.CreatedAt,
 			&renungan_harian.UpdatedAt,
