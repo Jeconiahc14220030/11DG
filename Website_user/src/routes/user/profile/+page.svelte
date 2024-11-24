@@ -36,6 +36,9 @@
 			// Pastikan data array memiliki elemen
 			if (result.data && result.data.length > 0) {
 				const userData = result.data[0]; // Ambil elemen pertama dalam array
+				// Menyimpan nilai poin ke sessionStorage
+				sessionStorage.setItem('poin', userData.poin);
+
 				user = {
 					name: userData.nama,
 					id: userData.id,
@@ -187,6 +190,7 @@
 				>
 					<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
 					<span class="mx-2">{user.points}</span>
+					<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
 				</div>
 			</div>
 		</a>

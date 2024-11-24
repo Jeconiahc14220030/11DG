@@ -46,7 +46,7 @@
 				class="flex bg-[#F0A242] justify-center text-white rounded-lg p-2 border-[#F3DDD1] w-full"
 			>
 				<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
-				<span class="mx-2">150000</span>
+				<span class="mx-2">{sessionStorage.getItem('poin')}</span>
 				<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
 			</div>
 		</div>
