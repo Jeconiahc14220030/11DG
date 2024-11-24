@@ -58,76 +58,41 @@ func FetchAllAnggotaKomunitas(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func POSTAnggotaKomunitas(c echo.Context) error {
-    var AnggotaKomunitas models.AnggotaKomunitas
-    var res models.Response
-
-    con := db.CreateCon()
-    if err := c.Bind(&AnggotaKomunitas); err != nil {
-        return err
-    }
-
-    sqlStatement := "INSERT INTO anggota_komunitas (id, id_anggota) VALUES (?, ?)"
-
-    stmt, err := con.Prepare(sqlStatement)
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-    }
-    defer stmt.Close()
-
-    result, err := stmt.Exec(AnggotaKomunitas.Id, AnggotaKomunitas.Id)
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-    }
-
-    lastInsertId, err := result.LastInsertId()
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-    }
-
-    AnggotaKomunitas.Id = int(lastInsertId)
-
-    res.Status = http.StatusOK
-    res.Message = "Success"
-    res.Data = AnggotaKomunitas
-
-    return c.JSON(http.StatusOK, res)
-}
-
-
-func ReceiveAnggotaKomunitas(c echo.Context) error {
-    var AnggotaKomunitas models.AnggotaKomunitas
-    var res models.Response
-
-    con := db.CreateCon()
-
-    // Bind the incoming JSON data to the AnggotaKomunitas struct
-    if err := c.Bind(&AnggotaKomunitas); err != nil {
+func RequestJoinKomunitas(c echo.Context) error {
+    // Bind data JSON dari request body ke struct AnggotaKomunitas
+    anggotaKomunitas := models.AnggotaKomunitas{}
+    if err := c.Bind(&anggotaKomunitas); err != nil {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
     }
 
-    // Ensure that the `id` and `status` fields are provided in the JSON
-    if AnggotaKomunitas.Id == 0 || AnggotaKomunitas.Status == "" {
-        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Missing id or status"})
+    // Validasi input
+    if anggotaKomunitas.IdAnggota == 0 || anggotaKomunitas.IdKomunitas == 0 {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "id_anggota and id_komunitas are required"})
     }
 
-    sqlStatement := "UPDATE anggota_komunitas SET status = ?, update_at = NOW() WHERE id = ?"
+    // Database connection
+    con := db.CreateCon()
 
-    stmt, err := con.Prepare(sqlStatement)
+    // Cek apakah pasangan id_anggota dan id_komunitas sudah ada
+    sqlStatement := "SELECT COUNT(*) FROM anggota_komunitas WHERE id_anggota = ? AND id_komunitas = ?"
+    var count int
+    err := con.QueryRow(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas).Scan(&count)
     if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to check existing data"})
     }
-    defer stmt.Close()
 
-    // Execute the update query with the provided `status` and `id`
-    _, err = stmt.Exec(AnggotaKomunitas.Status, AnggotaKomunitas.Id)
+    if count > 0 {
+        return c.JSON(http.StatusConflict, map[string]string{"message": "Data already exists"})
+    }
+
+    // Insert data baru ke tabel anggota_komunitas
+    sqlStatement = "INSERT INTO anggota_komunitas (id_anggota, id_komunitas, status) VALUES (?, ?, ?)"
+    _, err = con.Exec(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas, "pending")
     if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create request"})
     }
 
-    res.Status = http.StatusOK
-    res.Message = "Status updated successfully"
-    res.Data = AnggotaKomunitas
-
-    return c.JSON(http.StatusOK, res)
+    // Respon sukses
+    return c.JSON(http.StatusOK, map[string]string{"message": "Request to join komunitas created successfully"})
 }
+

@@ -92,5 +92,7 @@ func Init() *echo.Echo {
 
 	e.PUT("anggota/delete/:id", controllers.SoftDeleteAnggota); e.PUT("anggota/restore/:id", controllers.RestoreDeletedAnggota);
 
+	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
+
 	return e
 }

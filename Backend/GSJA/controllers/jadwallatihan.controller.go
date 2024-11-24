@@ -5,6 +5,7 @@ import (
 	"GSJA/models"
 	"net/http"
 	// "strconv"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -63,29 +64,36 @@ func GETJadwalLatihan() (models.Response, error) {
 
 func AddJadwalLatihan(c echo.Context) error {
 	// tanggal := c.FormValue("tanggal")
-	// lokasi := c.FormValue("lokasi")
-	// strIdAnggota := c.FormValue("id_anggota")
-	// strIdKomunitas := c.FormValue("id_komunitas")
+	lokasi := c.FormValue("lokasi")
+	strIdAnggota := c.FormValue("id_anggota")
+	strIdKomunitas := c.FormValue("id_komunitas")
 
-	// idAnggota, err := strconv.Atoi(strIdAnggota)
+	// // idAnggota, err := strconv.Atoi(strIdAnggota)
 
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
-	// }
+	// // if err != nil {
+	// // 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
+	// // }
 
-	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
+	// // idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
 	// formattanggal, err := time.Parse("2024-11-20", tanggal)
 	// if err != nil {
 	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	// }
 
-	// jadwalLatihan := models.JadwalLatihan{
-	// 	// Tanggal: tanggal,
-	// 	Lokasi: lokasi,
-	// 	IdAnggota: idAnggota,
-	// 	IdKomunitas: idKomunitas,
-	// }
+	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
+
+	formattanggal, err := time.Parse("2024-11-20", tanggal)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
+	}
+
+	jadwalLatihan := models.JadwalLatihan{
+		// Tanggal: tanggal,
+		Lokasi: lokasi,
+		IdAnggota: idAnggota,
+		IdKomunitas: idKomunitas,
+	}
 
 	// if err := c.Bind(&jadwalLatihan); err != nil {
 	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
