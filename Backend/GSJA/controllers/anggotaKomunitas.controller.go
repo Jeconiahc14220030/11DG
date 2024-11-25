@@ -96,3 +96,23 @@ func RequestJoinKomunitas(c echo.Context) error {
     return c.JSON(http.StatusOK, map[string]string{"message": "Request to join komunitas created successfully"})
 }
 
+func UpdateRequestStatus(c echo.Context) error {
+	// Bind data JSON dari request body ke struct AnggotaKomunitas
+	anggotaKomunitas := models.AnggotaKomunitas{}
+	if err := c.Bind(&anggotaKomunitas); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
+	}
+
+	// Database connection
+	con := db.CreateCon()
+
+	// Update status request
+	sqlStatement := "UPDATE anggota_komunitas SET status = ? WHERE id = ?"
+	_, err := con.Exec(sqlStatement, anggotaKomunitas.Status, anggotaKomunitas.Id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to update status"})
+	}
+
+	// Respon sukses
+	return c.JSON(http.StatusOK, map[string]string{"message": "Request status updated successfully"})
+}
