@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 
-    let voucher = [];
+	let voucher = [];
 
 	async function fetchdata() {
 		try {
@@ -14,9 +14,10 @@
 	}
 
 	onMount(() => {
-        fetchdata();
+		fetchdata();
 
 		const editBtn = document.getElementById('create');
+
 		if (editBtn) {
 			editBtn.addEventListener('click', () => {
 				Swal.fire({
@@ -27,40 +28,50 @@
 						popup: 'fixed-swal'
 					},
 					html: `
-					<div style="text-align: left; max-width: 500px; margin: 0 auto;">
-						<label for="Voucher" style="display: block; margin-bottom: 5px;">Foto Voucher:</label>
-						<input type="file" id="Voucher" style="width: 80%;" required>
+                <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <label for="Voucher" style="display: block; margin-bottom: 5px;">Foto Voucher:</label>
+                    <input type="file" id="Voucher" name="Voucher" style="width: 80%;" required>
 
-						<label for="Nama" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher:</label>
-						<input type="text" id="Nama" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
+                    <label for="Nama" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher:</label>
+                    <input type="text" id="Nama" name="Nama" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
 
-						<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point:</label>
-						<input type="text" id="laporan" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>
-                        <span style="white-space: nowrap;">Point</span>
-					</div>
-				`,
-					confirmButtonText: 'Create',
+                    <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point:</label>
+                    <input type="text" id="laporan" name="laporan" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>
+                    <span style="white-space: nowrap;">Point</span>
+                </form>
+            `,
+					confirmButtonText: 'Submit',
 					confirmButtonColor: '#F0A242',
 					focusConfirm: false,
 					preConfirm: () => {
-						const voucher = document.getElementById('Voucher').files[0];
-						const nama = document.getElementById('Nama').value;
-						const laporan = document.getElementById('laporan').value;
+						const formElement = document.getElementById('voucher-form');
+						const formData = new FormData(formElement);
+
+						const voucher = formData.get('Voucher');
+						const nama = formData.get('Nama');
+						const laporan = formData.get('laporan');
 
 						if (!voucher || !nama || !laporan) {
 							Swal.showValidationMessage('Semua input harus diisi');
 							return false;
 						}
 
-						return { voucher, nama, laporan };
+						return fetch('http://localhost:8080/voucher/add', {
+							method: 'POST',
+							body: formData
+						})
+							.then((response) => {
+								if (!response.ok) {
+									throw new Error('Gagal menyimpan data');
+								}
+								return response.json();
+							})
+							.catch((error) => {
+								Swal.showValidationMessage(`Request failed: ${error.message}`);
+							});
 					}
 				}).then((result) => {
 					if (result.isConfirmed) {
-						const dataInput = result.value;
-						console.log('Voucher:', dataInput.voucher);
-						console.log('Nama Voucher:', dataInput.nama);
-						console.log('Jumlah Point:', dataInput.laporan);
-
 						Swal.fire({
 							icon: 'success',
 							title: 'Voucher Berhasil Ditambahkan',
