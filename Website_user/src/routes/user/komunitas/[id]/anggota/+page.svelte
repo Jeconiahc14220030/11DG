@@ -51,7 +51,7 @@
 	}
 
 	onMount(() => {
-		alert($page.params.id); // Debugging
+		// alert($page.params.id); // Debugging
 		fetchDetail();
 		fetchAnggota();
 	});

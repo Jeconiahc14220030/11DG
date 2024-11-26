@@ -33,37 +33,32 @@
 		}
 	}
 
-	async function handleAccept(requestId) {
+	async function updateStatusRequest(id, status) {
 		try {
-			const response = await fetch(`http://localhost:8080/anggotakomunitas/${requestId}/accept`, {
-				method: 'POST'
+			console.log('ID yang dikirim:', id); // Debug ID
+			console.log('Status yang dikirim:', status); // Debug Status
+			const response = await fetch('http://localhost:8080/anggotaKomunitas/updatestatus', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: id,
+					status: status
+				})
 			});
 
+			// Mengecek respons dari server
 			if (response.ok) {
-				console.log('Permintaan diterima');
-				fetchRequest(); // Refresh data setelah perubahan
+				const result = await response.json();
+				alert(result.message); // Menampilkan pesan sukses
+				location.reload(); // Reload halaman untuk memperbarui UI
 			} else {
-				console.error(`Gagal menerima permintaan. Status HTTP: ${response.status}`);
+				const errorData = await response.json();
+				alert(`Gagal: ${errorData.message}`); // Menampilkan pesan error
 			}
 		} catch (error) {
-			console.error('Kesalahan saat menerima permintaan:', error);
-		}
-	}
-
-	async function handleReject(requestId) {
-		try {
-			const response = await fetch(`http://localhost:8080/anggotakomunitas/${requestId}/reject`, {
-				method: 'POST'
-			});
-
-			if (response.ok) {
-				console.log('Permintaan ditolak');
-				fetchRequest(); // Refresh data setelah perubahan
-			} else {
-				console.error(`Gagal menolak permintaan. Status HTTP: ${response.status}`);
-			}
-		} catch (error) {
-			console.error('Kesalahan saat menolak permintaan:', error);
+			console.error('Terjadi kesalahan:', error);
 		}
 	}
 
@@ -92,7 +87,6 @@
 		</div>
 
 		<!-- Daftar Anggota -->
-
 		{#if $requests.length > 0}
 			{#each $requests as request (request.id)}
 				<div class="bg-white shadow-md flex flex-col rounded p-4 mb-4">
@@ -124,14 +118,14 @@
 							<!-- Tombol Terima -->
 							<button
 								class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-								on:click={() => handleAccept(request.id)}
+								on:click={() => updateStatusRequest(request.id, 'diterima')}
 							>
 								Terima
 							</button>
 							<!-- Tombol Tolak -->
 							<button
 								class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-								on:click={() => handleReject(request.id)}
+								on:click={() => updateStatusRequest(request.id, 'ditolak')}
 							>
 								Tolak
 							</button>

@@ -31,7 +31,14 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				events = data.data.map((event) => ({
+				// Filter data untuk bulan dan tahun saat ini
+				const filteredEvents = data.data.filter((event) => {
+					const eventDate = new Date(event.tanggal);
+					return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
+				});
+
+				// Format data yang difilter
+				events = filteredEvents.map((event) => ({
 					date: new Date(event.tanggal).getDate(),
 					description: event.topik,
 					color: event.jenis_ibadah === 'ibadah pagi' ? 'bg-red-500' : 'bg-blue-500',
