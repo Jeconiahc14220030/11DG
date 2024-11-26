@@ -12,11 +12,12 @@ import (
 )
 
 func Login(c echo.Context) error {
+	var user models.User
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-
-	if username == "" || password == "" {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Username and password are required"})
+	
+	if err := c.Bind(&user); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 	}
 
 	result, err := AuthenticateUser (username, password)
