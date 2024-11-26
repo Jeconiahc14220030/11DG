@@ -60,7 +60,7 @@ func Init() *echo.Echo {
 	e.GET("anggota/:id/absensi", controllers.FetchAbsensiById)
 
 	e.GET("/hf", controllers.FetchAllHf)
-	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas)
+	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas); e.GET("/anggotakomunitas/pending", controllers.FetchPendingRequest); e.GET("/anggotakomunitas/member", controllers.FetchAllMemberAnggotaKomunitas);
 
 	e.POST("/anggota/add", controllers.AddAnggota)
 
