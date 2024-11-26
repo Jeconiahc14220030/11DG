@@ -12,16 +12,9 @@
 
 	const userId = 1;
 
-	let user = {
-		name: '',
-		id: '',
-		phone: '',
-		email: '',
-		birthdate: '',
-		points: 0
-	};
-
+	let user = [];
 	let vouchers = [];
+	let points = [];
 
 	async function fetchAnggota() {
 		try {
@@ -101,6 +94,68 @@
 		}
 	}
 
+	async function fetchPoins() {
+		try {
+			const responseAbsensi = await fetch(`http://localhost:8080/anggota/${userId}/absensi`);
+
+			if (!responseAbsensi.ok) {
+				throw new Error(`Http error! Status: ${responseAbsensi.status}`);
+			}
+
+			const resultAbsensi = await responseAbsensi.json();
+
+			if (resultAbsensi.data && resultAbsensi.data.length > 0) {
+				const jadwalIds = resultAbsensi.data.map((item) => item.id_jadwal);
+
+				const responseJadwal = await fetch(
+					`http://localhost:8080/jadwal?ids=${jadwalIds.join(',')}`
+				);
+
+				if (!responseJadwal.ok) {
+					throw new Error(`Http error! Status: ${responseJadwal.status}`);
+				}
+
+				const resultJadwal = await responseJadwal.json();
+
+				// Gabungkan absensi dengan jadwal
+				const absensiWithJadwal = resultAbsensi.data.map((absensi) => {
+					const jadwalInfo = resultJadwal.data.find((jadwal) => jadwal.id === absensi.id_jadwal);
+					return {
+						...absensi,
+						jadwal_topik: jadwalInfo?.topik,
+						jadwal_jenis_ibadah: jadwalInfo?.jenis_ibadah,
+						jadwal_tanggal: formatDate(jadwalInfo?.tanggal), // Format tanggal di sini
+						jumlah_poin: jadwalInfo?.jumlah_poin
+					};
+				});
+
+				// Format data untuk points
+				points = absensiWithJadwal.map((item) => ({
+					topik: item.jadwal_topik,
+					jenis_ibadah: item.jadwal_jenis_ibadah,
+					date: item.jadwal_tanggal, // Tanggal sudah diformat
+					point: item.jumlah_poin
+				}));
+
+				// Panggil fungsi untuk memperbarui tampilan
+				displayPoints(points);
+			} else {
+				console.log('Tidak ada data absensi.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	function displayPoints(points) {
+		points.forEach((point) => {
+			point.date = new Date(point.date).toISOString().split('T')[0]; // Ubah format ke YYYY-MM-DD
+		});
+
+		// Pastikan UI diperbarui, jika menggunakan framework seperti Svelte, cukup pastikan variable "points" diperbarui.
+		console.log(points); // Debug untuk memastikan data terformat dengan benar
+	}
+
 	let showModal = false; // Control for logout modal
 	let showPointsDetail = false; // Control for points detail
 	let showVoucherHistory = false; // Control for voucher history
@@ -127,39 +182,6 @@
 		return `${year}-${month}-${day}`; // Mengembalikan format 'YYYY-MM-DD'
 	}
 
-	let points = [
-		{
-			title: 'Ibadah Raya - Bersama Tuhan Kita Bebas',
-			date: '10 Agustus 2024, 10:48',
-			role: 'PAW',
-			point: '+ 4 Point'
-		},
-		{
-			title: 'Komunitasku - Tuhan Akan Pasti Menolong',
-			date: '13 Agustus 2024, 10:48',
-			role: 'Anggota',
-			point: '+ 2 Point'
-		},
-		{
-			title: 'Ibadah Raya - Iman Yang Memerdekakan',
-			date: '17 Agustus 2024, 10:48',
-			role: 'Anggota',
-			point: '+ 2 Point'
-		},
-		{
-			title: 'Komunitasku - Tepat Pada Waktu Tuhan',
-			date: '20 Agustus 2024, 10:48',
-			role: 'Anggota',
-			point: '+ 2 Point'
-		},
-		{
-			title: 'Ibadah Raya - Bebas dari belenggu Dosa',
-			date: '24 Agustus 2024, 10:48',
-			role: 'PAW',
-			point: '+ 4 Point'
-		}
-	];
-
 	let roles = [
 		{ title: 'BPH' },
 		{ title: 'Koordinator' },
@@ -171,6 +193,7 @@
 	onMount(() => {
 		fetchAnggota();
 		fetchRiwayatVoucher();
+		fetchPoins();
 	});
 </script>
 
@@ -221,9 +244,9 @@
 			</div>
 		</div>
 
-		<!-- Points Detail Section -->
 		<div class="flex flex-col justify-between items-center p-4">
 			<div class="flex flex-col w-full">
+				<!-- Points Detail Section -->
 				<div
 					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
 					on:click={() => (showPointsDetail = !showPointsDetail)}
@@ -236,13 +259,13 @@
 				>
 					{#each points as point}
 						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-							<h2 class="font-semibold">{point.title}</h2>
-							<div class="flex justify-between items-center mt-2">
+							<h2 class="font-bold">{point.jenis_ibadah}</h2>
+							<h2 class="">{point.topik}</h2>
+							<div class="flex justify-between items-center">
 								<div class="flex flex-col">
 									<p class="text-sm text-gray-500">{point.date}</p>
 								</div>
 								<div class="flex items-center">
-									<span class="text-xs text-gray-600 mr-4">{point.role}</span>
 									<span class="text-green-600 font-bold">{point.point}</span>
 								</div>
 							</div>
