@@ -76,9 +76,8 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
-	// e.POST("anggotaKomunitas/request", controllers.POSTAnggotaKomunitas)
 
-	// e.PUT("anggotaKomunitas/updatestatus", controllers.ReceiveAnggotaKomunitas)
+	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
@@ -93,6 +92,8 @@ func Init() *echo.Echo {
 	e.PUT("anggota/delete/:id", controllers.SoftDeleteAnggota); e.PUT("anggota/restore/:id", controllers.RestoreDeletedAnggota);
 
 	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
+
+	e.PUT("komunitasPelayanan/edit/:id", controllers.EditKomunitas)
 
 	return e
 }
