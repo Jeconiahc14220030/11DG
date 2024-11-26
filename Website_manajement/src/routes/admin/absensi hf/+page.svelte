@@ -113,6 +113,7 @@
 			}
 		});
 	}
+	
 	onMount(() => {
 		fetchdata();
 	});

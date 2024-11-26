@@ -1,20 +1,78 @@
 <script>
 	let dummyData = [
-		{ nama: 'Kelompok A' },
-		{ nama: 'Kelompok B' },
-		{ nama: 'Kelompok C' },
-		{ nama: 'Kelompok D' },
-		{ nama: 'Kelompok E' }
+		{ nama: 'Kelompok A', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok B', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok C', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok D', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok E', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok F', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok G', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok H', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok I', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok J', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok K', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok L', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok M', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok N', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok O', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok P', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok Q', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok R', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok S', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok T', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok U', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok V', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok W', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok X', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok Y', tanggal: '26 November 2024' },
+		{ nama: 'Kelompok Z', tanggal: '26 November 2024' }
 	];
 
-	function Editabsensi() {
-		// Logic untuk edit absensi
-		alert('Edit Absensi');
-	}
+	function absensihf() {
+		Swal.fire({
+			title: 'Tambah Absensi HF',
+			width: '600px',
+			padding: '1em',
+			customClass: {
+				popup: 'fixed-swal'
+			},
+			html: `
+		<div style="text-align: center; max-width: 500px; margin: 0 auto;">
+            <label for="topic" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Topik HF:</label>
+            <input type="text" id="topic" class="swal2-input" style="width: 80%;" placeholder="Topik HF"></input>
 
-	function detailhf() {
-		// Logic untuk detail HF
-		alert('Detail HF');
+            <label for="date" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Tanggal:</label>
+            <input type="date" id="date" class="swal2-input" style="width: 80%;" required>
+		</div>
+	`,
+			confirmButtonText: 'Save',
+			confirmButtonColor: '#F0A242',
+			focusConfirm: false,
+			preConfirm: () => {
+				const topic = document.getElementById('topic').value;
+				const date = document.getElementById('date').value;
+
+				if (!topic || !date) {
+					Swal.showValidationMessage('Semua input harus diisi');
+					return false;
+				}
+
+				return { topic, date };
+			}
+		}).then((result) => {
+			if (result.isConfirmed) {
+				const dataInput = result.value;
+				console.log('Tanggal:', dataInput.topic);
+				console.log('Topik:', dataInput.date);
+
+				Swal.fire({
+					icon: 'success',
+					title: 'Absensi HF Berhasil Di Tambahkan!',
+					showConfirmButton: false,
+					timer: 1500
+				});
+			}
+		});
 	}
 </script>
 
@@ -26,62 +84,26 @@
 					<h1 class="text-xl font-bold mb-4 text-center">Anggota</h1>
 					<table class="w-full h-full border-collapse border border-black">
 						<thead>
-							<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal border-black border-b">
+							<tr class="bg-blue-100 text-gray-600 uppercase text-sm leading-normal border-black border-b">
 								<th class="py-3 px-6 text-left text-black w-1/2">Anggota</th>
-								<th class="py-3 px-6 text-center text-black w-1/2">Aksi</th>
 							</tr>
 						</thead>
 						<tbody class="text-gray-600 text-sm">
 							{#each dummyData as item}
 								<tr class="border-b border-black hover:bg-gray-100">
 									<td class="py-3 px-6 text-left">{item.nama}</td>
-									<td class="py-3 px-6 text-center">
-										<div class="flex justify-center">
-											<button
-												on:click={Editabsensi}
-												class="mr-2 transform hover:text-blue-400 hover:scale-110"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="1.5em"
-													height="1.5em"
-													viewBox="0 0 16 16"
-												>
-													<path
-														fill="currentColor"
-														d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
-													/>
-												</svg>
-											</button>
-											<button
-												on:click={detailhf}
-												class="transform hover:text-rose-400 hover:scale-110"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="2em"
-													height="2em"
-													viewBox="0 0 24 24"
-												>
-													<path
-														fill="currentColor"
-														d="M8 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8m9 0a3 3 0 1 0 0-6a3 3 0 0 0 0 6M4.25 14A2.25 2.25 0 0 0 2 16.25v.25S2 21 8 21s6-4.5 6-4.5v-.25A2.25 2.25 0 0 0 11.75 14zM17 19.5c-1.171 0-2.068-.181-2.755-.458a5.5 5.5 0 0 0 .736-2.207A4 4 0 0 0 15 16.55v-.3a3.24 3.24 0 0 0-.902-2.248L14.2 14h5.6a2.2 2.2 0 0 1 2.2 2.2s0 3.3-5 3.3"
-													/>
-												</svg>
-											</button>
-										</div>
-									</td>
 								</tr>
 							{/each}
 						</tbody>
 					</table>
+					<button class="bg-blue-200 text-xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-200 hover:border-[0.2px] hover:border-black ease-in duration-400 mt-5">Tambah Anggota</button>
 				</div>
 
 				<div class="flex flex-col items-center w-full ">
 					<h1 class="text-xl font-bold mb-4 text-center">Absensi</h1>
 					<table class="w-full h-full border-collapse border border-black">
 						<thead>
-							<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal border-black border-b">
+							<tr class="bg-red-100 text-gray-600 uppercase text-sm leading-normal border-black border-b">
 								<th class="py-3 px-6 text-left text-black w-1/4">Topik HF</th>
 								<th class="py-3 px-6 text-center text-black w-1/4">Tanggal</th>
 								<th class="py-3 px-6 text-center text-black w-1/4">Aksi</th>
@@ -91,12 +113,13 @@
 							{#each dummyData as item}
 								<tr class="border-b border-black hover:bg-gray-100">
 									<td class="py-3 px-6 text-left">{item.nama}</td>
-									<td class="py-3 px-6 text-center"></td>
+									<td class="py-3 px-6 text-center">{item.tanggal}</td>
 									<td class="py-3 px-6 text-center"></td>
 								</tr>
 							{/each}
 						</tbody>
 					</table>
+					<button on:click={absensihf} class="bg-red-200 text-xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-200 hover:border-[0.1px] hover:border-black ease-in duration-400 mt-5">Create</button>
 				</div>
 			</div>
 		</div>
