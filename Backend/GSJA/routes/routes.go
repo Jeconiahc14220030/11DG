@@ -62,6 +62,8 @@ func Init() *echo.Echo {
 	e.GET("/hf", controllers.FetchAllHf)
 	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas); e.GET("/anggotakomunitas/pending", controllers.FetchPendingRequest); e.GET("/anggotakomunitas/member", controllers.FetchAllMemberAnggotaKomunitas);
 
+	e.GET("/jadwal/:id", controllers.FetchJadwalById)
+
 	e.POST("/anggota/add", controllers.AddAnggota)
 
 	e.POST("renunganharian/add", controllers.AddRenunganHarian)
@@ -94,6 +96,16 @@ func Init() *echo.Echo {
 	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
 
 	e.PUT("komunitasPelayanan/edit/:id", controllers.EditKomunitas)
+	e.PUT("absensihf/delete/:id", controllers.SoftDeleteAbsensiHf); 
+	e.PUT("berita/delete/:id", controllers.SoftDeletedataBerita);
+	e.PUT("carousel/delete/:id", controllers.SoftDeleteCarousel);
+	e.PUT("jadwal/delete/:id", controllers.SoftDeleteJadwal);
+	e.PUT("jadwallatihan/delete/:id", controllers.SoftDeletedataJadwalLatihan);
+	e.PUT("kontengereja/delete/:id", controllers.SoftDeletedataKontenGereja);
+	e.PUT("kutipanharian/delete/:id", controllers.SoftDeletedataKutipanHarian);
+	e.PUT("renunganharian/delete/:id", controllers.SoftDeletedataRenunganHarian);
+	e.PUT("voucher/delete/:id", controllers.SoftDeleteVoucher);
+
 
 	return e
 }
