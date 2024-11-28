@@ -19,6 +19,49 @@ func FetchAllJadwal(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func FetchJadwalById(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := GETJadwalById(id)
+
+	if
+		err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GETJadwalById(id string) (models.Response, error) {
+	var jadwal models.Jadwal
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM jadwal WHERE id = ?"
+
+	err := con.QueryRow(sqlStatement, id).Scan(
+		&jadwal.Id, 
+		&jadwal.Tanggal, 
+		&jadwal.Topik, 
+		&jadwal.JenisIbadah, 
+		&jadwal.JumlahPoin,
+		&jadwal.CreatedAt,
+		&jadwal.UpdatedAt,
+		&jadwal.DeletedAt,
+	)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "OK"
+	res.Data = jadwal
+
+	return res, err
+}
+
 func GETAllJadwal() (models.Response, error) {
 	var jadwal models.Jadwal
 	var arrJadwal []models.Jadwal
