@@ -12,26 +12,17 @@ import (
 
 func Login(c echo.Context) error {
 	// Struktur untuk menampung data JSON yang diterima
-	type LoginRequest struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
 
-	// Parse JSON request body ke dalam struktur LoginRequest
-	var req LoginRequest
-	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request format"})
-	}
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
-	// Validasi input
-	if req.Username == "" || req.Password == "" {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Username and password are required"})
-	}
-
+	fmt.Println(username)
+	fmt.Println(password)
 
 	// Autentikasi pengguna
-	result, err := AuthenticateUser(req.Username, req.Password)
+	result, err := AuthenticateUser(username, password)
 	if err != nil {
+		fmt.Println("error 3")
 		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid credentials"})
 	}
 

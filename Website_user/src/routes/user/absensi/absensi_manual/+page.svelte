@@ -19,7 +19,7 @@
 	async function fetchJadwal() {
 		try {
 			const id = sessionStorage.getItem('absensiID');
-			const response = await fetch(`http://localhost:8080/jadwal`);
+			const response = await fetch(`http://localhost:8080/jadwal/${id}`);
 			const data = await response.json();
 
 			if (data.status === 200) {

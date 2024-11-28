@@ -22,7 +22,9 @@ func Init() *echo.Echo {
 		return c.String(http.StatusOK, "Berhasil terkoneksi dengan database!")
 	})
 
-	e.POST("/login", controllers.Login)
+	e.POST("/login", func(c echo.Context) error {
+		return controllers.Login(c)
+	})
 
 	// Fetch Data
 	e.GET("/anggota", controllers.FetchAllAnggota)

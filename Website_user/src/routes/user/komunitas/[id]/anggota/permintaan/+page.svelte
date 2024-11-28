@@ -6,6 +6,14 @@
 	// Store untuk menyimpan daftar permintaan
 	export const requests = writable([]);
 
+	async function fetchAnggota() {
+		try {
+			
+		} catch (error) {
+			
+		}
+	}
+
 	// Fungsi untuk mengambil data permintaan bergabung
 	async function fetchRequest() {
 		const idKomunitas = $page.params.id; // Mengambil id_komunitas dari parameter URL
@@ -22,43 +30,14 @@
 			const { status, data } = await response.json();
 
 			if (status === 200) {
-				// Filter data berdasarkan id_komunitas
-				const filteredData = data.filter((item) => item.id_komunitas == idKomunitas);
+				// Filter data berdasarkan id_komunitas dan status "ditolak"
+				const filteredData = data.filter((item) => item.id_komunitas == idKomunitas && item.status === 'ditolak');
 				requests.set(filteredData); // Simpan data ke store
 			} else {
 				console.error('Gagal mengambil data, status:', status);
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan saat mem-fetch data:', error);
-		}
-	}
-
-	async function updateStatusRequest(id, status) {
-		try {
-			console.log('ID yang dikirim:', id); // Debug ID
-			console.log('Status yang dikirim:', status); // Debug Status
-			const response = await fetch('http://localhost:8080/anggotaKomunitas/updatestatus', {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					id: id,
-					status: status
-				})
-			});
-
-			// Mengecek respons dari server
-			if (response.ok) {
-				const result = await response.json();
-				alert(result.message); // Menampilkan pesan sukses
-				location.reload(); // Reload halaman untuk memperbarui UI
-			} else {
-				const errorData = await response.json();
-				alert(`Gagal: ${errorData.message}`); // Menampilkan pesan error
-			}
-		} catch (error) {
-			console.error('Terjadi kesalahan:', error);
 		}
 	}
 
@@ -75,7 +54,7 @@
 			<a href="#" on:click|preventDefault={() => window.history.back()}>
 				<img src="/src/lib/image/return.svg" alt="return" class="w-6 h-6" />
 			</a>
-			<h1 class="ml-2 text-lg md:text-xl font-bold">Permintaan Bergabung</h1>
+			<h1 class="ml-2 text-lg md:text-xl font-bold">Permintaan Bergabung - Ditolak</h1>
 		</div>
 	</header>
 
@@ -86,7 +65,7 @@
 			<img src="/src/lib/image/logo.png" alt="logo" class="w-16 h-16" />
 		</div>
 
-		<!-- Daftar Anggota -->
+		<!-- Daftar Permintaan Ditolak -->
 		{#if $requests.length > 0}
 			{#each $requests as request (request.id)}
 				<div class="bg-white shadow-md flex flex-col rounded p-4 mb-4">
@@ -134,7 +113,7 @@
 				</div>
 			{/each}
 		{:else}
-			<p class="text-center text-gray-600">Tidak ada permintaan bergabung untuk komunitas ini.</p>
+			<p class="text-center text-gray-600">Tidak ada permintaan bergabung yang ditolak untuk komunitas ini.</p>
 		{/if}
 	</div>
 </div>
