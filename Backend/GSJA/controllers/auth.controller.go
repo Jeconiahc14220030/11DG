@@ -47,10 +47,26 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 		return res, err
 	}
 
+<<<<<<< HEAD
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		fmt.Println("Password tidak cocok:", err)
 		return res, errors.New("invalid password")
+=======
+	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	// if err != nil {
+	// 	fmt.Println("Password does not match:", err)
+	// } else {
+	// 	fmt.Println("Password matches!")
+	// }
+
+	if user.Password == password {
+		fmt.Println("Password cocok")
+		return res, nil
+	} else {
+		fmt.Println("Password tidak cocok")
+		return res, errors.New("password tidak cocok")
+>>>>>>> f55fa0bbdacfa6193632b0bcd76122ea6d69c193
 	}
 
 	// if user.Password == password {
