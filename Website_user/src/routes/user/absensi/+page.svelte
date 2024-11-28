@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 
 	const userId = 1;
+	let jadwalId = null;
 
 	async function fetchAbsensi() {
 		try {
@@ -78,6 +79,74 @@
 		absensiContainer.innerHTML = absensiHTML;
 	}
 
+	async function fetchJadwal() {
+		try {
+			// Panggil API untuk mendapatkan data jadwal
+			const response = await fetch('http://localhost:8080/jadwal');
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			if (result.status === 200 && result.data.length > 0) {
+				// Ambil elemen jadwalList dari modal
+				const jadwalList = document.getElementById('jadwalList');
+
+				// Kosongkan list sebelum mengisi
+				jadwalList.innerHTML = '';
+
+				// Tambahkan setiap item jadwal ke dalam modal
+				result.data.forEach((jadwal) => {
+					const item = document.createElement('a');
+					item.className =
+						'block p-4 border rounded shadow-sm bg-gray-100 hover:bg-gray-200 transition';
+					item.href = '/user/absensi/absensi_manual'; // URL tujuan
+					item.innerHTML = `
+					<p><strong>Tanggal:</strong> ${jadwal.tanggal}</p>
+					<p><strong>Topik:</strong> ${jadwal.topik}</p>
+					<p><strong>Jenis Ibadah:</strong> ${jadwal.jenis_ibadah}</p>
+					<p><strong>Jumlah Poin:</strong> ${jadwal.jumlah_poin}</p>
+				`;
+
+					// Tambahkan event listener untuk menyimpan id jadwal yang dipilih
+					item.addEventListener('click', function (e) {
+						sessionStorage.setItem('absensiID', jadwal.id);
+						window.location.href = item.href; // Arahkan ke halaman absensi_manual
+					});
+
+					// Tambahkan elemen ke dalam daftar
+					jadwalList.appendChild(item);
+				});
+			} else {
+				// Jika tidak ada data, tampilkan pesan kosong
+				jadwalList.innerHTML = '<p>Tidak ada jadwal tersedia.</p>';
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	function bukaModal() {
+		const modal = document.getElementById('jadwalModal');
+		if (!modal) {
+			console.error('Modal tidak ditemukan');
+			return;
+		}
+
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
+
+		// Panggil fetchJadwal untuk memuat data
+		fetchJadwal();
+	}
+
+	// Fungsi untuk menutup modal
+	function tutupModal() {
+		const modal = document.getElementById('jadwalModal');
+		modal.classList.add('hidden');
+		modal.classList.remove('flex');
+	}
+
 	// Fungsi untuk mengubah format tanggal menjadi YYYY-MM-DD
 	function formatDate(dateString) {
 		const date = new Date(dateString);
@@ -102,9 +171,9 @@
 			<a href="/user/absensi/absensi_hf" class="p-2">
 				<img src="/src/lib/image/absenHF.svg" alt="Icon absensi HF" class="w-6 h-6" />
 			</a>
-			<a href="/user/absensi/absensi_manual" class="p-2">
+			<button class="p-2" on:click={bukaModal}>
 				<img src="/src/lib/image/absenManual.svg" alt="Icon absensi manual" class="w-6 h-6" />
-			</a>
+			</button>
 		</div>
 	</header>
 
@@ -117,5 +186,24 @@
 
 		<!-- Absensi Items -->
 		<div id="absensi-container"></div>
+	</div>
+
+	<!-- Modal -->
+	<div
+		id="jadwalModal"
+		class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-50 flex items-center justify-center"
+	>
+		<div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
+			<h2 class="text-xl font-semibold mb-4">Daftar Jadwal</h2>
+			<div id="jadwalList" class="space-y-4">
+				<!-- List jadwal akan diisi melalui JavaScript -->
+			</div>
+			<button
+				on:click={tutupModal}
+				class="mt-6 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+			>
+				Tutup
+			</button>
+		</div>
 	</div>
 </div>

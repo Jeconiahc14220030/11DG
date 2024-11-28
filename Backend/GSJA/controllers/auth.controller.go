@@ -44,7 +44,6 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "SELECT id,username,password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
