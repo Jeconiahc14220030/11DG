@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	async function tambahberita(event) {
 		event.preventDefault();
@@ -54,9 +55,11 @@
 
 			Swal.fire({
 				title: 'Berhasil Ditambahkan',
-				text: 'Berita berhasil ditambahkan ke sistem',
+				text: 'Konten Gereja berhasil ditambahkan ke sistem',
 				icon: 'success',
 				confirmButtonColor: '#F0A242'
+			}).then(() => {
+				window.location.reload();
 			});
 		} catch (err) {
 			console.error('Terjadi kesalahan saat menambahkan konten gereja:', err);

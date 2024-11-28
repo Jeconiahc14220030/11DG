@@ -125,11 +125,11 @@ func GETKomunitasById(id int) (models.Response, error) {
 }
 
 func AddPengumuman(c echo.Context) error {
-	konten := c.FormValue("konten")
+	// konten := c.FormValue("konten")
 	// tanggal := c.FormValue("tanggal")
-	strIdKomunitas := c.FormValue("id_komunitas")
+	// strIdKomunitas := c.FormValue("id_komunitas")
 
-	idKomunitas, err := strconv.Atoi(strIdKomunitas)
+	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
 	// formattanggal, err := time.Parse("2024-11-20", tanggal)
 	// if err != nil {
