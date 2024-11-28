@@ -2,9 +2,6 @@
 	async function handleLogin(event) {
 		event.preventDefault(); // Mencegah form melakukan submit default
 
-		// const username = document.getElementById('username').value;
-		// const password = document.getElementById('password').value;
-
 		let formData = new FormData(document.getElementById('loginForm'));
 
 		for (let [key, value] of formData.entries()) {

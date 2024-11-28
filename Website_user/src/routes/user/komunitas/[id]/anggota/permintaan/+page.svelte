@@ -6,14 +6,6 @@
 	// Store untuk menyimpan daftar permintaan
 	export const requests = writable([]);
 
-	async function fetchAnggota() {
-		try {
-			
-		} catch (error) {
-			
-		}
-	}
-
 	// Fungsi untuk mengambil data permintaan bergabung
 	async function fetchRequest() {
 		const idKomunitas = $page.params.id; // Mengambil id_komunitas dari parameter URL
@@ -30,8 +22,12 @@
 			const { status, data } = await response.json();
 
 			if (status === 200) {
-				// Filter data berdasarkan id_komunitas dan status "ditolak"
-				const filteredData = data.filter((item) => item.id_komunitas == idKomunitas && item.status === 'ditolak');
+				// Filter data berdasarkan id_komunitas dan status "ditolak" atau "pending"
+				const filteredData = data.filter(
+					(item) =>
+						item.id_komunitas == idKomunitas &&
+						(item.status === 'ditolak' || item.status === 'pending')
+				);
 				requests.set(filteredData); // Simpan data ke store
 			} else {
 				console.error('Gagal mengambil data, status:', status);
@@ -54,7 +50,7 @@
 			<a href="#" on:click|preventDefault={() => window.history.back()}>
 				<img src="/src/lib/image/return.svg" alt="return" class="w-6 h-6" />
 			</a>
-			<h1 class="ml-2 text-lg md:text-xl font-bold">Permintaan Bergabung - Ditolak</h1>
+			<h1 class="ml-2 text-lg md:text-xl font-bold">Permintaan Bergabung</h1>
 		</div>
 	</header>
 
@@ -113,7 +109,9 @@
 				</div>
 			{/each}
 		{:else}
-			<p class="text-center text-gray-600">Tidak ada permintaan bergabung yang ditolak untuk komunitas ini.</p>
+			<p class="text-center text-gray-600">
+				Tidak ada permintaan bergabung yang ditolak untuk komunitas ini.
+			</p>
 		{/if}
 	</div>
 </div>

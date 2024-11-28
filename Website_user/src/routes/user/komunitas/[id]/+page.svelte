@@ -35,7 +35,7 @@
 	}
 
 	async function requestJoinKomunitas() {
-		const idAnggota = 1; // Ganti dengan ID anggota yang sesuai
+		const idAnggota = 2; // Ganti dengan ID anggota yang sesuai
 		const idKomunitas = $page.params.id;
 
 		const requestData = {
