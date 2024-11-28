@@ -58,76 +58,165 @@ func FetchAllAnggotaKomunitas(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func POSTAnggotaKomunitas(c echo.Context) error {
-    var AnggotaKomunitas models.AnggotaKomunitas
-    var res models.Response
+func GetPendingRequest() (models.Response, error) {
+	var AnggotaKomunitas models.AnggotaKomunitas
+	var arrayAnggotaKomunitas []models.AnggotaKomunitas
+	var res models.Response
 
-    con := db.CreateCon()
-    if err := c.Bind(&AnggotaKomunitas); err != nil {
-        return err
-    }
+	con := db.CreateCon()
 
-    sqlStatement := "INSERT INTO anggota_komunitas (id, id_anggota) VALUES (?, ?)"
+	sqlStatement := "SELECT * FROM anggota_komunitas WHERE status = 'pending'"
 
-    stmt, err := con.Prepare(sqlStatement)
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-    }
-    defer stmt.Close()
+	rows, err := con.Query(sqlStatement)
 
-    result, err := stmt.Exec(AnggotaKomunitas.Id, AnggotaKomunitas.Id)
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-    }
+	if err != nil {
+		return res, err
+	}
 
-    lastInsertId, err := result.LastInsertId()
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-    }
+	defer rows.Close()
 
-    AnggotaKomunitas.Id = int(lastInsertId)
+	for rows.Next() {
+		err = rows.Scan(
+			&AnggotaKomunitas.Id, 
+			&AnggotaKomunitas.IdKomunitas, 
+			&AnggotaKomunitas.IdAnggota,
+			&AnggotaKomunitas.RequestAt,
+			&AnggotaKomunitas.UpdatedAt,
+			&AnggotaKomunitas.DeletedAt,
+			&AnggotaKomunitas.Status, 
+		)
+		
+		if err != nil {
+			return res, err
+		}
 
-    res.Status = http.StatusOK
-    res.Message = "Success"
-    res.Data = AnggotaKomunitas
+		arrayAnggotaKomunitas = append(arrayAnggotaKomunitas, AnggotaKomunitas)
+	}
 
-    return c.JSON(http.StatusOK, res)
+	res.Status = http.StatusOK
+	res.Message = "Success"
+	res.Data = arrayAnggotaKomunitas
+
+	return res, nil
 }
 
+func FetchPendingRequest(c echo.Context) error {
+	result, err := GetPendingRequest()
 
-func ReceiveAnggotaKomunitas(c echo.Context) error {
-    var AnggotaKomunitas models.AnggotaKomunitas
-    var res models.Response
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
-    con := db.CreateCon()
+	return c.JSON(http.StatusOK, result)
+}
 
-    // Bind the incoming JSON data to the AnggotaKomunitas struct
-    if err := c.Bind(&AnggotaKomunitas); err != nil {
+func GETMember() (models.Response, error) {
+	var AnggotaKomunitas models.AnggotaKomunitas
+	var arrayAnggotaKomunitas []models.AnggotaKomunitas
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM anggota_komunitas WHERE status = 'diterima'"
+
+	rows, err := con.Query(sqlStatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&AnggotaKomunitas.Id, 
+			&AnggotaKomunitas.IdKomunitas, 
+			&AnggotaKomunitas.IdAnggota,
+			&AnggotaKomunitas.RequestAt,
+			&AnggotaKomunitas.UpdatedAt,
+			&AnggotaKomunitas.DeletedAt,
+			&AnggotaKomunitas.Status, 
+		)
+		
+		if err != nil {
+			return res, err
+		}
+
+		arrayAnggotaKomunitas = append(arrayAnggotaKomunitas, AnggotaKomunitas)
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Success"
+	res.Data = arrayAnggotaKomunitas
+
+	return res, nil
+}
+
+func FetchAllMemberAnggotaKomunitas(c echo.Context) error {
+	result, err := GETMember()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func RequestJoinKomunitas(c echo.Context) error {
+    // Bind data JSON dari request body ke struct AnggotaKomunitas
+    anggotaKomunitas := models.AnggotaKomunitas{}
+    if err := c.Bind(&anggotaKomunitas); err != nil {
         return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
     }
 
-    // Ensure that the `id` and `status` fields are provided in the JSON
-    if AnggotaKomunitas.Id == 0 || AnggotaKomunitas.Status == "" {
-        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Missing id or status"})
+    // Validasi input
+    if anggotaKomunitas.IdAnggota == 0 || anggotaKomunitas.IdKomunitas == 0 {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "id_anggota and id_komunitas are required"})
     }
 
-    sqlStatement := "UPDATE anggota_komunitas SET status = ?, update_at = NOW() WHERE id = ?"
+    // Database connection
+    con := db.CreateCon()
 
-    stmt, err := con.Prepare(sqlStatement)
+    // Cek apakah pasangan id_anggota dan id_komunitas sudah ada
+    sqlStatement := "SELECT COUNT(*) FROM anggota_komunitas WHERE id_anggota = ? AND id_komunitas = ?"
+    var count int
+    err := con.QueryRow(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas).Scan(&count)
     if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to check existing data"})
     }
-    defer stmt.Close()
 
-    // Execute the update query with the provided `status` and `id`
-    _, err = stmt.Exec(AnggotaKomunitas.Status, AnggotaKomunitas.Id)
+    if count > 0 {
+        return c.JSON(http.StatusConflict, map[string]string{"message": "Data already exists"})
+    }
+
+    // Insert data baru ke tabel anggota_komunitas
+    sqlStatement = "INSERT INTO anggota_komunitas (id_anggota, id_komunitas, status) VALUES (?, ?, ?)"
+    _, err = con.Exec(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas, "pending")
     if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create request"})
     }
 
-    res.Status = http.StatusOK
-    res.Message = "Status updated successfully"
-    res.Data = AnggotaKomunitas
+    // Respon sukses
+    return c.JSON(http.StatusOK, map[string]string{"message": "Request to join komunitas created successfully"})
+}
 
-    return c.JSON(http.StatusOK, res)
+func UpdateRequestStatus(c echo.Context) error {
+	// Bind data JSON dari request body ke struct AnggotaKomunitas
+	anggotaKomunitas := models.AnggotaKomunitas{}
+	if err := c.Bind(&anggotaKomunitas); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
+	}
+
+	// Database connection
+	con := db.CreateCon()
+
+	// Update status request
+	sqlStatement := "UPDATE anggota_komunitas SET status = ? WHERE id = ?"
+	_, err := con.Exec(sqlStatement, anggotaKomunitas.Status, anggotaKomunitas.Id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to update status"})
+	}
+
+	// Respon sukses
+	return c.JSON(http.StatusOK, map[string]string{"message": "Request status updated successfully"})
 }

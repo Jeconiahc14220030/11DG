@@ -23,9 +23,11 @@ func Login(c echo.Context) error {
 
 	result, err := AuthenticateUser(username, password)
 	if err != nil {
+		fmt.Println("error 3")
 		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid credentials"})
 	}
 
+	// Respon sukses
 	return c.JSON(http.StatusOK, result)
 }
 
@@ -34,7 +36,6 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "SELECT id,username,password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)

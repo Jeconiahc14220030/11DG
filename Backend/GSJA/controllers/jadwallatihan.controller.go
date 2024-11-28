@@ -66,15 +66,29 @@ func AddJadwalLatihan(c echo.Context) error {
 	// lokasi := c.FormValue("lokasi")
 	// strIdAnggota := c.FormValue("id_anggota")
 	// strIdKomunitas := c.FormValue("id_komunitas")
+	// lokasi := c.FormValue("lokasi")
+	// strIdAnggota := c.FormValue("id_anggota")
+	// strIdKomunitas := c.FormValue("id_komunitas")
 
-	// idAnggota, err := strconv.Atoi(strIdAnggota)
+	// // idAnggota, err := strconv.Atoi(strIdAnggota)
 
+	// // if err != nil {
+	// // 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
+	// // }
+
+	// // idKomunitas, err := strconv.Atoi(strIdKomunitas)
+
+	// formattanggal, err := time.Parse("2024-11-20", tanggal)
 	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	// }
 
 	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
+	// formattanggal, err := time.Parse("2024-11-20", tanggal)
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
+	// }
 	// formattanggal, err := time.Parse("2024-11-20", tanggal)
 	// if err != nil {
 	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
@@ -116,6 +130,38 @@ func POSTJadwalLatihan(jadwalLatihan models.JadwalLatihan) (models.Response, err
 	res.Status = http.StatusCreated
 	res.Message = "Jadwal latihan added successfully"
 	res.Data = jadwalLatihan
+
+	return res, nil
+}
+
+func SoftDeletedataJadwalLatihan(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtJadwalLatihan(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtJadwalLatihan(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE jadwal_latihan SET deleted_at = NOW() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Jadwal latihan berhasil dihapus"
 
 	return res, nil
 }
