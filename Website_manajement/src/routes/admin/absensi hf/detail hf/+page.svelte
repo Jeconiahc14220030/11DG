@@ -76,9 +76,10 @@
 	}
 </script>
 
-<div class="bg-background w-screen h-screen justify-center items-center">
+
+<div class="bg-background w-screen h-auto justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
-		<div class="bg-white shadow-md rounded-md p-6 gap-6 max-h-screen overflow-auto">
+		<div class="bg-white shadow-md rounded-md p-6 gap-6">
 			<div class="grid md:grid-cols-2 gap-6 mt-6">
 				<div class="flex flex-col items-center w-full">
 					<h1 class="text-xl font-bold mb-4 text-center">Anggota</h1>

@@ -125,9 +125,9 @@ func GETKomunitasById(id int) (models.Response, error) {
 }
 
 func AddPengumuman(c echo.Context) error {
-	konten := c.FormValue("konten")
+	// konten := c.FormValue("konten")
 	// tanggal := c.FormValue("tanggal")
-	strIdKomunitas := c.FormValue("id_komunitas")
+	// strIdKomunitas := c.FormValue("id_komunitas")
 
 	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
 
@@ -136,11 +136,11 @@ func AddPengumuman(c echo.Context) error {
 	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	// }
 
-	pengumuman := models.Pengumuman{
-		Konten: konten,
-		// Tanggal: tanggal,
-		Id_komunitas: idKomunitas,
-	}
+	// pengumuman := models.Pengumuman{
+	// 	Konten: konten,
+	// 	// Tanggal: tanggal,
+	// 	Id_komunitas: idKomunitas,
+	// }
 
 	// idParam := c.Param("id")
 	// id, err := strconv.Atoi(idParam)

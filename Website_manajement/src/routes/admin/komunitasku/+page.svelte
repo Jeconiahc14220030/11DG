@@ -141,9 +141,9 @@
 			>
 				<div class="flex flex-col sm:w-2/3 w-full">
 					<h1 class="text-lg md:text-xl text-center font-bold">{item.id}</h1>
-					<p>
+					<!-- <p>
 						{item.id_anggota}
-					</p>
+					</p> -->
 					<p class="text-black text-center overflow-hidden overflow-ellipsis whitespace-nowrap">
 						{item.id_komunitas}
 					</p>
