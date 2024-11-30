@@ -3,8 +3,10 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	_"database/sql"
 	"net/http"
 	"strconv"
+
 	// "time"
 
 	"github.com/labstack/echo/v4"
@@ -127,7 +129,7 @@ func GETKomunitasById(id int) (models.Response, error) {
 
 func AddPengumuman(c echo.Context) error {
 	// konten := c.FormValue("konten")
-	// // tanggal := c.FormValue("tanggal")
+	// tanggal := c.FormValue("tanggal")
 	// strIdKomunitas := c.FormValue("id_komunitas")
 
 	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
@@ -182,4 +184,21 @@ func POSTPengumuman(pengumuman models.Pengumuman, id int) (models.Response, erro
 	res.Data = pengumuman
 
 	return res, nil
+}
+
+func EditKomunitas (c echo.Context) error {
+	komunitasPelayanan := models.KomunitasPelayanan{}
+	if err := c.Bind(&komunitasPelayanan); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
+	}
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE komunitas_pelayanan SET nama_komunitas = ?, deskripsi = ?, snk = ?, manfaat = ?, gambar = ? WHERE id = ?"
+	_, err := con.Exec(sqlStatement, komunitasPelayanan.NamaKomunitas, komunitasPelayanan.Deskripsi, komunitasPelayanan.Snk, komunitasPelayanan.Manfaat, komunitasPelayanan.Gambar, komunitasPelayanan.Id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Komunitas berhasil diubah"})
 }

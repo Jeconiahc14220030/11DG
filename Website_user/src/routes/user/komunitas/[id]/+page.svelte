@@ -3,15 +3,17 @@
 	import { onMount } from 'svelte';
 
 	let komunitas = {
-		nama_komunitas: "",
-		deskripsi: "",
-		snk: "",
-		manfaat: "",
+		nama_komunitas: '',
+		deskripsi: '',
+		snk: '',
+		manfaat: ''
 	};
+
+	let showModal = false; // Untuk modal sukses
 
 	async function fetchDetail() {
 		try {
-			const id = $page.params.id; // Mengambil ID dari params
+			const id = $page.params.id;
 
 			const response = await fetch(`http://localhost:8080/komunitas/${id}`);
 			if (!response.ok) {
@@ -25,15 +27,49 @@
 				nama_komunitas: komunitasData.nama_komunitas,
 				deskripsi: komunitasData.deskripsi,
 				snk: komunitasData.snk,
-				manfaat: komunitasData.snk,
-			}
+				manfaat: komunitasData.manfaat // Perbaikan manfaat
+			};
 		} catch (error) {
-			console.error("Terjadi kesalahan saat mengambil data komunitas:", error);
+			console.error('Error fetching komunitas data:', error);
+		}
+	}
+
+	async function requestJoinKomunitas() {
+		const idAnggota = 2; // Ganti dengan ID anggota yang sesuai
+		const idKomunitas = $page.params.id;
+
+		const requestData = {
+			id_anggota: idAnggota,
+			id_komunitas: Number(idKomunitas)
+		};
+
+		// Menampilkan data yang akan dikirim melalui console.log
+		console.log('Data yang dikirim:', requestData);
+
+		try {
+			const response = await fetch('http://localhost:8080/anggotaKomunitas/request', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(requestData)
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Terjadi kesalahan saat mengirim permintaan.');
+			}
+
+			const result = await response.json();
+			alert(result.message); // Notifikasi keberhasilan
+			showModal = true; // Tampilkan modal
+		} catch (error) {
+			console.error('Error:', error);
+			alert(error.message); // Notifikasi jika terjadi kesalahan
 		}
 	}
 
 	onMount(() => {
-		alert($page.params.id); // Debugging
 		fetchDetail();
 	});
 </script>
@@ -61,31 +97,16 @@
 	</header>
 
 	<div class="flex flex-col ml-6 mr-6 pb-16">
-		<div class="flex justify-end -mt-16">
-			<img src="/src/lib/image/logo.png" alt="logo" class="w-16 h-16" />
-		</div>
-
 		<div class="flex flex-col ml-24 mr-24 mb-6">
 			<div class="flex justify-center">
-				<p>
-					{komunitas.deskripsi}
-				</p>
-			</div>
-			<div class="flex justify-end">
-				<p class="text-[#FFE500]">@11dgeneration</p>
+				<p>{komunitas.deskripsi}</p>
 			</div>
 		</div>
 
 		<div class="flex flex-col mb-6">
 			<div class="flex flex-col bg-[#FEFEFE] p-4 mb-6 rounded-lg">
-				<h1 class="text-[#F0A242] font-bold text-3xl mb-2">Jadwal Latihan</h1>
-				<p>Pelatihan akan dilaksanakan setiap hari Sabtu, 16.00 WIB.</p>
-			</div>
-			<div class="flex flex-col bg-[#FEFEFE] p-4 mb-6 rounded-lg">
 				<h1 class="text-[#F0A242] font-bold text-3xl mb-2">Manfaat</h1>
-				<p>
-					{komunitas.manfaat}
-				</p>
+				<p>{komunitas.manfaat}</p>
 			</div>
 			<div class="flex flex-col bg-[#FEFEFE] p-4 mb-6 rounded-lg">
 				<h1 class="text-[#F0A242] font-bold text-3xl mb-4">Syarat dan Ketentuan</h1>
@@ -237,60 +258,38 @@
 				</div>
 			</div>
 
-			<div class="flex justify-center">
-				<button
-					id="request"
-					class="border border-black rounded-full bg-[#F9C067] px-8 py-2 hover:bg-[#F8B048] font-bold"
-					>Request</button
-				>
-			</div>
+			<!-- Tombol untuk melakukan POST request -->
+			<button
+				class="border border-black rounded-full bg-[#F9C067] px-8 py-2 hover:bg-[#F8B048] font-bold"
+				on:click={requestJoinKomunitas}
+			>
+				Request
+			</button>
 		</div>
 	</div>
 
 	<!-- Modal -->
-	<div
-		id="successModal"
-		class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
-	>
-		<div class="bg-white p-8 rounded-lg text-center">
-			<!-- Ikon sukses dengan centang -->
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-16 w-16 text-green-500 mx-auto mb-4"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-				stroke-width="2"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M9 12l2 2l4-4m-6 6l-6-6m0 0l6 6m-6-6l6 6"
-				/>
-			</svg>
-
-			<h1 class="text-xl mb-4">Permintaan berhasil dikirim!</h1>
-			<button
-				id="backButton"
-				class="rounded-full bg-[#F9C067] px-8 py-2 hover:bg-[#F8B048] font-bold">Kembali</button
-			>
+	{#if showModal}
+		<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+			<div class="bg-white p-8 rounded-lg text-center">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-16 w-16 text-green-500 mx-auto mb-4"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4m-6 6l-6-6" />
+				</svg>
+				<h1 class="text-xl mb-4">Permintaan berhasil dikirim!</h1>
+				<button
+					class="rounded-full bg-[#F9C067] px-8 py-2 hover:bg-[#F8B048] font-bold"
+					on:click={() => (showModal = false)}
+				>
+					Kembali
+				</button>
+			</div>
 		</div>
-	</div>
-
-	<!-- Script -->
-	<script>
-		const request = document.getElementById('request');
-		const modal = document.getElementById('successModal');
-		const backButton = document.getElementById('backButton');
-
-		// Menampilkan modal saat tombol "Send" diklik
-		request.addEventListener('click', function () {
-			modal.classList.remove('hidden');
-		});
-
-		// Menyembunyikan modal saat tombol "Kembali" diklik
-		backButton.addEventListener('click', function () {
-			modal.classList.add('hidden');
-		});
-	</script>
+	{/if}
 </div>

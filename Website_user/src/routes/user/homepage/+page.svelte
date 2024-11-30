@@ -2,12 +2,12 @@
 	import { onMount } from 'svelte';
 
 	let beritaList = [];
-	let renungan = "";
+	let renungan = '';
 	let konten = {
-		visi: "",
-		misi: "",
-		pesan_ketua: "",
-		tujuan: "",
+		visi: '',
+		misi: '',
+		pesan_ketua: '',
+		tujuan: ''
 	};
 
 	let openAccordion = null; // Track the open accordion id
@@ -33,25 +33,25 @@
 
 	async function fetchRenungan() {
 		try {
-			const response = await fetch('http://localhost:8080/renunganharian')
+			const response = await fetch('http://localhost:8080/renunganharian');
 			if (response.ok) {
 				const result = await response.json();
 				const data = Array.isArray(result.data) ? result.data : [];
-				const renunganAktif = data.find(item => item.status === "aktif");
-				renungan = renunganAktif ? renunganAktif.isi : "Tidak ada renungan yang aktif saat ini.";
-			}else{
-				console.error('Gagak mengambil data renungan')
-				renungan = "Gagal memuat data.";
+				// Menampilkan renungan pertama dari hasil yang ada
+				renungan = data.length > 0 ? data[0].isi : 'Tidak ada renungan yang tersedia.';
+			} else {
+				console.error('Gagal mengambil data renungan');
+				renungan = 'Gagal memuat data.';
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
-			renungan = "Terjadi kesalahan dalam mengambil data.";
+			renungan = 'Terjadi kesalahan dalam mengambil data.';
 		}
 	}
 
 	async function fetchKonten() {
 		try {
-			const response = await fetch("http://localhost:8080/dashboard");
+			const response = await fetch('http://localhost:8080/dashboard');
 			if (response.ok) {
 				const result = await response.json();
 				if (result.data && result.data.length > 0) {
@@ -60,7 +60,7 @@
 					konten.misi = fetchedKonten.misi;
 					konten.pesan_ketua = fetchedKonten.pesan_ketua;
 					konten.tujuan = fetchedKonten.tujuan;
-				}else{
+				} else {
 					console.error('Gagal mengambil data.');
 				}
 			}
@@ -148,7 +148,7 @@
 			<!-- Bagian Kanan (Deskripsi) dengan Background Putih Transparan -->
 			<div class="bg-white bg-opacity-50 p-4 w-1/2 rounded-r-lg overflow-auto">
 				<p>
-					{renungan || "Memuat renungan..."}
+					{renungan || 'Memuat renungan...'}
 				</p>
 			</div>
 		</div>

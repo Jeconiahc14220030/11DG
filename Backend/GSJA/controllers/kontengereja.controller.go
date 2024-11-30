@@ -90,7 +90,6 @@ func POSTKontenGereja(kontenGereja models.KontenGereja) (models.Response, error)
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO konten_gereja (visi, misi, tujuan, pesan_ketua) VALUES (?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement, kontenGereja.Visi, kontenGereja.Misi, kontenGereja.Tujuan, kontenGereja.PesanKetua)

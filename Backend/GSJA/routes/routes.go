@@ -22,7 +22,9 @@ func Init() *echo.Echo {
 		return c.String(http.StatusOK, "Berhasil terkoneksi dengan database!")
 	})
 
-	e.POST("/login", controllers.Login)
+	e.POST("/login", func(c echo.Context) error {
+		return controllers.Login(c)
+	})
 
 	// Fetch Data
 	e.GET("/anggota", controllers.FetchAllAnggota)
@@ -58,7 +60,9 @@ func Init() *echo.Echo {
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
 	e.GET("/hf", controllers.FetchAllHf)
-	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas)
+	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas); e.GET("/anggotakomunitas/pending", controllers.FetchPendingRequest); e.GET("/anggotakomunitas/member", controllers.FetchAllMemberAnggotaKomunitas);
+
+	e.GET("/jadwal/:id", controllers.FetchJadwalById)
 
 	e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
 
@@ -76,9 +80,8 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
-	// e.POST("anggotaKomunitas/request", controllers.POSTAnggotaKomunitas)
 
-	// e.PUT("anggotaKomunitas/updatestatus", controllers.ReceiveAnggotaKomunitas)
+	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
@@ -91,10 +94,6 @@ func Init() *echo.Echo {
 	e.PUT("anggota/delete/:id", controllers.SoftDeleteAnggota); e.PUT("anggota/restore/:id", controllers.RestoreDeletedAnggota);
 
 	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
-
-	e.POST("absensihf/sethadir", controllers.AddKehadiranAbsensiHf)
-
-	e.POST("absensi/sethadir", controllers.AddKehadiranAbsensi)
 
 	return e
 }

@@ -1,9 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
+	import QRCode from 'qrcode'; // Pastikan Anda menginstal library ini dengan `npm install qrcode`
 
 	let events = [];
 	let currentMonth = new Date().getMonth(); // Bulan saat ini (0-11)
 	let currentYear = new Date().getFullYear(); // Tahun saat ini
+	let selectedQRCode = null; // Untuk menyimpan QR Code yang di-zoom
 
 	// Menentukan jumlah hari dalam bulan
 	const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -31,14 +33,28 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				events = data.data.map((event) => ({
-					date: new Date(event.tanggal).getDate(),
-					description: event.topik,
-					color: event.jenis_ibadah === 'ibadah pagi' ? 'bg-red-500' : 'bg-blue-500',
-					poin: event.jumlah_poin,
-					id: event.id,
-					jenis_ibadah: event.jenis_ibadah
-				}));
+				// Filter data untuk bulan dan tahun saat ini
+				const filteredEvents = data.data.filter((event) => {
+					const eventDate = new Date(event.tanggal);
+					return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
+				});
+
+				// Format data yang difilter
+				events = await Promise.all(
+					filteredEvents.map(async (event) => {
+						const qrData = `${event.topik} - ${event.jenis_ibadah} - ${new Date(event.tanggal).toLocaleDateString()}`;
+						const qrCodeUrl = await QRCode.toDataURL(qrData); // Generate QR Code
+						return {
+							date: new Date(event.tanggal).getDate(),
+							description: event.topik,
+							color: event.jenis_ibadah === 'ibadah pagi' ? 'bg-red-500' : 'bg-blue-500',
+							poin: event.jumlah_poin,
+							id: event.id,
+							jenis_ibadah: event.jenis_ibadah,
+							qrCodeUrl // Tambahkan URL QR Code
+						};
+					})
+				);
 			} else {
 				console.error('Gagal memuat data.');
 			}
@@ -51,6 +67,27 @@
 		fetchEvents();
 	});
 </script>
+
+<style>
+	.modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.6);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.modal img {
+		width: 300px;
+		height: 300px;
+		background: white;
+		padding: 10px;
+		border-radius: 10px;
+	}
+</style>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
 	<header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
@@ -116,10 +153,23 @@
 						<p>{event.jenis_ibadah}</p>
 						<p>{event.date} {monthName} {currentYear}</p>
 						<p>Poin: {event.poin}</p>
-						<img src="/src/lib/image/qrcode.svg" alt="QR Code" class="w-12 h-12 mt-2" />
+						<!-- QR Code -->
+						<img
+							src={event.qrCodeUrl}
+							alt="QR Code"
+							class="w-12 h-12 mt-2 cursor-pointer"
+							on:click={() => (selectedQRCode = event.qrCodeUrl)}
+						/>
 					</div>
 				{/each}
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal untuk QR Code -->
+	{#if selectedQRCode}
+		<div class="modal" on:click={() => (selectedQRCode = null)}>
+			<img src={selectedQRCode} alt="QR Code Besar" />
+		</div>
+	{/if}
 </div>

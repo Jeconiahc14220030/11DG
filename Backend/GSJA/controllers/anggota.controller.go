@@ -39,6 +39,7 @@ func GETAllAnggota() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&anggota.Id, 
+			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
 			&anggota.Password,
@@ -49,8 +50,6 @@ func GETAllAnggota() (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.IdKomunitas,
-			&anggota.IdHf,
 		)
 		
 		if err != nil {
@@ -104,6 +103,7 @@ func GETAnggotaById(id int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&anggota.Id, 
+			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
 			&anggota.Password,
@@ -114,8 +114,6 @@ func GETAnggotaById(id int) (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.IdKomunitas,
-			&anggota.IdHf,
 		)
 
 		if err != nil {

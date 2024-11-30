@@ -9,6 +9,7 @@ import (
 
 type Anggota struct {
 	Id           int        `json:"id" db:"id"`
+	IdHf         *int        `json:"id_hf" db:"id_hf"`
 	Nama         string     `json:"nama" db:"nama"`
 	Username     string     `json:"username" db:"username"`
 	Password     string     `json:"password" db:"password"`
@@ -19,8 +20,6 @@ type Anggota struct {
 	CreatedAt    time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at" db:"updated_at"`
 	DeletedAt    *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
-	IdKomunitas  int        `json:"id_komunitas" db:"id_komunitas"`
-	IdHf         int        `json:"id_hf" db:"id_hf"`
 }
 
 type CustomDate struct {
