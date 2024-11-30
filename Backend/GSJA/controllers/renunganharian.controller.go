@@ -38,7 +38,6 @@ func GETAllRenunganHarian() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&renungan_harian.Id,
-			&renungan_harian.Status,
 			&renungan_harian.Isi,
 			&renungan_harian.CreatedAt,
 			&renungan_harian.UpdatedAt,
@@ -61,7 +60,11 @@ func GETAllRenunganHarian() (models.Response, error) {
 }
 
 func AddRenunganHarian(c echo.Context) error {
-	var renunganHarian models.RenunganHarian
+	isi := c.FormValue("isi")
+	
+	renunganHarian := models.RenunganHarian{
+		Isi: isi,
+	}
 
 	if err := c.Bind(&renunganHarian); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
@@ -84,7 +87,7 @@ func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, 
 
 	sqlStatement := "INSERT INTO renungan_harian (status, isi) VALUES (?, ?)"
 
-	_, err := con.Exec(sqlStatement, renunganHarian.Status, renunganHarian.Isi)
+	_, err := con.Exec(sqlStatement, renunganHarian.Isi)
 
 	if err != nil {
 		return res, err
@@ -93,6 +96,38 @@ func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, 
 	res.Status = http.StatusCreated
 	res.Message = "Renungan harian berhasil ditambahkan"
 	res.Data = renunganHarian
+
+	return res, nil
+}
+
+func SoftDeletedataRenunganHarian(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtRenunganHarian(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtRenunganHarian(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE renungan_harian SET deleted_at = NOW() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Renungan harian berhasil dihapus"
 
 	return res, nil
 }

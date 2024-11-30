@@ -39,6 +39,7 @@ func GETAllAnggota() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&anggota.Id, 
+			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
 			&anggota.Password,
@@ -49,8 +50,6 @@ func GETAllAnggota() (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.IdKomunitas,
-			&anggota.IdHf,
 		)
 		
 		if err != nil {
@@ -104,6 +103,7 @@ func GETAnggotaById(id int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&anggota.Id, 
+			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
 			&anggota.Password,
@@ -114,8 +114,6 @@ func GETAnggotaById(id int) (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.IdKomunitas,
-			&anggota.IdHf,
 		)
 
 		if err != nil {
@@ -192,10 +190,27 @@ func GETRiwayatVoucherAnggota(id int) (models.Response, error) {
 }
 
 func AddAnggota(c echo.Context) error {
-	var anggota models.Anggota
+	nama := c.FormValue("nama")
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	email := c.FormValue("email")
+	nomorTelepon := c.FormValue("nomor_telepon")
+	tanggalLahir := c.FormValue("tanggal_lahir")
+	poinStr := c.FormValue("poin")
 
-	if err := c.Bind(&anggota); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	poin, err := strconv.Atoi(poinStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid poin"})
+	}
+
+	anggota := models.Anggota{
+		Nama:         nama,
+		Username:     username,
+		Password:     password,
+		Email:        email,
+		NomorTelepon: nomorTelepon,
+		TanggalLahir: tanggalLahir,
+		Poin:         poin,
 	}
 
 	result, err := POSTAnggota(anggota)
@@ -213,8 +228,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	defer con.Close()
 
 	sqlStatement := "INSERT INTO anggota (nama, username, password, email, nomor_telepon, tanggal_lahir, poin) VALUES (?, ?, ?, ?, ?, ?, ?)"
-
-	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir.Time, anggota.Poin)
+	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir, anggota.Poin)
 
 	if err != nil {
 		return res, err
@@ -227,4 +241,136 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	return res, nil
 }
 
+func SoftDeleteAnggota(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	result, err := UpdateDeletedAtAnggota(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtAnggota(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE anggota SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Deleted at updated successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+func RestoreDeletedAnggota(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	result, err := UpdateDeletedAtToNullAnggota(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtToNullAnggota(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE anggota SET deleted_at = NULL WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Deleted at restored successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+func FetchAbsensiById(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam	)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	result, err := GetAbsensiById(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetAbsensiById(id int) (models.Response, error) {
+	var absensi models.Absensi
+	var arrAbsensi []models.Absensi
+	var response models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM absensi WHERE id_anggota = ?"
+
+	rows, err := con.Query(sqlStatement, id)
+
+	if err != nil {
+		return response, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&absensi.Id,
+			&absensi.Status,
+			&absensi.IdAnggota,
+			&absensi.IdJadwal,
+			&absensi.CreatedAt,
+			&absensi.UpdatedAt,
+			&absensi.DeletedAt,
+		)
+
+		if err != nil {
+			return response, err
+		}
+
+		arrAbsensi = append(arrAbsensi, absensi)
+	}
+
+	response.Status = http.StatusOK
+	response.Message = "OK"
+	response.Data = arrAbsensi
+
+	return response, err
+}
 

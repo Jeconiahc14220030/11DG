@@ -26,7 +26,7 @@ func GETLaporanKeuangan() (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM laporan_keuangan "
+	sqlStatement := "SELECT * FROM laporan_keuangan"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -120,4 +120,88 @@ func GETLaporanKeuanganById(id int) (models.Response, error) {
 	response.Data = arrLaporan
 
 	return response, err
+}
+
+func AddLaporanKeuangan(c echo.Context) error {
+	tanggal := c.FormValue("tanggal")
+	jenis := c.FormValue("jenis")
+	nominal := c.FormValue("nominal")
+	strIdPembuat := c.FormValue("id_pembuat")
+
+	idPembuat, err := strconv.Atoi(strIdPembuat)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id pembuat"})
+	}
+
+	laporanKeuangan := models.LaporanKeuangan{
+		Tanggal: tanggal,
+		Jenis: jenis,
+		Nominal: nominal,
+		IdPembuat: idPembuat,
+	}
+
+	if err := c.Bind(&laporanKeuangan); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := POSTLaporanKeuangan(laporanKeuangan)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTLaporanKeuangan(laporanKeuangan models.LaporanKeuangan) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO laporan_keuangan (tanggal, jenis, nominal, id_pembuat) VALUES (?, ?, ?, ?)"
+
+	_, err := con.Exec(sqlStatement, laporanKeuangan.Tanggal, laporanKeuangan.Jenis, laporanKeuangan.Nominal, laporanKeuangan.IdPembuat)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Laporan keuangan berhasil ditambahkan"
+	res.Data = laporanKeuangan
+
+	return res, nil
+}
+
+func SoftDeletedataLaporanKeuangan(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtLaporanKeuangan(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtLaporanKeuangan(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE laporan_keuangan SET deleted_at = NOW() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Laporan keuangan berhasil dihapus"
+
+	return res, nil
 }

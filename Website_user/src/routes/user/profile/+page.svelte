@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	// Functions to handle profile edit and password change
 	function editProfile() {
 		window.location.href = '/user/profile/ubah_profile';
@@ -8,14 +10,151 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
-	let user = {
-		name: 'Christian Adi',
-		id: '240409',
-		phone: '0821-4186-3444',
-		email: 'C14200028@john.petra.ac.id',
-		birthdate: '20/02/2000',
-		points: 150000
-	};
+	const userId = 1;
+
+	let user = [];
+	let vouchers = [];
+	let points = [];
+
+	async function fetchAnggota() {
+		try {
+			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
+
+			if (!response.ok) {
+				throw new Error(`Http error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			// Pastikan data array memiliki elemen
+			if (result.data && result.data.length > 0) {
+				const userData = result.data[0]; // Ambil elemen pertama dalam array
+				// Menyimpan nilai poin ke sessionStorage
+				sessionStorage.setItem('poin', userData.poin);
+
+				user = {
+					name: userData.nama,
+					id: userData.id,
+					phone: userData.nomor_telepon,
+					email: userData.email,
+					birthdate: userData.tanggal_lahir,
+					points: userData.poin
+				};
+			} else {
+				console.error('Data user tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	async function fetchRiwayatVoucher() {
+		try {
+			// Ambil riwayat voucher anggota
+			const responseRiwayat = await fetch(`http://localhost:8080/anggota/${userId}/riwayatvoucher`);
+
+			if (!responseRiwayat.ok) {
+				throw new Error(`Http error! Status: ${responseRiwayat.status}`);
+			}
+
+			const resultRiwayat = await responseRiwayat.json();
+
+			// Jika ada data riwayat voucher
+			if (resultRiwayat.data && resultRiwayat.data.length > 0) {
+				// Ambil data voucher berdasarkan id_voucher di riwayat
+				const voucherIds = resultRiwayat.data.map((item) => item.id_voucher);
+
+				// Ambil data voucher berdasarkan id yang teridentifikasi
+				const responseVoucher = await fetch(
+					`http://localhost:8080/voucher?ids=${voucherIds.join(',')}`
+				);
+
+				if (!responseVoucher.ok) {
+					throw new Error(`Http error! Status: ${responseVoucher.status}`);
+				}
+
+				const resultVoucher = await responseVoucher.json();
+
+				// Gabungkan data voucher dengan riwayat voucher
+				vouchers = resultRiwayat.data.map((item) => {
+					const voucherInfo = resultVoucher.data.find((voucher) => voucher.id === item.id_voucher);
+					return {
+						...item,
+						nama_voucher: voucherInfo?.nama_voucher,
+						status_voucher: voucherInfo?.status,
+						harga_voucher: voucherInfo?.harga,
+						foto_voucher: voucherInfo?.foto
+					};
+				});
+			} else {
+				console.log('Tidak ada riwayat voucher untuk anggota ini');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	async function fetchPoins() {
+		try {
+			const responseAbsensi = await fetch(`http://localhost:8080/anggota/${userId}/absensi`);
+
+			if (!responseAbsensi.ok) {
+				throw new Error(`Http error! Status: ${responseAbsensi.status}`);
+			}
+
+			const resultAbsensi = await responseAbsensi.json();
+
+			if (resultAbsensi.data && resultAbsensi.data.length > 0) {
+				const jadwalIds = resultAbsensi.data.map((item) => item.id_jadwal);
+
+				const responseJadwal = await fetch(
+					`http://localhost:8080/jadwal?ids=${jadwalIds.join(',')}`
+				);
+
+				if (!responseJadwal.ok) {
+					throw new Error(`Http error! Status: ${responseJadwal.status}`);
+				}
+
+				const resultJadwal = await responseJadwal.json();
+
+				// Gabungkan absensi dengan jadwal
+				const absensiWithJadwal = resultAbsensi.data.map((absensi) => {
+					const jadwalInfo = resultJadwal.data.find((jadwal) => jadwal.id === absensi.id_jadwal);
+					return {
+						...absensi,
+						jadwal_topik: jadwalInfo?.topik,
+						jadwal_jenis_ibadah: jadwalInfo?.jenis_ibadah,
+						jadwal_tanggal: formatDate(jadwalInfo?.tanggal), // Format tanggal di sini
+						jumlah_poin: jadwalInfo?.jumlah_poin
+					};
+				});
+
+				// Format data untuk points
+				points = absensiWithJadwal.map((item) => ({
+					topik: item.jadwal_topik,
+					jenis_ibadah: item.jadwal_jenis_ibadah,
+					date: item.jadwal_tanggal, // Tanggal sudah diformat
+					point: item.jumlah_poin
+				}));
+
+				// Panggil fungsi untuk memperbarui tampilan
+				displayPoints(points);
+			} else {
+				console.log('Tidak ada data absensi.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	function displayPoints(points) {
+		points.forEach((point) => {
+			point.date = new Date(point.date).toISOString().split('T')[0]; // Ubah format ke YYYY-MM-DD
+		});
+
+		// Pastikan UI diperbarui, jika menggunakan framework seperti Svelte, cukup pastikan variable "points" diperbarui.
+		console.log(points); // Debug untuk memastikan data terformat dengan benar
+	}
 
 	let showModal = false; // Control for logout modal
 	let showPointsDetail = false; // Control for points detail
@@ -24,6 +163,7 @@
 
 	const handleYes = () => {
 		console.log('Logout dikonfirmasi!');
+		window.location.href = '/';
 		// Add logout logic here
 	
 	};
@@ -33,53 +173,15 @@
 		showModal = false; // Close modal
 	};	
 
-	let points = [
-		{
-			title: 'Ibadah Raya - Bersama Tuhan Kita Bebas',
-			date: '10 Agustus 2024, 10:48',
-			role: 'PAW',
-			point: '+ 4 Point'
-		},
-		{
-			title: 'Komunitasku - Tuhan Akan Pasti Menolong',
-			date: '13 Agustus 2024, 10:48',
-			role: 'Anggota',
-			point: '+ 2 Point'
-		},
-		{
-			title: 'Ibadah Raya - Iman Yang Memerdekakan',
-			date: '17 Agustus 2024, 10:48',
-			role: 'Anggota',
-			point: '+ 2 Point'
-		},
-		{
-			title: 'Komunitasku - Tepat Pada Waktu Tuhan',
-			date: '20 Agustus 2024, 10:48',
-			role: 'Anggota',
-			point: '+ 2 Point'
-		},
-		{
-			title: 'Ibadah Raya - Bebas dari belenggu Dosa',
-			date: '24 Agustus 2024, 10:48',
-			role: 'PAW',
-			point: '+ 4 Point'
-		}
-	];
+	// Fungsi untuk memformat tanggal menjadi 'tahun-bulan-tanggal'
+	function formatDate(dateString) {
+		const date = new Date(dateString); // Mengonversi string tanggal menjadi objek Date
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero jika bulan kurang dari 10
+		const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero jika tanggal kurang dari 10
 
-	let vouchers = [
-		{
-			title: 'Voucher Makanan',
-			date: '1 Desember 2024'
-		},
-		{
-			title: 'Voucher Dana',
-			date: '8 Desember 2024'
-		},
-		{
-			title: 'Voucher Barang',
-			date: '1 Desember 2024'
-		}
-	];
+		return `${year}-${month}-${day}`; // Mengembalikan format 'YYYY-MM-DD'
+	}
 
 	let roles = [
 		{ title: 'BPH' },
@@ -88,6 +190,12 @@
 		{ title: 'Usher' },
 		{ title: 'Anggota' }
 	];
+
+	onMount(() => {
+		fetchAnggota();
+		fetchRiwayatVoucher();
+		fetchPoins();
+	});
 
 	let softwareVersion = 'V 1.2.2(67)';
 
@@ -115,6 +223,7 @@
 				>
 					<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
 					<span class="mx-2">{user.points}</span>
+					<img src="/src/lib/image/coin.png" alt="icon" class="w-6 h-6" />
 				</div>
 			</div>
 		</a>
@@ -150,12 +259,13 @@
 			</div>
 		</div>
 
-		<!-- Points Detail Section -->
 		<div class="flex flex-col justify-between items-center p-4">
 			<div class="flex flex-col w-full">
+				<!-- Points Detail Section -->
 				<div
 					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
-					on:click={() => (showPointsDetail = !showPointsDetail)}>
+					on:click={() => (showPointsDetail = !showPointsDetail)}
+				>
 					<span>Detail Poin</span>
 					<span>&gt;</span> 
 				</div>
@@ -168,19 +278,19 @@
 							on:click|stopPropagation
 						>
 							{#each points as point}
-								<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-									<h2 class="font-semibold">{point.title}</h2>
-									<div class="flex justify-between items-center mt-2">
-										<div class="flex flex-col">
-											<p class="text-sm text-gray-500">{point.date}</p>
-										</div>
-										<div class="flex items-center">
-											<span class="text-xs text-gray-600 mr-4">{point.role}</span>
-											<span class="text-green-600 font-bold">{point.point}</span>
-										</div>
-									</div>
+							<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+							<h2 class="font-semibold">{point.title}</h2>
+							<div class="flex justify-between items-center mt-2">
+								<div class="flex flex-col">
+								<p class="text-sm text-gray-500">{point.date}</p>
 								</div>
-							{/each}
+								<div class="flex items-center">
+								<span class="text-xs text-gray-600 mr-4">{point.role}</span>
+								<span class="text-green-600 font-bold">{point.point}</span>
+								</div>
+							</div>
+							</div>
+						{/each}
 						</div>
 					</div>
 				{/if}
@@ -289,4 +399,3 @@
 			</div>
 		{/if}
 	</div>
-

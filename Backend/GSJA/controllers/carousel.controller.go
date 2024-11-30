@@ -123,10 +123,16 @@ func GETCarouselById(id int) (models.Response, error) {
 }
 
 func AddCarousel(c echo.Context) error {
-	var carousel models.Carousel
+	foto1 := c.FormValue("foto1")
+	foto2 := c.FormValue("foto2")
+	foto3 := c.FormValue("foto3")
+	foto4 := c.FormValue("foto4")
 
-	if err := c.Bind(&carousel); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	carousel := models.Carousel{
+		Foto1:        foto1,
+		Foto2:        foto2,
+		Foto3:        foto3,
+		Foto4:        foto4,
 	}
 
 	result, err := POSTCarousel(carousel)
@@ -143,8 +149,8 @@ func POSTCarousel(carousel models.Carousel) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4, carousel.StatusCarousel)
+	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4)
 
 	if err != nil {
 		return res, err
@@ -155,4 +161,40 @@ func POSTCarousel(carousel models.Carousel) (models.Response, error) {
 	res.Data = carousel
 
 	return res, nil
+}
+
+func UpdateDeletedatCarousel(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE carousel SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Carousel deleted successfully"
+
+	return res, nil
+}
+
+func SoftDeleteCarousel(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := UpdateDeletedatCarousel(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
 }

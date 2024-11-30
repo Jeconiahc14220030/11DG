@@ -8,6 +8,10 @@
 			const response = await fetch('http://localhost:8080/hf');
 			hanyafasilitator = await response.json();
 			hanyafasilitator = hanyafasilitator.data;
+
+			// const response = await fetch('http://localhost:8080/hf/' + { id });
+			// hanyafasilitator = await response.json();
+			// hanyafasilitator = hanyafasilitator.data;
 		} catch (err) {
 			console.log(err);
 		}

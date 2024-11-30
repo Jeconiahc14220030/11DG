@@ -3,8 +3,11 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	_"database/sql"
 	"net/http"
 	"strconv"
+
+	// "time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -38,11 +41,11 @@ func GETAllKomunitas() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&komunitas.Id, 
-			&komunitas.NamaKomunitas, 
-			&komunitas.Deskripsi, 
-			&komunitas.Snk, 
-			&komunitas.Manfaat, 
+			&komunitas.Id,
+			&komunitas.NamaKomunitas,
+			&komunitas.Deskripsi,
+			&komunitas.Snk,
+			&komunitas.Manfaat,
 			&komunitas.Gambar,
 			&komunitas.CreatedAt,
 			&komunitas.UpdatedAt,
@@ -99,11 +102,11 @@ func GETKomunitasById(id int) (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&komunitas.Id, 
-			&komunitas.NamaKomunitas, 
-			&komunitas.Deskripsi, 
-			&komunitas.Snk, 
-			&komunitas.Manfaat, 
+			&komunitas.Id,
+			&komunitas.NamaKomunitas,
+			&komunitas.Deskripsi,
+			&komunitas.Snk,
+			&komunitas.Manfaat,
 			&komunitas.Gambar,
 			&komunitas.CreatedAt,
 			&komunitas.UpdatedAt,
@@ -122,4 +125,80 @@ func GETKomunitasById(id int) (models.Response, error) {
 	response.Data = arrayKomunitas
 
 	return response, err
+}
+
+func AddPengumuman(c echo.Context) error {
+	// konten := c.FormValue("konten")
+	// tanggal := c.FormValue("tanggal")
+	// strIdKomunitas := c.FormValue("id_komunitas")
+
+	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
+
+	// formattanggal, err := time.Parse("2024-11-20", tanggal)
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
+	// }
+
+	// pengumuman := models.Pengumuman{
+	// 	Konten: konten,
+	// 	// Tanggal: tanggal,
+	// 	Id_komunitas: idKomunitas,
+	// }
+
+	// idParam := c.Param("id")
+	// id, err := strconv.Atoi(idParam)
+
+	// if err := c.Bind(&pengumuman); err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	// }
+
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	// }
+
+	// result, err := POSTPengumuman(pengumuman, id)
+
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	// }
+
+	// return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, map[string]string{"message": "OK"})
+}
+
+func POSTPengumuman(pengumuman models.Pengumuman, id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO pengumuman(konten, tanggal, id_komunitas) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, pengumuman.Konten, pengumuman.Tanggal, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Pengumuman berhasil ditambahkan"
+	res.Data = pengumuman
+
+	return res, nil
+}
+
+func EditKomunitas (c echo.Context) error {
+	komunitasPelayanan := models.KomunitasPelayanan{}
+	if err := c.Bind(&komunitasPelayanan); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
+	}
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE komunitas_pelayanan SET nama_komunitas = ?, deskripsi = ?, snk = ?, manfaat = ?, gambar = ? WHERE id = ?"
+	_, err := con.Exec(sqlStatement, komunitasPelayanan.NamaKomunitas, komunitasPelayanan.Deskripsi, komunitasPelayanan.Snk, komunitasPelayanan.Manfaat, komunitasPelayanan.Gambar, komunitasPelayanan.Id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Komunitas berhasil diubah"})
 }

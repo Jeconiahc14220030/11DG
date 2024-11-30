@@ -38,7 +38,6 @@ func GETAllKutipanHarian() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&kutipanHarian.Id,
-			&kutipanHarian.Status,
 			&kutipanHarian.Isi,
 			&kutipanHarian.CreatedAt,
 			&kutipanHarian.UpdatedAt,
@@ -60,7 +59,11 @@ func GETAllKutipanHarian() (models.Response, error) {
 }
 
 func AddKutipanHarian(c echo.Context) error {
-	var kutipanHarian models.KutipanHarian
+	isi := c.FormValue("isi")
+
+	kutipanHarian := models.KutipanHarian{
+		Isi: isi,
+	}
 
 	if err := c.Bind(&kutipanHarian); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
@@ -81,8 +84,8 @@ func POSTKutipanHarian(kutipanHarian models.KutipanHarian) (models.Response, err
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO kutipan_harian (status, isi) VALUES (?, ?)"
-	_, err := con.Exec(sqlStatement, kutipanHarian.Status, kutipanHarian.Isi)
+	sqlStatement := "INSERT INTO kutipan_harian (isi) VALUES (?)"
+	_, err := con.Exec(sqlStatement, kutipanHarian.Isi)
 
 	if err != nil {
 		return res, err
@@ -91,6 +94,37 @@ func POSTKutipanHarian(kutipanHarian models.KutipanHarian) (models.Response, err
 	res.Status = http.StatusCreated
 	res.Message = "Kutipan harian berhasil ditambahkan"
 	res.Data = kutipanHarian
+
+	return res, nil
+}
+
+func SoftDeletedataKutipanHarian(c echo.Context) error {
+	id := c.Param("id")
+
+	result, err := UpdateDeletedAtKutipanHarian(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedAtKutipanHarian(id string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE kutipan_harian SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Kutipan harian berhasil dihapus"
 
 	return res, nil
 }

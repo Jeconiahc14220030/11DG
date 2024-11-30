@@ -20,8 +20,8 @@ func FetchAllAbsensihf(c echo.Context) error {
 }
 
 func GETAllAbsensihf() (models.Response, error) {
-	var absensihf models.Absensihf
-	var arrayAbsensihf []models.Absensihf
+	var absensihf models.AbsensiHf
+	var arrayAbsensihf []models.AbsensiHf
 	var response models.Response
 
 	con := db.CreateCon()
@@ -79,8 +79,8 @@ func FetchAbsensihfById(c echo.Context) error {
 }
 
 func GETAbsensihfById(id int) (models.Response, error) {
-	var absensihf models.Absensihf
-	var arrayAbsensihf []models.Absensihf
+	var absensihf models.AbsensiHf
+	var arrayAbsensihf []models.AbsensiHf
 	var response models.Response
 
 	con := db.CreateCon()
@@ -120,3 +120,89 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	return response, err
 }
 
+func AddAbsensiHf(c echo.Context) error {
+	status := c.FormValue("status")
+	idAnggotaStr := c.FormValue("id_anggota")
+	idJadwalStr := c.FormValue("id_jadwal")
+
+	idAnggota, err := strconv.Atoi(idAnggotaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_anggota"})
+	}
+
+	idJadwal, err := strconv.Atoi(idJadwalStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_jadwal"})
+	}
+
+	absensiHf := models.AbsensiHf{
+		Status:    status,
+		IdAnggota: idAnggota,
+		IdJadwal:  idJadwal,
+	}
+
+	result, err := POSTAbsensiHf(absensiHf)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, result)
+}
+
+func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "INSERT INTO absensi_hf (status, id_anggota, id_jadwal) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.Status, absensiHf.IdAnggota, absensiHf.IdJadwal)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Absensi hf berhasil ditambahkan"
+	res.Data = absensiHf
+
+	return res, nil
+}
+
+func SoftDeleteAbsensiHf(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := UpdateDeletedatAbsensiHf(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateDeletedatAbsensiHf(id int) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	defer con.Close()
+
+	sqlStatement := "UPDATE absensi_hf SET deleted_at = NOW() WHERE id = ?"
+	_, err := con.Exec(sqlStatement, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Deleted at updated successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
