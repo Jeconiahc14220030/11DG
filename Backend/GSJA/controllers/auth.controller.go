@@ -6,8 +6,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"net/http"
 	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 func Login(c echo.Context) error {
@@ -30,13 +30,14 @@ func Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func AuthenticateUser (username, password string) (models.Response, error) {
+func AuthenticateUser(username, password string) (models.Response, error) {
 	var user models.User
 	var res models.Response
 
 	con := db.CreateCon()
+	defer con.Close()
 
-	sqlStatement := "SELECT id,username,password FROM anggota WHERE username = ?"
+	sqlStatement := "SELECT id, username, password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
 
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
@@ -46,7 +47,7 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 		}
 		return res, err
 	}
-	
+
 	// if err != nil {
 	// 	fmt.Println("Password does not match:", err)
 	// } else {
@@ -60,10 +61,9 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 		fmt.Println("Password tidak cocok")
 		return res, errors.New("password tidak cocok")
 	}
-	
 
 	res.Status = http.StatusOK
-	res.Message = "Login successful"
+	res.Message = "Berhasil login"
 	res.Data = user
 
 	return res, nil

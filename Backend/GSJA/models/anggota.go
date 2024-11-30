@@ -9,7 +9,7 @@ import (
 
 type Anggota struct {
 	Id           int        `json:"id" db:"id"`
-	IdHf         *int        `json:"id_hf" db:"id_hf"`
+	IdHf         *int       `json:"id_hf" db:"id_hf"`
 	Nama         string     `json:"nama" db:"nama"`
 	Username     string     `json:"username" db:"username"`
 	Password     string     `json:"password" db:"password"`
