@@ -15,9 +15,10 @@
 			if (response.ok) {
 				const result = await response.json();
 
-				const username = 'JasonAS';
+				const username = formData.get('username');
+				localStorage.setItem('username', username);
 				// Jika login berhasil, arahkan ke halaman homepage
-				window.location.href = `/user/profile?username=${encodeURIComponent(username)}`;
+				window.location.href = `/user/homepage?username=${encodeURIComponent(username)}`;
 			} else {
 				console.log(await response.text()); // Untuk melihat pesan kesalahan lebih lengkap
 				alert('Login gagal: Username atau Password salah');

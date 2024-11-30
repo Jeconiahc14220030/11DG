@@ -11,16 +11,14 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
-	let username = $page.url.searchParams.get('username');
-	console.log('Username:', username);
-
+	let username = localStorage.getItem('username')
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
 	// Fetch Anggota berdasarkan Username
 	async function fetchAnggotaByUsername() {
 		try {
 			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
-			const response = await fetch(`http://localhost:8080/anggota`);
+			const response = await fetch(`http://localhost:8080/${username}`);
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
@@ -54,7 +52,7 @@
 	// Ambil data user berdasarkan userId
 	async function fetchAnggota() {
 		try {
-			if (!userId) return; // Pastikan userId sudah di set
+			if (!userId) return; // Pastikan userId sudah diatur
 
 			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
 
@@ -64,8 +62,10 @@
 
 			const result = await response.json();
 
-			if (result.data && result.data.length > 0) {
-				const userData = result.data[0]; // Ambil elemen pertama dalam array
+			// Cek apakah data ada dan valid
+			if (result.data) {
+				const userData = result.data; // Ambil objek data langsung
+
 				// Menyimpan nilai poin ke sessionStorage
 				sessionStorage.setItem('poin', userData.poin);
 
