@@ -164,8 +164,6 @@
 	const handleYes = () => {
 		console.log('Logout dikonfirmasi!');
 		window.location.href = '/';
-		// Add logout logic here
-	
 	};
 
 	const handleNo = () => {
