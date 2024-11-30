@@ -66,7 +66,7 @@ func Init() *echo.Echo {
 
 	e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
 
-	e.GET("anggota/:username", controllers.FetchAnggotaByUsername)
+	e.GET(":username", controllers.FetchAnggotaByUsername)
 
 	e.POST("/anggota/add", controllers.AddAnggota)
 
