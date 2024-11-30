@@ -3,7 +3,6 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -70,9 +69,8 @@ func GETAllAnggota() (models.Response, error) {
 func FetchAnggotaById(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
-
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id of" + idParam})
 	}
 
 	result, err := GETAnggotaById(id)
@@ -90,27 +88,26 @@ func GETAnggotaById(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "SELECT * FROM anggota WHERE id = ?"
-	log.Printf("Executing query: %s with id: %d", sqlStatement, id)
 
 	rows, err := con.Query(sqlStatement, id)
+
 	if err != nil {
-		log.Printf("Error executing query: %v", err)
 		return res, err
 	}
+
 	defer rows.Close()
 
 	for rows.Next() {
 		err = rows.Scan(
-			&anggota.Id,
+			&anggota.Id, 
 			&anggota.IdHf,
-			&anggota.Nama,
+			&anggota.Nama, 
 			&anggota.Username,
 			&anggota.Password,
-			&anggota.Email,
-			&anggota.NomorTelepon,
+			&anggota.Email, 
+			&anggota.NomorTelepon, 
 			&anggota.TanggalLahir,
 			&anggota.Poin,
 			&anggota.CreatedAt,
@@ -119,17 +116,10 @@ func GETAnggotaById(id int) (models.Response, error) {
 		)
 
 		if err != nil {
-			log.Printf("Error scanning row: %v", err)
 			return res, err
 		}
 
 		arrayAnggota = append(arrayAnggota, anggota)
-	}
-
-	if len(arrayAnggota) == 0 {
-		res.Status = http.StatusNotFound
-		res.Message = "No anggota found with the given ID"
-		return res, nil
 	}
 
 	res.Status = http.StatusOK
