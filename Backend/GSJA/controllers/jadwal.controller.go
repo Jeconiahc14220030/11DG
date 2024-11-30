@@ -131,7 +131,6 @@ func AddJadwal(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
-
 	return c.JSON(http.StatusCreated, result)
 }
 
@@ -139,7 +138,6 @@ func POSTJadwal(jadwal models.Jadwal) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO jadwal (tanggal, topik, jenis_ibadah, jumlah_poin) VALUES (?, ?, ?, ?)"
 
@@ -157,7 +155,12 @@ func POSTJadwal(jadwal models.Jadwal) (models.Response, error) {
 }
 
 func SoftDeleteJadwal(c echo.Context) error {
-	id := c.Param("id")
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id"})
+		
+	}
 
 	result, err := UpdateDeletedAtJadwal(id)
 
@@ -168,11 +171,10 @@ func SoftDeleteJadwal(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateDeletedAtJadwal(id string) (models.Response, error) {
+func UpdateDeletedAtJadwal(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE jadwal SET deleted_at = CURRENT_TIMESTAMP() WHERE id = ?"
 

@@ -13,8 +13,6 @@
 		}
 	}
 
-	
-
 	function cetaklaporan() {
 		Swal.fire({
 			title: 'Tambah Data Pengguna',
@@ -24,39 +22,49 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-		<form id="laporankeuangan" style="text-align: left; max-width: 500px; margin: 0 auto;">
-			<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
-			<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
+        <form id="laporankeuangan" style="text-align: left; max-width: 500px; margin: 0 auto;">
+            <label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
+            <input type="date" id="tanggal" name="tanggal" class="swal2-input" style="width: 80%;" required>
 
-			<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
-			<input type="text" id="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
+            <label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
+            <input type="text" id="nominal" name="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
 
-			<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
-			<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
-		</form>
-	`,
+            <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
+            <input type="text" id="laporan" name="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
+        </form>
+    `,
 			confirmButtonText: 'Create',
 			confirmButtonColor: '#F0A242',
 			focusConfirm: false,
 			preConfirm: () => {
-				const tanggal = document.getElementById('tanggal').value;
-				const nominal = document.getElementById('nominal').value;
-				const laporan = document.getElementById('laporan').value;
+				const formElement = document.getElementById('laporankeuangan');
+				const formData = new FormData(formElement); 
+
+				const tanggal = formData.get('tanggal');
+				const nominal = formData.get('nominal');
+				const laporan = formData.get('laporan');
 
 				if (!tanggal || !nominal || !laporan) {
 					Swal.showValidationMessage('Semua input harus diisi');
 					return false;
 				}
 
-				return { tanggal, nominal, laporan };
+				return fetch('http://localhost:8080/laporankeuangan/add', {
+					method: 'POST',
+					body: formData
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Gagal menyimpan data');
+						}
+						return response.json();
+					})
+					.catch((error) => {
+						Swal.showValidationMessage(`Request failed: ${error.message}`);
+					});
 			}
 		}).then((result) => {
 			if (result.isConfirmed) {
-				const dataInput = result.value;
-				console.log('Tanggal:', dataInput.tanggal);
-				console.log('Nominal Uang:', dataInput.nominal);
-				console.log('Laporan:', dataInput.laporan);
-
 				Swal.fire({
 					icon: 'success',
 					title: 'Data Berhasil Disimpan!',

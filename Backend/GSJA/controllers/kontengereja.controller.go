@@ -4,6 +4,7 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -106,7 +107,11 @@ func POSTKontenGereja(kontenGereja models.KontenGereja) (models.Response, error)
 }
 
 func SoftDeletedataKontenGereja(c echo.Context) error {
-	id := c.Param("id")
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id"})
+	}
 
 	result, err := UpdateDeletedAtKontenGereja(id)
 
@@ -117,11 +122,10 @@ func SoftDeletedataKontenGereja(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateDeletedAtKontenGereja(id string) (models.Response, error) {
+func UpdateDeletedAtKontenGereja(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE konten_gereja SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)

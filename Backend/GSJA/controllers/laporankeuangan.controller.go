@@ -157,7 +157,6 @@ func POSTLaporanKeuangan(laporanKeuangan models.LaporanKeuangan) (models.Respons
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO laporan_keuangan (tanggal, jenis, nominal, id_pembuat) VALUES (?, ?, ?, ?)"
 
@@ -175,7 +174,12 @@ func POSTLaporanKeuangan(laporanKeuangan models.LaporanKeuangan) (models.Respons
 }
 
 func SoftDeletedataLaporanKeuangan(c echo.Context) error {
-	id := c.Param("id")
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id"})
+	}
 
 	result, err := UpdateDeletedAtLaporanKeuangan(id)
 
@@ -186,11 +190,10 @@ func SoftDeletedataLaporanKeuangan(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateDeletedAtLaporanKeuangan(id string) (models.Response, error) {
+func UpdateDeletedAtLaporanKeuangan(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE laporan_keuangan SET deleted_at = NOW() WHERE id = ?"
 

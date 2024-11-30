@@ -15,10 +15,10 @@
 		}
 	}
 
-	function deleteanggota(id_anggota) {
+	async function deleteanggota(id_anggota) {
 		Swal.fire({
 			title: 'Apakah Anda yakin?',
-			text: `Anda tidak akan dapat mengembalikannya! ${id_anggota}`,
+			text: `Anda tidak akan dapat mengembalikannya!`,
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
@@ -26,18 +26,31 @@
 			confirmButtonText: 'Hapus!'
 		}).then((result) => {
 			if (result.isConfirmed) {
-				Swal.fire({
-					title: 'Hapus!',
-					text: 'Pengguna berhasil dihapus.',
-					icon: 'success',
-					showConfirmButton: false
-				});
+				try {
+					const response = fetch(`http://localhost:8080/anggota/delete/${id_anggota}`, {
+						method: 'PUT'
+					});
+					Swal.fire({
+						title: 'Hapus!',
+						text: 'Pengguna berhasil dihapus.',
+						icon: 'success',
+						showConfirmButton: false
+					}).then(() => {
+						window.location.reload();
+					});
+				} catch (err) {
+					console.log(err.message);
+				}
 			}
 		});
 	}
 
-	function tambahangota(){
+	function tambahangota() {
 		goto('/admin/pengguna/tambah pengguna');
+	}
+
+	function editangota() {
+		goto('/admin/pengguna/edit pengguna');
 	}
 
 	onMount(() => {
@@ -187,8 +200,8 @@
 						<td class="py-3 px-6 text-left text-black">{item.created_at}</td>
 						<td class="py-3 px-6 text-center">
 							<div class="flex item-center justify-center">
-								<a
-									href="/admin/pengguna/edit pengguna"
+								<button
+									on:click={editangota}
 									class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110"
 								>
 									<svg
@@ -202,8 +215,11 @@
 											d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
 										/>
 									</svg>
-								</a>
-								<button on:click={deleteanggota(item.id)} class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
+								</button>
+								<button
+									on:click={deleteanggota(item.id)}
+									class="w-4 mr-2 transform hover:text-red-500 hover:scale-110"
+								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="1.5em"

@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	let hanyafasilitator = [];
 
@@ -55,8 +56,6 @@
 		}).then((result) => {
 			if (result.isConfirmed) {
 				const dataInput = result.value;
-				console.log('Tanggal:', dataInput.anggota);
-				console.log('Nama Kelompok:', dataInput.kelompok);
 
 				Swal.fire({
 					icon: 'success',
@@ -114,9 +113,14 @@
 			}
 		});
 	}
+	
 	onMount(() => {
 		fetchdata();
 	});
+
+	function detailhf() {
+		goto('/admin/absensi hf/detail hf');
+	}
 </script>
 
 <div class="bg-background w-screen h-screen justify-center items-center">
@@ -139,16 +143,35 @@
 									<td class="py-3 px-6 text-left text-black">{item.nama}</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center">
-											<button on:click={Editabsensi} class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
+											<button
+												on:click={Editabsensi}
+												class="w-4 mr-4 transform hover:text-blue-400 hover:scale-110"
+											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
-													width="1.5em"
-													height="1.5em"
+													width="1.7em"
+													height="1.7em"
 													viewBox="0 0 16 16"
 												>
 													<path
 														fill="currentColor"
 														d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
+													/>
+												</svg>
+											</button>
+											<button 
+												on:click={detailhf}
+												class="w-4 mr-4 transform hover:text-rose-400 hover:scale-110"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="2em"
+													height="2em"
+													viewBox="0 0 24 24"
+												>
+													<path
+														fill="currentColor"
+														d="M8 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8m9 0a3 3 0 1 0 0-6a3 3 0 0 0 0 6M4.25 14A2.25 2.25 0 0 0 2 16.25v.25S2 21 8 21s6-4.5 6-4.5v-.25A2.25 2.25 0 0 0 11.75 14zM17 19.5c-1.171 0-2.068-.181-2.755-.458a5.5 5.5 0 0 0 .736-2.207A4 4 0 0 0 15 16.55v-.3a3.24 3.24 0 0 0-.902-2.248L14.2 14h5.6a2.2 2.2 0 0 1 2.2 2.2s0 3.3-5 3.3"
 													/>
 												</svg>
 											</button>

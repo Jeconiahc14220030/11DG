@@ -35,139 +35,40 @@
 		}
 	}
 
-	onMount(() => {
-		const createBtn = document.getElementById('accept1');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Success',
-					text: 'Visi misi berhasil ditambahkan',
-					icon: 'success',
-					showConfirmButton: false
-				});
-			});
-		}
-	});
+	async function kontengereja(event) {
+		event.preventDefault();
 
-	onMount(() => {
-		const createBtn = document.getElementById('accept2');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Success',
-					text: 'Pesan ketua berhasil ditambahkan',
-					icon: 'success',
-					showConfirmButton: false
-				});
-			});
-		}
-	});
+		const formData = new FormData(document.getElementById('kontengereja'));
 
-	onMount(() => {
-		const createBtn = document.getElementById('accept3');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Success',
-					text: 'Tujuan berhasil ditambahkan',
-					icon: 'success',
-					showConfirmButton: false
-				});
+		try {
+			const response = await fetch('http://localhost:8080/kontengereja/add', {
+				method: 'POST',
+				body: formData
 			});
-		}
-	});
 
-	onMount(() => {
-		const createBtn = document.getElementById('accept4');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Success',
-					text: 'Renungan berhasil ditambahkan',
-					icon: 'success',
-					showConfirmButton: false
-				});
-			});
-		}
-	});
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
 
-	onMount(() => {
-		const createBtn = document.getElementById('delete1');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Apakah Anda yakin?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, delete it!'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						Swal.fire({
-							title: 'Deleted!',
-							text: 'Visi misi berhasil dihapus',
-							icon: 'success',
-							showConfirmButton: false
-						});
-					}
-				});
-			});
-		}
-	});
+			const result = await response.json();
 
-	onMount(() => {
-		const createBtn = document.getElementById('delete2');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, delete it!'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						Swal.fire({
-							title: 'Deleted!',
-							text: 'Pesan ketua berhasil dihapus',
-							icon: 'success',
-							showConfirmButton: false
-						});
-					}
-				});
+			Swal.fire({
+				title: 'Berhasil Ditambahkan',
+				text: 'Berita berhasil ditambahkan ke sistem',
+				icon: 'success',
+				confirmButtonColor: '#F0A242'
+			});
+		} catch (err) {
+			console.error('Terjadi kesalahan saat menambahkan konten gereja:', err);
+			Swal.fire({
+				title: 'Gagal',
+				text: 'Terjadi kesalahan silakan coba lagi.',
+				icon: 'error',
+				confirmButtonColor: '#F0A242'
 			});
 		}
-	});
+	}
 
-	onMount(() => {
-		const createBtn = document.getElementById('delete3');
-		if (createBtn) {
-			createBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, delete it!'
-				}).then((result) => {
-					if (result.isConfirmed) {
-						Swal.fire({
-							title: 'Deleted!',
-							text: 'Tujuan berhasil dihapus',
-							icon: 'success',
-							showConfirmButton: false
-						});
-					}
-				});
-			});
-		}
-	});
 
 	onMount(() => {
 		const createBtn = document.getElementById('delete4');
@@ -201,14 +102,33 @@
 		<h1 id="isi" class="text-3xl text-center font-bold mb-4">Edit Halaman Utama</h1>
 
 		<div class="grid grid-cols-1 gap-6 mb-6">
-			<form class="bg-white p-4 rounded-md shadow-md">
-				<h2 class="font-bold text-2xl" id="isi">Visi Misi</h2>
-				<textarea
+			<form id="kontengereja" on:submit={kontengereja} class="bg-white p-4 rounded-md shadow-md">
+				<h2 class="font-bold text-2xl" id="isi">Visi</h2>
+				<textarea name="visi"
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
 					rows="2"
 				></textarea>
-				<div class="mt-2 flex justify-end">
-					<a id="accept1" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
+
+				<h2 class="font-bold text-2xl mt-2" id="isi">Misi</h2>
+				<textarea name="misi"
+					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
+					rows="2"
+				></textarea>
+
+				<h2 class="font-bold text-2xl mt-2" id="isi">Pesan Ketua</h2>
+				<textarea name="pesanKetua"
+					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
+					rows="2"
+				></textarea>
+
+				<h2 class="font-bold text-2xl mt-2" id="isi">Tujuan</h2>
+				<textarea name="tujuan"
+					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
+					rows="2"
+				></textarea>
+
+				<div class="mt-2 flex justify-end text-center justify-center">
+					<button type="submit" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.5em"
@@ -220,8 +140,8 @@
 								d="M5 3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2v-5.5A1.5 1.5 0 0 1 6.5 10h6.444l1.159-1.16A2.87 2.87 0 0 1 17 8.135V6.62a2 2 0 0 0-.586-1.414l-1.621-1.621A2 2 0 0 0 13.379 3H13v3.5A1.5 1.5 0 0 1 11.5 8h-4A1.5 1.5 0 0 1 6 6.5V3zm6.944 8l-2.67 2.67a3.2 3.2 0 0 0-.841 1.485l-.375 1.498q-.044.176-.054.347H6v-5.5a.5.5 0 0 1 .5-.5zM7 3h5v3.5a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5zm7.81 6.548l-4.83 4.83a2.2 2.2 0 0 0-.578 1.02l-.375 1.498a.89.89 0 0 0 1.079 1.078l1.498-.374a2.2 2.2 0 0 0 1.02-.578l4.83-4.83a1.87 1.87 0 0 0-2.645-2.644"
 							/>
 						</svg>
-					</a>
-					<a id="delete1" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
+					</button>
+					<button type="delete" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.5em"
@@ -233,77 +153,7 @@
 								d="M7 6V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6zm6.414 8l1.768-1.768l-1.414-1.414L12 12.586l-1.768-1.768l-1.414 1.414L10.586 14l-1.768 1.768l1.414 1.414L12 15.414l1.768 1.768l1.414-1.414zM9 4v2h6V4z"
 							/>
 						</svg>
-					</a>
-				</div>
-			</form>
-			<form class="bg-white p-4 rounded-md shadow-md">
-				<h2 class="font-bold text-2xl" id="isi">Pesan Ketua</h2>
-				<textarea
-					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
-					rows="2"
-				></textarea>
-				<div class="mt-2 flex justify-end">
-					<a id="accept2" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1.5em"
-							height="1.5em"
-							viewBox="0 0 20 20"
-						>
-							<path
-								fill="currentColor"
-								d="M5 3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2v-5.5A1.5 1.5 0 0 1 6.5 10h6.444l1.159-1.16A2.87 2.87 0 0 1 17 8.135V6.62a2 2 0 0 0-.586-1.414l-1.621-1.621A2 2 0 0 0 13.379 3H13v3.5A1.5 1.5 0 0 1 11.5 8h-4A1.5 1.5 0 0 1 6 6.5V3zm6.944 8l-2.67 2.67a3.2 3.2 0 0 0-.841 1.485l-.375 1.498q-.044.176-.054.347H6v-5.5a.5.5 0 0 1 .5-.5zM7 3h5v3.5a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5zm7.81 6.548l-4.83 4.83a2.2 2.2 0 0 0-.578 1.02l-.375 1.498a.89.89 0 0 0 1.079 1.078l1.498-.374a2.2 2.2 0 0 0 1.02-.578l4.83-4.83a1.87 1.87 0 0 0-2.645-2.644"
-							/>
-						</svg>
-					</a>
-					<a id="delete2" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1.5em"
-							height="1.5em"
-							viewBox="0 0 24 24"
-						>
-							<path
-								fill="currentColor"
-								d="M7 6V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6zm6.414 8l1.768-1.768l-1.414-1.414L12 12.586l-1.768-1.768l-1.414 1.414L10.586 14l-1.768 1.768l1.414 1.414L12 15.414l1.768 1.768l1.414-1.414zM9 4v2h6V4z"
-							/>
-						</svg>
-					</a>
-				</div>
-			</form>
-			<form class="bg-white p-4 rounded-md shadow-md">
-				<h2 class="font-bold text-2xl" id="isi">Tujuan</h2>
-				<textarea
-					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
-					rows="2"
-				></textarea>
-				<div class="mt-2 flex justify-end">
-					<a id="accept3" class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1.5em"
-							height="1.5em"
-							viewBox="0 0 20 20"
-						>
-							<path
-								fill="currentColor"
-								d="M5 3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2v-5.5A1.5 1.5 0 0 1 6.5 10h6.444l1.159-1.16A2.87 2.87 0 0 1 17 8.135V6.62a2 2 0 0 0-.586-1.414l-1.621-1.621A2 2 0 0 0 13.379 3H13v3.5A1.5 1.5 0 0 1 11.5 8h-4A1.5 1.5 0 0 1 6 6.5V3zm6.944 8l-2.67 2.67a3.2 3.2 0 0 0-.841 1.485l-.375 1.498q-.044.176-.054.347H6v-5.5a.5.5 0 0 1 .5-.5zM7 3h5v3.5a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5zm7.81 6.548l-4.83 4.83a2.2 2.2 0 0 0-.578 1.02l-.375 1.498a.89.89 0 0 0 1.079 1.078l1.498-.374a2.2 2.2 0 0 0 1.02-.578l4.83-4.83a1.87 1.87 0 0 0-2.645-2.644"
-							/>
-						</svg>
-					</a>
-					<a id="delete3" class="w-4 mr-2 transform hover:text-red-500 hover:scale-110">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1.5em"
-							height="1.5em"
-							viewBox="0 0 24 24"
-						>
-							<path
-								fill="currentColor"
-								d="M7 6V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6zm6.414 8l1.768-1.768l-1.414-1.414L12 12.586l-1.768-1.768l-1.414 1.414L10.586 14l-1.768 1.768l1.414 1.414L12 15.414l1.768 1.768l1.414-1.414zM9 4v2h6V4z"
-							/>
-						</svg>
-					</a>
+					</button>
 				</div>
 			</form>
 		</div>

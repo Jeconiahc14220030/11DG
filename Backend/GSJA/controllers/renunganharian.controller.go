@@ -4,6 +4,7 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -83,7 +84,6 @@ func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, 
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO renungan_harian (status, isi) VALUES (?, ?)"
 
@@ -101,8 +101,12 @@ func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, 
 }
 
 func SoftDeletedataRenunganHarian(c echo.Context) error {
-	id := c.Param("id")
-
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id"})
+	}
+	
 	result, err := UpdateDeletedAtRenunganHarian(id)
 
 	if err != nil {
@@ -112,11 +116,10 @@ func SoftDeletedataRenunganHarian(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateDeletedAtRenunganHarian(id string) (models.Response, error) {
+func UpdateDeletedAtRenunganHarian(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE renungan_harian SET deleted_at = NOW() WHERE id = ?"
 

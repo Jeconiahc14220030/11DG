@@ -1,8 +1,38 @@
 <script>
 	import { onMount } from 'svelte';
 
-	const userId = 1;
-	let jadwalId = null;
+	let username = localStorage.getItem('username')
+	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
+
+	// Fetch Anggota berdasarkan Username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			if (result.status === 200 && result.data) {
+				// Cari user berdasarkan username
+				const user = result.data.find((user) => user.username === username);
+
+				if (user) {
+					userId = user.id; // Set userId sesuai dengan hasil pencarian
+					console.log('User ID:', userId);
+				} else {
+					console.log('Pengguna tidak ditemukan');
+				}
+			} else {
+				console.log('Data tidak valid:', result.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
 
 	async function fetchAbsensi() {
 		try {
@@ -156,8 +186,12 @@
 		return `${year}-${month}-${day}`;
 	}
 
-	onMount(() => {
-		fetchAbsensi();
+	onMount(async () => {
+		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		if (userId) {
+			// Jika userId ada, ambil data lainnya
+			fetchAbsensi();
+		}
 	});
 </script>
 
