@@ -3,6 +3,7 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"log"
 	"net/http"
 	"strconv"
 
