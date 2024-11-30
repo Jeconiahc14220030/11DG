@@ -120,29 +120,27 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	return response, err
 }
 
-func AddAbsensiHf(c echo.Context) error {
-	status := c.FormValue("status")
-	idAnggotaStr := c.FormValue("id_anggota")
-	idJadwalStr := c.FormValue("id_jadwal")
-
-	idAnggota, err := strconv.Atoi(idAnggotaStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_anggota"})
-	}
+func AddKehadiranAbsensiHf(c echo.Context) error {
+	idAnggotaStr := c.FormValue("idAnggota") 
+	idJadwalStr := c.FormValue("idJadwal")
 
 	idJadwal, err := strconv.Atoi(idJadwalStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_jadwal"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idJadwal" + idJadwalStr})
+	}
+	
+	idAnggota, err := strconv.Atoi(idAnggotaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
 
 	absensiHf := models.AbsensiHf{
-		Status:    status,
+		Status:    "hadir",
 		IdAnggota: idAnggota,
-		IdJadwal:  idJadwal,
+		IdJadwal: idJadwal,
 	}
 
 	result, err := POSTAbsensiHf(absensiHf)
-
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
