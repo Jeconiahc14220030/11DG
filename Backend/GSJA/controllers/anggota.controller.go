@@ -26,7 +26,7 @@ func GETAllAnggota() (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM anggota"
+	sqlStatement := "SELECT * FROM anggota WHERE deleted_at IS NULL"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -190,27 +190,18 @@ func GETRiwayatVoucherAnggota(id int) (models.Response, error) {
 }
 
 func AddAnggota(c echo.Context) error {
-	nama := c.FormValue("nama")
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 	email := c.FormValue("email")
 	nomorTelepon := c.FormValue("nomor_telepon")
 	tanggalLahir := c.FormValue("tanggal_lahir")
-	poinStr := c.FormValue("poin")
-
-	poin, err := strconv.Atoi(poinStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid poin"})
-	}
 
 	anggota := models.Anggota{
-		Nama:         nama,
 		Username:     username,
 		Password:     password,
 		Email:        email,
 		NomorTelepon: nomorTelepon,
 		TanggalLahir: tanggalLahir,
-		Poin:         poin,
 	}
 
 	result, err := POSTAnggota(anggota)
@@ -227,8 +218,8 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO anggota (nama, username, password, email, nomor_telepon, tanggal_lahir, poin) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir, anggota.Poin)
+	sqlStatement := "INSERT INTO anggota (username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir 	)
 
 	if err != nil {
 		return res, err
@@ -262,7 +253,6 @@ func UpdateDeletedAtAnggota(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE anggota SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)
@@ -299,7 +289,6 @@ func UpdateDeletedAtToNullAnggota(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE anggota SET deleted_at = NULL WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)

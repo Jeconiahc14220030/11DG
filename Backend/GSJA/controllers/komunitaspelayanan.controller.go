@@ -138,7 +138,16 @@ func AddPengumuman(c echo.Context) error {
 	// if err != nil {
 	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
 	// }
+	// formattanggal, err := time.Parse("2024-11-20", tanggal)
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
+	// }
 
+	// pengumuman := models.Pengumuman{
+	// 	Konten: konten,
+	// 	// Tanggal: tanggal,
+	// 	Id_komunitas: idKomunitas,
+	// }
 	// pengumuman := models.Pengumuman{
 	// 	Konten: konten,
 	// 	// Tanggal: tanggal,

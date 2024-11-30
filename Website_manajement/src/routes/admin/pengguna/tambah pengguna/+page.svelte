@@ -5,6 +5,7 @@
 		event.preventDefault();
 
 		const formdata = new FormData(document.getElementById('tambahanggota'));
+		console.log(formdata);
 
 		try {
 			const response = await fetch('http://localhost:8080/anggota/add', {
@@ -13,7 +14,8 @@
 			});
 
 			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
+				const errorData = await response.json();
+				throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
 			}
 
 			const tambahanggota = await response.json();
@@ -27,7 +29,13 @@
 				goto('/admin/pengguna');
 			});
 		} catch (err) {
-			console.error('Error during login:', err);
+			Swal.fire({
+				title: 'Error',
+				text: 'Data pengguna gagal ditambahkan',
+				icon: 'error',
+				confirmButtonColor: '#FF0000'
+			});
+			console.error('Error during adding anggota:', err);
 		}
 	}
 </script>
@@ -45,13 +53,14 @@
 		<div class="flex flex-row space-x-8">
 			<div class="flex flex-col space-y-4">
 				<div class="flex flex-col">
-					<label for="name" class="font-medium">Nama</label>
+					<label for="username" class="font-medium">Username</label>
 					<input
 						type="text"
-						id="name"
-						name="name"
+						id="username"
+						name="username"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
-						placeholder="Masukkan nama"
+						placeholder="Masukkan username"
+						required
 					/>
 				</div>
 
@@ -63,41 +72,45 @@
 						name="email"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan email"
+						required
 					/>
 				</div>
 
 				<div class="flex flex-col">
-					<label for="dob" class="font-medium">Tanggal Lahir</label>
+					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
 					<input
 						type="date"
-						id="dob"
-						name="dob"
+						id="tanggal_lahir"
+						name="tanggal_lahir"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
+						required
 					/>
 				</div>
 			</div>
 
 			<div class="flex flex-col space-y-4">
 				<div class="flex flex-col">
-					<label for="phone" class="font-medium">Nomor Telepon</label>
+					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
 					<input
-						type="phone"
-						id="phone"
-						name="phone"
+						type="tel"
+						id="nomor_telepon"
+						name="nomor_telepon"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan nomor telepon"
+						required
 					/>
 				</div>
 
 				<div class="flex flex-col">
-					<label for="phone" class="font-medium">Roles</label>
+					<label for="roles" class="font-medium">Roles</label>
 					<select
 						id="roles"
 						name="roles"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
+						required
 					>
-						<option>BPH</option>
-						<option>User</option>
+						<option value="BPH">BPH</option>
+						<option value="User" selected>User</option>
 					</select>
 				</div>
 			</div>

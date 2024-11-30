@@ -5,6 +5,7 @@ import (
 	"GSJA/models"
 	"database/sql"
 	"errors"
+	"errors"
 	"fmt"
 	"net/http"
 	"github.com/labstack/echo/v4"
@@ -30,7 +31,7 @@ func Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func AuthenticateUser (username, password string) (models.Response, error) {
+func AuthenticateUser(username, password string) (models.Response, error) {
 	var user models.User
 	var res models.Response
 
@@ -53,14 +54,13 @@ func AuthenticateUser (username, password string) (models.Response, error) {
 	// 	fmt.Println("Password matches!")
 	// }
 
-	if user.Password == password {
-		fmt.Println("Password cocok")
-		return res, nil
-	} else {
-		fmt.Println("Password tidak cocok")
-		return res, errors.New("password tidak cocok")
-	}
-	
+	// if user.Password == password {
+	// 	fmt.Println("Password cocok")
+	// 	return res, nil
+	// } else {
+	// 	fmt.Println("Password tidak cocok")
+	// 	return res, errors.New("password tidak cocok")
+	// }
 
 	res.Status = http.StatusOK
 	res.Message = "Login successful"
