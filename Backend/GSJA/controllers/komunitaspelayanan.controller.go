@@ -179,7 +179,6 @@ func POSTPengumuman(pengumuman models.Pengumuman, id int) (models.Response, erro
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO pengumuman(konten, tanggal, id_komunitas) VALUES (?, ?, ?)"
 	_, err := con.Exec(sqlStatement, pengumuman.Konten, pengumuman.Tanggal, id)

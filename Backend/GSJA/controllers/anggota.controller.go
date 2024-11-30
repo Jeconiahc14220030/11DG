@@ -216,7 +216,6 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO anggota (username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir 	)

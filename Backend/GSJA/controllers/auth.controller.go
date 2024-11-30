@@ -4,8 +4,6 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"database/sql"
-	"errors"
-	"errors"
 	"fmt"
 	"net/http"
 	"github.com/labstack/echo/v4"
