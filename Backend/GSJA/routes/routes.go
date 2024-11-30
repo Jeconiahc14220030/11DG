@@ -66,15 +66,14 @@ func Init() *echo.Echo {
 
 	e.GET("/jadwal/:id", controllers.FetchJadwalById)
 
+	e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
+
+	e.GET(":username", controllers.FetchAnggotaByUsername)
 	e.GET("/roles", controllers.FetchAllRoles)
 	
 	e.GET("anggotaRoles", controllers.FetchAllRolesAnggota)
 
 	e.POST("/roles/add", controllers.AddRoles)
-
-	e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
-
-	e.GET(":username", controllers.FetchAnggotaByUsername)
 
 	e.POST("/anggota/add", controllers.AddAnggota)
 
@@ -95,7 +94,7 @@ func Init() *echo.Echo {
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
-	e.POST("absensihf/add", controllers.AddAbsensiHf) // perlu dipikirkan lagi struktur tanggal
+	e.POST("absensihf/add", controllers.AddAbsensiHfJson) // perlu dipikirkan lagi struktur tanggal
 
 	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan) // perlu dipikirkan lagi struktur tanggal
 

@@ -4,6 +4,7 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -29,7 +30,6 @@ func Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func AuthenticateUser(username, password string) (models.Response, error) {
 func AuthenticateUser(username, password string) (models.Response, error) {
 	var user models.User
 	var res models.Response

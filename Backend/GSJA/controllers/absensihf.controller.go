@@ -130,16 +130,9 @@ func AddAbsensiHfForm(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
 
-	idJadwalStr := c.FormValue("idJadwal")
 	idJadwal, err := strconv.Atoi(idJadwalStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idJadwal" + idJadwalStr})
-	}
-
-	idHfStr := c.FormValue("idHf")
-	idHf, err := strconv.Atoi(idHfStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idHf" + idHfStr})
 	}
 
 	idHF, err := strconv.Atoi(idHFStr)
