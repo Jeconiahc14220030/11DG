@@ -4,7 +4,6 @@ import "time"
 
 type Absensi struct {
 	Id          int        `json:"id" db:"id"`
-	Status      string     `json:"status" db:"status"`
 	IdAnggota   int        `json:"id_anggota" db:"id_anggota"`
 	IdJadwal    int        `json:"id_jadwal" db:"id_jadwal"`
 	CreatedAt   time.Time  `json:"created_at" db:"created_at"`

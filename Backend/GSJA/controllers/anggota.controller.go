@@ -352,7 +352,6 @@ func GetAbsensiById(id int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&absensi.Id,
-			&absensi.Status,
 			&absensi.IdAnggota,
 			&absensi.IdJadwal,
 			&absensi.CreatedAt,

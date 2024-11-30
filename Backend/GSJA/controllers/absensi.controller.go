@@ -24,7 +24,6 @@ func AddKehadiranAbsensi(c echo.Context) error {
 	}
 
 	absensiHf := models.AbsensiHf{
-		Status:    "hadir",
 		IdAnggota: idAnggota,
 		IdJadwal:  idJadwal,
 	}
@@ -43,8 +42,8 @@ func POSTAbsensi(absensi models.Absensi) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO absensi_hf (status, id_anggota, id_jadwal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, absensi.Status, absensi.IdAnggota, absensi.IdJadwal)
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_jadwal) VALUES (?, ?)"
+	_, err := con.Exec(sqlStatement, absensi.IdAnggota, absensi.IdJadwal)
 
 	if err != nil {
 		return res, err

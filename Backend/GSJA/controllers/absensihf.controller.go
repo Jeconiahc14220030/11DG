@@ -38,10 +38,10 @@ func GETAllAbsensihf() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&absensihf.Id, 
-			&absensihf.Status, 
+			&absensihf.Id,  
 			&absensihf.IdAnggota, 
 			&absensihf.IdJadwal, 
+			&absensihf.IdHf,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
 			&absensihf.DeletedAt,
@@ -98,9 +98,9 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&absensihf.Id, 
-			&absensihf.Status, 
 			&absensihf.IdAnggota, 
 			&absensihf.IdJadwal, 
+			&absensihf.IdHf,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
 			&absensihf.DeletedAt,
@@ -121,23 +121,28 @@ func GETAbsensihfById(id int) (models.Response, error) {
 }
 
 func AddKehadiranAbsensiHf(c echo.Context) error {
-	idAnggotaStr := c.FormValue("idAnggota") 
-	idJadwalStr := c.FormValue("idJadwal")
-
-	idJadwal, err := strconv.Atoi(idJadwalStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idJadwal" + idJadwalStr})
-	}
-	
+	idAnggotaStr := c.FormValue("idAnggota")	
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
 
+	idJadwalStr := c.FormValue("idJadwal")
+	idJadwal, err := strconv.Atoi(idJadwalStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idJadwal" + idJadwalStr})
+	}
+
+	idHfStr := c.FormValue("idHf")
+	idHf, err := strconv.Atoi(idHfStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idHf" + idHfStr})
+	}
+	
 	absensiHf := models.AbsensiHf{
-		Status:    "hadir",
 		IdAnggota: idAnggota,
 		IdJadwal: idJadwal,
+		IdHf: idHf,
 	}
 
 	result, err := POSTAbsensiHf(absensiHf)
@@ -154,8 +159,8 @@ func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO absensi_hf (status, id_anggota, id_jadwal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, absensiHf.Status, absensiHf.IdAnggota, absensiHf.IdJadwal)
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_jadwal, id_hf) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.IdJadwal, absensiHf.IdHf)
 
 	if err != nil {
 		return res, err
