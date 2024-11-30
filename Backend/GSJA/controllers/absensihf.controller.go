@@ -85,7 +85,7 @@ func GETAbsensihfById(id int) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM absensi_hf WHERE id = ?"
+	sqlStatement := "SELECT * FROM absensi_hf WHERE id_hf = ?"
 
 	rows, err := con.Query(sqlStatement, id)
 
