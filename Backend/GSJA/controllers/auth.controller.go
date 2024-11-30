@@ -35,7 +35,7 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
+	
 
 	sqlStatement := "SELECT id, username, password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
@@ -47,6 +47,8 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 		}
 		return res, err
 	}
+
+	// defer con.Close()
 
 	// if err != nil {
 	// 	fmt.Println("Password does not match:", err)

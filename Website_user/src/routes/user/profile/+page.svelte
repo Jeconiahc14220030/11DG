@@ -151,9 +151,6 @@
 		points.forEach((point) => {
 			point.date = new Date(point.date).toISOString().split('T')[0]; // Ubah format ke YYYY-MM-DD
 		});
-
-		// Pastikan UI diperbarui, jika menggunakan framework seperti Svelte, cukup pastikan variable "points" diperbarui.
-		console.log(points); // Debug untuk memastikan data terformat dengan benar
 	}
 
 	let showModal = false; // Control for logout modal

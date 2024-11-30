@@ -4,10 +4,6 @@
 
 		let formData = new FormData(document.getElementById('loginForm'));
 
-		for (let [key, value] of formData.entries()) {
-			console.log(key, value);
-		}
-
 		try {
 			const response = await fetch('http://localhost:8080/login', {
 				method: 'POST',
@@ -18,7 +14,7 @@
 
 			if (response.ok) {
 				const result = await response.json();
-				console.log(result.message);
+
 				// Jika login berhasil, arahkan ke halaman homepage
 				window.location.href = '/user/homepage';
 			} else {
