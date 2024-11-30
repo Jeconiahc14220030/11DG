@@ -3,6 +3,7 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -360,5 +361,78 @@ func GetAbsensiById(id int) (models.Response, error) {
 	response.Data = arrAbsensi
 
 	return response, err
+}
+
+func ChangePassword(c echo.Context) error {
+	idParam := c.Param("id")
+	currentPassword := c.FormValue("current_password")
+	newPassword := c.FormValue("new_password")
+	confirmPassword := c.FormValue("confirm_password")
+
+	
+	if newPassword != confirmPassword {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "New password and confirm password do not match"})
+	}
+
+	
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
+	}
+
+	isValid, err := ValidateCurrentPassword(id, currentPassword)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	if !isValid {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Current password is incorrect"})
+	}
+
+	result, err := UpdatePassword(id, newPassword)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func ValidateCurrentPassword(id int, currentPassword string) (bool, error) {
+	var passwordFromDB string
+
+	con := db.CreateCon()
+	sqlStatement := "SELECT password FROM anggota WHERE id = ? AND deleted_at IS NULL"
+
+	err := con.QueryRow(sqlStatement, id).Scan(&passwordFromDB)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil 
+		}
+		return false, err
+	}
+
+	if currentPassword != passwordFromDB {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func UpdatePassword(id int, newPassword string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	sqlStatement := "UPDATE anggota SET password = ?, updated_at = NOW() WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, newPassword, id)
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Password updated successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
 }
 
