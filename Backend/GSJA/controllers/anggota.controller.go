@@ -68,12 +68,13 @@ func GETAllAnggota() (models.Response, error) {
 
 func FetchAnggotaById(c echo.Context) error {
 	idParam := c.Param("id")
-	// id, err := strconv.Atoi(idParam)
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id of" + idParam})
-	// }
+	id, err := strconv.Atoi(idParam)
 
-	result, err := GETAnggotaById(idParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := GETAnggotaById(id)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -82,7 +83,7 @@ func FetchAnggotaById(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func GETAnggotaById(id string) (models.Response, error) {
+func GETAnggotaById(id int) (models.Response, error) {
 	var anggota models.Anggota
 	var arrayAnggota []models.Anggota
 	var res models.Response
