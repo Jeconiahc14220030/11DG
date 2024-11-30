@@ -1,7 +1,8 @@
 <script>
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	// Functions to handle profile edit and password change
+	// Fungsi untuk mengedit profil dan mengganti password
 	function editProfile() {
 		window.location.href = '/user/profile/ubah_profile';
 	}
@@ -10,14 +11,51 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
-	const userId = 1;
+	let username = $page.url.searchParams.get('username');
+	console.log('Username:', username);
 
-	let user = [];
+	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
+
+	// Fetch Anggota berdasarkan Username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/anggota`);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			if (result.status === 200 && result.data) {
+				// Cari user berdasarkan username
+				const user = result.data.find((user) => user.username === username);
+
+				if (user) {
+					userId = user.id; // Set userId sesuai dengan hasil pencarian
+					console.log('User ID:', userId);
+				} else {
+					console.log('Pengguna tidak ditemukan');
+				}
+			} else {
+				console.log('Data tidak valid:', result.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	// Variabel untuk menyimpan data user, voucher, dan points
+	let user = {};
 	let vouchers = [];
 	let points = [];
 
+	// Ambil data user berdasarkan userId
 	async function fetchAnggota() {
 		try {
+			if (!userId) return; // Pastikan userId sudah di set
+
 			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
 
 			if (!response.ok) {
@@ -26,7 +64,6 @@
 
 			const result = await response.json();
 
-			// Pastikan data array memiliki elemen
 			if (result.data && result.data.length > 0) {
 				const userData = result.data[0]; // Ambil elemen pertama dalam array
 				// Menyimpan nilai poin ke sessionStorage
@@ -48,9 +85,11 @@
 		}
 	}
 
+	// Ambil riwayat voucher
 	async function fetchRiwayatVoucher() {
 		try {
-			// Ambil riwayat voucher anggota
+			if (!userId) return;
+
 			const responseRiwayat = await fetch(`http://localhost:8080/anggota/${userId}/riwayatvoucher`);
 
 			if (!responseRiwayat.ok) {
@@ -59,12 +98,9 @@
 
 			const resultRiwayat = await responseRiwayat.json();
 
-			// Jika ada data riwayat voucher
 			if (resultRiwayat.data && resultRiwayat.data.length > 0) {
-				// Ambil data voucher berdasarkan id_voucher di riwayat
 				const voucherIds = resultRiwayat.data.map((item) => item.id_voucher);
 
-				// Ambil data voucher berdasarkan id yang teridentifikasi
 				const responseVoucher = await fetch(
 					`http://localhost:8080/voucher?ids=${voucherIds.join(',')}`
 				);
@@ -75,7 +111,6 @@
 
 				const resultVoucher = await responseVoucher.json();
 
-				// Gabungkan data voucher dengan riwayat voucher
 				vouchers = resultRiwayat.data.map((item) => {
 					const voucherInfo = resultVoucher.data.find((voucher) => voucher.id === item.id_voucher);
 					return {
@@ -94,8 +129,11 @@
 		}
 	}
 
+	// Ambil data poin
 	async function fetchPoins() {
 		try {
+			if (!userId) return;
+
 			const responseAbsensi = await fetch(`http://localhost:8080/anggota/${userId}/absensi`);
 
 			if (!responseAbsensi.ok) {
@@ -117,28 +155,23 @@
 
 				const resultJadwal = await responseJadwal.json();
 
-				// Gabungkan absensi dengan jadwal
 				const absensiWithJadwal = resultAbsensi.data.map((absensi) => {
 					const jadwalInfo = resultJadwal.data.find((jadwal) => jadwal.id === absensi.id_jadwal);
 					return {
 						...absensi,
 						jadwal_topik: jadwalInfo?.topik,
 						jadwal_jenis_ibadah: jadwalInfo?.jenis_ibadah,
-						jadwal_tanggal: formatDate(jadwalInfo?.tanggal), // Format tanggal di sini
+						jadwal_tanggal: formatDate(jadwalInfo?.tanggal),
 						jumlah_poin: jadwalInfo?.jumlah_poin
 					};
 				});
 
-				// Format data untuk points
 				points = absensiWithJadwal.map((item) => ({
 					topik: item.jadwal_topik,
 					jenis_ibadah: item.jadwal_jenis_ibadah,
-					date: item.jadwal_tanggal, // Tanggal sudah diformat
+					date: item.jadwal_tanggal,
 					point: item.jumlah_poin
 				}));
-
-				// Panggil fungsi untuk memperbarui tampilan
-				displayPoints(points);
 			} else {
 				console.log('Tidak ada data absensi.');
 			}
@@ -147,37 +180,30 @@
 		}
 	}
 
-	function displayPoints(points) {
-		points.forEach((point) => {
-			point.date = new Date(point.date).toISOString().split('T')[0]; // Ubah format ke YYYY-MM-DD
-		});
+	// Fungsi untuk memformat tanggal
+	function formatDate(dateString) {
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
 	}
 
-	let showModal = false; // Control for logout modal
-	let showPointsDetail = false; // Control for points detail
-	let showVoucherHistory = false; // Control for voucher history
-	let showRoles = false; // Control for roles detail
+	let showModal = false;
+	let showPointsDetail = false;
+	let showVoucherHistory = false;
+	let showRoles = false;
 
 	const handleYes = () => {
 		console.log('Logout dikonfirmasi!');
 		window.location.href = '/';
-		// Add logout logic here
 	};
 
 	const handleNo = () => {
 		console.log('Logout dibatalkan!');
-		showModal = false; // Close modal
+		showModal = false;
 	};
-
-	// Fungsi untuk memformat tanggal menjadi 'tahun-bulan-tanggal'
-	function formatDate(dateString) {
-		const date = new Date(dateString); // Mengonversi string tanggal menjadi objek Date
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero jika bulan kurang dari 10
-		const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero jika tanggal kurang dari 10
-
-		return `${year}-${month}-${day}`; // Mengembalikan format 'YYYY-MM-DD'
-	}
 
 	let roles = [
 		{ title: 'BPH' },
@@ -187,10 +213,15 @@
 		{ title: 'Anggota' }
 	];
 
-	onMount(() => {
-		fetchAnggota();
-		fetchRiwayatVoucher();
-		fetchPoins();
+	// Ambil data setelah komponen mounted
+	onMount(async () => {
+		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		if (userId) {
+			// Jika userId ada, ambil data lainnya
+			fetchAnggota();
+			fetchRiwayatVoucher();
+			fetchPoins();
+		}
 	});
 </script>
 
