@@ -119,13 +119,12 @@ func GETAnggotaById(id int) (models.Response, error) {
 		if err != nil {
 			return res, err
 		}
-
+		res.Data = anggota
 		arrayAnggota = append(arrayAnggota, anggota)
 	}
 
 	res.Status = http.StatusOK
 	res.Message = "Success"
-	res.Data = arrayAnggota
 
 	return res, nil
 }
