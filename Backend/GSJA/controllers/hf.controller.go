@@ -59,6 +59,64 @@ func GETAllHf() (models.Response, error) {
 	return response, err
 }
 
+func GetAnggotaHF(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := GETAnggotaHF(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GETAnggotaHF(idHF int) (models.Response, error) {
+	var anggota models.Anggota
+	var arrayAnggota []models.Anggota
+	var response models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM anggota WHERE id_hf = ?"
+
+	rows, err := con.Query(sqlStatement, idHF)
+
+	if err != nil {
+		return response, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&anggota.Id,
+			&anggota.IdHf,
+			&anggota.Nama,
+			&anggota.CreatedAt,
+			&anggota.UpdatedAt,
+			&anggota.DeletedAt,
+		)
+
+		if err != nil {
+			return response, err
+		}
+
+		arrayAnggota = append(arrayAnggota, anggota)
+	}
+
+	response.Status = http.StatusOK
+	response.Message = "Berhasil GET semua anggota HF"
+	response.Data = arrayAnggota
+
+	return response, err
+}
+
 func UpdateDeletedatHf(id int) (models.Response, error) {
 	var response models.Response
 
@@ -77,6 +135,7 @@ func UpdateDeletedatHf(id int) (models.Response, error) {
 
 	return response, err
 }
+
 
 func SoftDeleteHF(c echo.Context) error {
 	idParam := c.Param("id")

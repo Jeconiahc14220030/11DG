@@ -51,6 +51,8 @@ func Init() *echo.Echo {
 	e.GET("/absensihf", controllers.FetchAllAbsensihf)
 	e.GET("/absensihf/:id", controllers.FetchAbsensihfById)
 
+	e.GET("AnggotaHF/:idHf", controllers.GetAnggotaHF)
+
 	e.GET("/berita", controllers.FetchAllBerita)
 
 	e.GET("/renunganharian", controllers.FetchAllRenunganHarian)
@@ -63,6 +65,12 @@ func Init() *echo.Echo {
 	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas); e.GET("/anggotakomunitas/pending", controllers.FetchPendingRequest); e.GET("/anggotakomunitas/member", controllers.FetchAllMemberAnggotaKomunitas);
 
 	e.GET("/jadwal/:id", controllers.FetchJadwalById)
+
+	e.GET("/roles", controllers.FetchAllRoles)
+	
+	e.GET("anggotaRoles", controllers.FetchAllRolesAnggota)
+
+	e.POST("/roles/add", controllers.AddRoles)
 
 	e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
 
@@ -82,9 +90,12 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
+	e.PUT("anggota/changePassword/:id", controllers.ChangePassword)
 	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
+
+	e.POST("absensihf/add", controllers.AddAbsensiHf) // perlu dipikirkan lagi struktur tanggal
 
 	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan) // perlu dipikirkan lagi struktur tanggal
 

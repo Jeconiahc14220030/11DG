@@ -101,7 +101,6 @@ func InsertVoucher(namaVoucher, status string, harga int, foto string) (models.R
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := `
 		INSERT INTO voucher (nama_voucher, status, harga, foto, created_at, updated_at)
@@ -184,7 +183,6 @@ func UpdateDeletedAtVoucher(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE voucher SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)

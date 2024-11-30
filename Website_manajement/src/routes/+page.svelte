@@ -6,11 +6,9 @@
 	async function proseslogin(event) {
 		event.preventDefault();
 
-		goto('/admin/dashboard');
-
-		const formdata = new FormData(document.getElementById('login'));
-
 		try {
+			const formdata = new FormData(document.getElementById('login'));
+
 			const response = await fetch('http://localhost:8080/login', {
 				method: 'POST',
 				body: formdata
@@ -21,6 +19,12 @@
 			}
 
 			const login = await response.json();
+			
+			if (login.success) {
+				goto('/admin/dashboard');
+			} else {
+				console.error('Login failed:', login.message || 'Unknown error');
+			}
 		} catch (err) {
 			console.error('Error during login:', err);
 		}
