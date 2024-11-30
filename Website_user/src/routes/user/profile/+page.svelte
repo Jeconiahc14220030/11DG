@@ -10,42 +10,11 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
+	const userId = 1;
+
 	let user = [];
 	let vouchers = [];
 	let points = [];
-
-	let username = localStorage.getItem('username')
-	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
-
-	// Fetch Anggota berdasarkan Username
-	async function fetchAnggotaByUsername() {
-		try {
-			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
-			const response = await fetch(`http://localhost:8080/${username}`);
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
-
-			const result = await response.json();
-
-			if (result.status === 200 && result.data) {
-				// Cari user berdasarkan username
-				const user = result.data.find((user) => user.username === username);
-
-				if (user) {
-					userId = user.id; // Set userId sesuai dengan hasil pencarian
-					console.log('User ID:', userId);
-				} else {
-					console.log('Pengguna tidak ditemukan');
-				}
-			} else {
-				console.log('Data tidak valid:', result.message);
-			}
-		} catch (error) {
-			console.error('Terjadi kesalahan:', error);
-		}
-	}
 
 	async function fetchAnggota() {
 		try {
@@ -195,6 +164,8 @@
 	const handleYes = () => {
 		console.log('Logout dikonfirmasi!');
 		window.location.href = '/';
+		// Add logout logic here
+	
 	};
 
 	const handleNo = () => {
@@ -220,16 +191,10 @@
 		{ title: 'Anggota' }
 	];
 
-	
-	// Ambil data setelah komponen mounted
-	onMount(async () => {
-		await fetchAnggotaByUsername(); // Dapatkan userId dari username
-		if (userId) {
-			// Jika userId ada, ambil data lainnya
-			fetchAnggota();
-			fetchRiwayatVoucher();
-			fetchPoins();
-		}
+	onMount(() => {
+		fetchAnggota();
+		fetchRiwayatVoucher();
+		fetchPoins();
 	});
 
 	let softwareVersion = 'V 1.2.2(67)';
