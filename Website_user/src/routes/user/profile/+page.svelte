@@ -266,7 +266,7 @@
 					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
 					on:click={() => (showPointsDetail = !showPointsDetail)}
 				>
-					<span>kontol</span>
+					<span>Detail Poin</span>
 					<span>&gt;</span> 
 				</div>
 
