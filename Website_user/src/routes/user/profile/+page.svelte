@@ -25,12 +25,13 @@
 	const handleYes = () => {
 		console.log('Logout dikonfirmasi!');
 		// Add logout logic here
+	
 	};
 
 	const handleNo = () => {
 		console.log('Logout dibatalkan!');
 		showModal = false; // Close modal
-	};
+	};	
 
 	let points = [
 		{
@@ -87,6 +88,15 @@
 		{ title: 'Usher' },
 		{ title: 'Anggota' }
 	];
+
+	let softwareVersion = 'V 1.2.2(67)';
+
+	// Function to close the modal when clicking outside
+	const closeModal = () => {
+		showPointsDetail = false;
+		showVoucherHistory = false;
+		showRoles = false;
+	};
 </script>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
@@ -115,10 +125,10 @@
 				<img
 					src="/src/lib/image/pp.jpg"
 					alt="Profile"
-					class="w-10 h-10 md:w-24 md:h-24 rounded-full"
+					class="w-20 h-20 md:w-34 md:h-34 rounded-full"
 				/>
 				<h1 class="text-lg md:text-xl font-bold">{user.name} (ID: {user.id})</h1>
-				<p class="text-[#515151]">{user.phone}</p>
+				<p class="text-[#515151] pt-5">{user.phone}</p>
 				<p class="text-[#515151]">{user.email}</p>
 				<p class="text-[#515151]">{user.birthdate}</p>
 			</div>
@@ -127,11 +137,16 @@
 		<!-- Action Buttons -->
 		<div class="flex justify-center items-center mb-4">
 			<div class="flex space-x-4">
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={editProfile}>Ubah Profil</button
-				>
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={changePassword}
-					>Ganti Password</button
-				>
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={editProfile}>
+					<img src="/src/lib/image/edit.png" alt="Edit Icon" class="w-5 h-5" />
+					<span>Ubah Profil</span>
+				</button>
+				
+				<!-- Tombol Ganti Password dengan Ikon -->
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={changePassword}>
+					<img src="/src/lib/image/key.png" alt="Key Icon" class="w-5 h-5" />
+					<span>Ganti Password</span>
+				</button>
 			</div>
 		</div>
 
@@ -142,50 +157,61 @@
 					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
 					on:click={() => (showPointsDetail = !showPointsDetail)}>
 					<span>Detail Poin</span>
-					<span>&gt;</span>
-				</div>
-				<div
-					class={`max-h-0 overflow-hidden transition-all duration-500 ${showPointsDetail ? 'max-h-screen' : ''}`}>
-					{#each points as point}
-						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-							<h2 class="font-semibold">{point.title}</h2>
-							<div class="flex justify-between items-center mt-2">
-								<div class="flex flex-col">
-									<p class="text-sm text-gray-500">{point.date}</p>
-								</div>
-								<div class="flex items-center">
-									<span class="text-xs text-gray-600 mr-4">{point.role}</span>
-									<span class="text-green-600 font-bold">{point.point}</span>
-								</div>
-							</div>
-						</div>
-					{/each}
+					<span>&gt;</span> 
 				</div>
 
+				<!-- Points Modal -->
+				{#if showPointsDetail}
+					<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50" on:click={closeModal}>
+						<div
+							class="bg-white p-6 rounded-lg w-full h-1/2 overflow-y-auto transform transition-all duration-500 ease-out	"
+							on:click|stopPropagation
+						>
+							{#each points as point}
+								<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+									<h2 class="font-semibold">{point.title}</h2>
+									<div class="flex justify-between items-center mt-2">
+										<div class="flex flex-col">
+											<p class="text-sm text-gray-500">{point.date}</p>
+										</div>
+										<div class="flex items-center">
+											<span class="text-xs text-gray-600 mr-4">{point.role}</span>
+											<span class="text-green-600 font-bold">{point.point}</span>
+										</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
 				<!-- Voucher History Section -->
-				<div
-					class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
+				<div class="flex justify-between items-center border-b border-black pb-2 mb-2 cursor-pointer"
 					on:click={() => (showVoucherHistory = !showVoucherHistory)}
 				>
 					<span>Riwayat Penukaran Voucher</span>
 					<span>&gt;</span>
 				</div>
-				<div
-					class={`max-h-0 overflow-hidden transition-all duration-500 ${showVoucherHistory ? 'max-h-screen' : ''}`}
-				>
-					{#each vouchers as voucher, index}
+
+				<!-- Voucher Modal -->
+				{#if showVoucherHistory}
+					<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50" on:click={closeModal}>
 						<div
-							class={`p-4 rounded-xl mb-3 border-2 border-black ${index === 0 ? 'bg-green-300' : index === 1 ? 'bg-gray-300' : 'bg-red-300'}`}
+							class="bg-white p-6 rounded-lg w-full h-1/2 overflow-y-auto transform transition-all duration-500 ease-out"
+							on:click|stopPropagation
 						>
-							<h2 class="font-semibold">{voucher.title}</h2>
-							<div class="flex justify-between items-center mt-2">
-								<div class="flex flex-col">
-									<p class="text-sm text-gray-500">Tanggal Penukaran Voucher : {voucher.date}</p>
+							{#each vouchers as voucher, index}
+								<div
+									class={`p-4 rounded-xl mb-3 border-2 border-black ${index === 0 ? 'bg-green-300' : index === 1 ? 'bg-gray-300' : 'bg-red-300'}`}
+									key={voucher.date}
+								>
+									<h2 class="font-semibold">{voucher.title}</h2>
+									<p class="text-sm text-gray-500">Tanggal Penukaran Voucher: {voucher.date}</p>
 								</div>
-							</div>
+							{/each}
 						</div>
-					{/each}
-				</div>
+					</div>
+				{/if}
 
 				<!-- Roles Section -->
 				<div
@@ -195,30 +221,40 @@
 					<span>Roles</span>
 					<span>&gt;</span>
 				</div>
-				<div
-					class={`max-h-0 overflow-hidden transition-all duration-500 ${showRoles ? 'max-h-screen' : ''}`}
-				>
-					{#each roles as role}
-						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-							<h2 class="font-semibold">{role.title}</h2>
-						</div>
-					{/each}
-				</div>
 
+				<!-- Roles Modal -->
+				{#if showRoles}
+					<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50" on:click={closeModal}>
+						<div
+							class="bg-white p-6 rounded-lg w-full h-1/2 overflow-y-auto transform transition-all duration-500 ease-out"
+							on:click|stopPropagation
+						>
+							{#each roles as role}
+								<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+									<h2 class="font-semibold">{role.title}</h2>
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
+				<!-- Software Version Section -->
 				<div class="flex justify-between items-center border-b border-black pb-2 mb-2">
 					<span>Software Version</span>
-					<span>V 1.2.2(67)</span>
+					<span>{softwareVersion}</span>
 				</div>
 			</div>
+			
 		</div>
-
+		
+	</div>
 		<!-- Logout Button -->
 		<div class="flex justify-center">
 			<button
-				class="bg-[#F3DDD1] text-red-600 py-2 px-6 rounded-lg flex items-center"
+				class="bg-[#F3DDD1] text-red-600 py-2 px-6 rounded-full flex items-center"
 				on:click={() => (showModal = true)}
 			>
-				<img src="/src/lib/image/shutdown.png" alt="Logout" class="w-4 h-4 mr-2" />
+				<img src="/src/lib/image/off.png" alt="Logout" class="w-4 h-4 mr-2" />
 				<span class="text-[#DB1616] font-bold">Logout</span>
 			</button>
 		</div>
@@ -253,4 +289,4 @@
 			</div>
 		{/if}
 	</div>
-</div>
+
