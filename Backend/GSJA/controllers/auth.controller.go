@@ -56,15 +56,12 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 
 	if user.Password == password {
 		fmt.Println("Password cocok")
+		res.Status = http.StatusOK
+		res.Message = "Berhasil login"
+		res.Data = user
 		return res, nil
 	} else {
 		fmt.Println("Password tidak cocok")
 		return res, errors.New("password tidak cocok")
 	}
-
-	res.Status = http.StatusOK
-	res.Message = "Berhasil login"
-	res.Data = user
-
-	return res, nil
 }
