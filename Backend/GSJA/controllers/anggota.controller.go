@@ -69,9 +69,8 @@ func GETAllAnggota() (models.Response, error) {
 func FetchAnggotaById(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
-
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id of" + idParam})
 	}
 
 	result, err := GETAnggotaById(id)
