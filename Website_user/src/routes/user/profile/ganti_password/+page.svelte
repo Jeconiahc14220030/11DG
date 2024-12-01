@@ -1,50 +1,123 @@
 <script>
+    import { onMount } from 'svelte';
+
     let current_password = '';
     let newPassword = '';
     let confirmPassword = '';
     let showModal = false;
+    let userId; // ID akan diambil menggunakan fetchAnggotaByUsername()
 
+    async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/anggota/id/${username}`);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			if (result.status === 200 && result.data) {
+				// Cari user berdasarkan username
+				const user = result.data.find((user) => user.username === username);
+
+				if (user) {
+					userId = user.id; // Set userId sesuai dengan hasil pencarian
+					console.log('User ID:', userId);
+				} else {
+					console.log('Pengguna tidak ditemukan');
+				}
+			} else {
+				console.log('Data tidak valid:', result.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+    async function fetchAnggota() {
+		try {
+			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
+
+			if (!response.ok) {
+				throw new Error(`Http error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			// Pastikan data array memiliki elemen
+			if (result.data && result.data.length > 0) {
+				const userData = result.data[0]; // Ambil elemen pertama dalam array
+				// Menyimpan nilai poin ke sessionStorage
+				sessionStorage.setItem('poin', userData.poin);
+
+				user = {
+					name: userData.nama,
+					id: userData.id,
+					phone: userData.nomor_telepon,
+					email: userData.email,
+					birthdate: userData.tanggal_lahir,
+					points: userData.poin
+				};
+			} else {
+				console.error('Data user tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+    // Fungsi untuk mengubah password
     async function savePassword() {
         if (newPassword !== confirmPassword) {
             alert('Password tidak cocok!');
             return;
         }
 
-        // ID pengguna (misalnya diset dari sesi atau URL)
-        const userId = 1; // Ganti dengan ID yang sesuai
+        try {
+            const response = await fetch(`http://localhost:8080/anggota/changePassword/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    current_password: current_password,
+                    new_password: newPassword,
+                    confirm_password: confirmPassword,
+                }),
+            });
 
-         // Kirim permintaan PUT ke API Go
-            try {
-                const response = await fetch(`http://localhost:8080/anggota/changePassword/${userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        current_password: current_password, // Ganti dengan nilai password lama
-                        new_password: newPassword,
-                        confirm_password: confirmPassword
-                    }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    // Menampilkan modal konfirmasi jika berhasil
-                    showModal = true;
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal memperbarui password');
-                }
+            const data = await response.json();
+            if (response.ok) {
+                showModal = true;
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Gagal memperbarui password');
+        }
     }
 
+
+    
     function handleBack() {
-        // Tutup modal
-        showModal = false;
+        showModal = false; // Tutup modal
     }
+    
+    onMount(async () => {
+		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		if (userId) {
+			// Jika userId ada, ambil data lainnya
+			console.log(userRoles); // Tambahkan untuk debugging
+			fetchAnggota();
+		}
+	});
+    
+
 </script>
+
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">

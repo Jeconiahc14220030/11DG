@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     
+    let id = 1; // Ganti dengan ID anggota yang relevan
     let name = '';
     let birthdate = '';
     let email = '';
@@ -10,7 +11,7 @@
     // Ambil data profil dari server (GET Request)
     onMount(async () => {
         try {
-            const response = await fetch('/api/profile', {
+            const response = await fetch(`/anggota/${id}/editprofil`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +32,7 @@
         }
     });
 
-    // Fungsi untuk mengirim data profil yang diperbarui (POST Request)
+    // Fungsi untuk mengirim data profil yang diperbarui (PUT Request)
     async function saveProfile() {
         const profileData = {
             name,
@@ -41,8 +42,8 @@
         };
 
         try {
-            const response = await fetch('/api/ubah_profile', {
-                method: 'POST',
+            const response = await fetch(`/anggota/${id}/editprofil`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -65,10 +66,11 @@
     }
 </script>
 
+
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
         <div class="flex items-center">
-            <a href="/user/profile">
+            <a href="#" on:click|preventDefault="{() => window.history.back()}">
                 <img src="/src/lib/image/return.svg" alt="return" class="w-6 h-6">
             </a>
             <h1 class="ml-2 text-lg md:text-xl font-bold">Ubah Profile</h1>
