@@ -211,8 +211,8 @@ func UpdateRequestStatus(c echo.Context) error {
 	con := db.CreateCon()
 
 	// Update status request
-	sqlStatement := "UPDATE anggota_komunitas SET status = ? WHERE id = ?"
-	_, err := con.Exec(sqlStatement, anggotaKomunitas.Status, anggotaKomunitas.Id)
+	sqlStatement := "UPDATE anggota_komunitas SET status = ? WHERE id_anggota = ? AND id_komunitas = ?"
+	_, err := con.Exec(sqlStatement, anggotaKomunitas.Status, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to update status"})
 	}
