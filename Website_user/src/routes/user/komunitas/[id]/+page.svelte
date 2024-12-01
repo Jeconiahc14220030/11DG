@@ -35,15 +35,38 @@
 	}
 
 	async function requestJoinKomunitas() {
-		const idAnggota = 2; // Ganti dengan ID anggota yang sesuai
+		const username = localStorage.getItem('username'); // Ambil username dari localStorage
 		const idKomunitas = $page.params.id;
+		let idAnggota;
+		console.log('Username:', username);
 
+		// Langkah 1: Ambil ID Anggota berdasarkan username
+		try {
+			const response = await fetch(`http://localhost:8080/${username}`);
+			if (!response.ok) {
+				throw new Error('Gagal mendapatkan ID anggota berdasarkan username.');
+			}
+
+			const result = await response.json();
+			if (result.status === 200 && result.data.length > 0) {
+				// Pastikan data tidak kosong
+				idAnggota = result.data[0].id; // Ambil ID dari elemen pertama array
+				console.log('ID Anggota:', idAnggota);
+			} else {
+				throw new Error('Data anggota tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Error mencari ID anggota:', error);
+			alert('Terjadi kesalahan saat mencari ID anggota.');
+			return;
+		}
+
+		// Langkah 2: Kirim permintaan POST untuk request komunitas
 		const requestData = {
 			id_anggota: idAnggota,
 			id_komunitas: Number(idKomunitas)
 		};
 
-		// Menampilkan data yang akan dikirim melalui console.log
 		console.log('Data yang dikirim:', requestData);
 
 		try {

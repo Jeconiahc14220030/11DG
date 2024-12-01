@@ -6,14 +6,28 @@
 	// Store untuk menyimpan daftar permintaan
 	export const requests = writable([]);
 
+	async function fetchDetailAnggota(idAnggota) {
+		try {
+			const response = await fetch(`http://localhost:8080/anggota/${idAnggota}`);
+
+			if (!response.ok) {
+				throw new Error(`Http error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			return result.data; // Return anggota detail
+		} catch (error) {
+			console.error(`Gagal mengambil detail anggota (ID: ${idAnggota}):`, error);
+			return null;
+		}
+	}
+
 	// Fungsi untuk mengambil data permintaan bergabung
 	async function fetchRequest() {
-		const idKomunitas = $page.params.id; // Mengambil id_komunitas dari parameter URL
+		const idKomunitas = $page.params.id;
 
 		try {
-			// Fetch data dari API
-			const response = await fetch('http://localhost:8080/anggotakomunitas');
-
+			const response = await fetch('http://localhost:8080/anggotakomunitas/pending');
 			if (!response.ok) {
 				console.error(`Gagal mengambil data. Status HTTP: ${response.status}`);
 				return;
@@ -28,12 +42,48 @@
 						item.id_komunitas == idKomunitas &&
 						(item.status === 'ditolak' || item.status === 'pending')
 				);
-				requests.set(filteredData); // Simpan data ke store
+
+				// Gabungkan data dengan detail anggota
+				const enrichedRequests = await Promise.all(
+					filteredData.map(async (item) => {
+						const detailAnggota = await fetchDetailAnggota(item.id_anggota);
+						return { ...item, ...detailAnggota }; // Merge detail anggota ke data permintaan
+					})
+				);
+
+				requests.set(enrichedRequests); // Simpan data gabungan ke store
 			} else {
 				console.error('Gagal mengambil data, status:', status);
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan saat mem-fetch data:', error);
+		}
+	}
+
+	async function updateStatusRequest(idRequest, statusBaru) {
+		try {
+			console.log(`Body dikirim ke API:`, {
+				id: idRequest,
+				status: statusBaru
+			});
+
+			const response = await fetch(`http://localhost:8080/anggotaKomunitas/updatestatus`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id: idRequest,
+					status: statusBaru
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error(`Gagal memperbarui status. HTTP: ${response.status}`);
+			}
+
+			// Setelah berhasil, panggil ulang `fetchRequest` untuk memperbarui tampilan
+			await fetchRequest();
+		} catch (error) {
+			console.error('Terjadi kesalahan saat memperbarui status:', error);
 		}
 	}
 
@@ -74,7 +124,10 @@
 						<!-- Informasi Anggota -->
 						<div class="flex flex-col">
 							<div class="font-bold text-lg">
-								<span>ID Anggota: {request.id_anggota}</span>
+								<span>Nama: {request.nama}</span>
+							</div>
+							<div class="text-gray-600">
+								<span>Nomor Telepon: {request.nomor_telepon}</span>
 							</div>
 							<div class="text-gray-600">
 								<span>Status: {request.status}</span>
@@ -90,14 +143,12 @@
 
 						<!-- Tombol Aksi -->
 						<div class="flex flex-row space-x-2">
-							<!-- Tombol Terima -->
 							<button
 								class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
 								on:click={() => updateStatusRequest(request.id, 'diterima')}
 							>
 								Terima
 							</button>
-							<!-- Tombol Tolak -->
 							<button
 								class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
 								on:click={() => updateStatusRequest(request.id, 'ditolak')}
@@ -110,7 +161,7 @@
 			{/each}
 		{:else}
 			<p class="text-center text-gray-600">
-				Tidak ada permintaan bergabung yang ditolak untuk komunitas ini.
+				Tidak ada permintaan bergabung yang ditolak atau pending untuk komunitas ini.
 			</p>
 		{/if}
 	</div>

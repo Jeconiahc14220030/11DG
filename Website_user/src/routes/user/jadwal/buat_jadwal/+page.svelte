@@ -25,24 +25,17 @@
 				return;
 			}
 
-			// Format tanggal ke string dengan format YYYY-MM-DD
-			const formattedDate = new Date(date).toISOString().split('T')[0];
-
-			// Siapkan data yang akan dikirim
-			const payload = {
-				tanggal: formattedDate,
-				topik: topic,
-				jenis_ibadah: ibadahType,
-				jumlah_poin: parsedPoints
-			};
+			// Siapkan data menggunakan FormData
+			const formData = new FormData();
+			formData.append('tanggal', date);
+			formData.append('topik', topic);
+			formData.append('jenis_ibadah', ibadahType);
+			formData.append('jumlah_poin', points);
 
 			// Kirim data ke server menggunakan POST
 			const response = await fetch('http://localhost:8080/jadwal/add', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(payload)
+				body: formData
 			});
 
 			const result = await response.json();
@@ -74,12 +67,13 @@
 	<div class="flex flex-col flex-grow ml-6 mr-6 pb-16">
 		<div class="flex flex-col justify-center items-center px-6 pb-16 mt-4">
 			<!-- Form Buat Jadwal -->
-			<div class="w-full space-y-4">
+			<form class="w-full space-y-4" on:submit|preventDefault={buatJadwal}>
 				<!-- Input Tanggal -->
 				<div>
 					<input
 						type="date"
 						id="date"
+						name="date"
 						bind:value={date}
 						placeholder="Tanggal"
 						class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -91,6 +85,7 @@
 					<input
 						type="text"
 						id="topic"
+						name="topic"
 						bind:value={topic}
 						placeholder="Topik"
 						class="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -101,6 +96,7 @@
 				<div>
 					<select
 						id="ibadahType"
+						name="ibadahType"
 						bind:value={ibadahType}
 						class="mt-1 p-2 w-full border border-gray-300 rounded-md"
 					>
@@ -114,20 +110,23 @@
 					<input
 						type="number"
 						id="points"
+						name="points"
 						bind:value={points}
 						placeholder="Jumlah Poin"
 						class="mt-1 p-2 w-full border border-gray-300 rounded-md"
 					/>
 				</div>
-			</div>
 
-			<!-- Tombol Simpan -->
-			<button
-				class="bg-[#F9C067] text-white py-2 px-4 mt-6 rounded-full w-full max-w-xs font-semibold"
-				on:click={buatJadwal}
-			>
-				Buat
-			</button>
+				<!-- Tombol Simpan -->
+				<div class="flex justify-center">
+					<button
+						type="submit"
+						class="bg-[#F9C067] text-white py-2 px-4 mt-6 rounded-full w-full max-w-xs font-semibold"
+					>
+						Buat
+					</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
