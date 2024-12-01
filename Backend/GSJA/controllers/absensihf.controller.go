@@ -166,8 +166,6 @@ func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
 	res.Message = "Absensi hf berhasil ditambahkan"
 	res.Data = absensiHf
 
-	defer con.Close()
-
 	return res, nil
 }
 
@@ -179,7 +177,7 @@ func AddAbsensiHfJson(c echo.Context) error {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal;) VALUES (?, ?, ?)"
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
 	_, err := con.Exec(sqlStatement, AbsensiHf.IdAnggota, AbsensiHf.Idhf, AbsensiHf.Tanggal)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -210,7 +208,6 @@ func UpdateDeletedatAbsensiHf(id int) (models.Response, error) {
 
 	con := db.CreateCon()
 	
-
 	sqlStatement := "UPDATE absensi_hf SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)
 
