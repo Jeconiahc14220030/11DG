@@ -106,6 +106,8 @@ func Init() *echo.Echo {
 
 	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
 
+	e.POST("absensi/add", controllers.AddKehadiranAbsensi)
+
 	e.PUT("anggota/:id/editprofil", controllers.EditProfil)
 	return e
 }
