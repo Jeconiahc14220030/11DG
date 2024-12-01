@@ -3,6 +3,7 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -68,6 +69,7 @@ func AddBerita(c echo.Context) error {
 	result, err := POSTBerita(berita)
 
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 

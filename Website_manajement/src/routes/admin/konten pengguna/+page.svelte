@@ -72,7 +72,6 @@
 		}
 	}
 
-
 	onMount(() => {
 		const createBtn = document.getElementById('delete4');
 		if (createBtn) {
@@ -107,25 +106,29 @@
 		<div class="grid grid-cols-1 gap-6 mb-6">
 			<form id="kontengereja" on:submit={kontengereja} class="bg-white p-4 rounded-md shadow-md">
 				<h2 class="font-bold text-2xl" id="isi">Visi</h2>
-				<textarea name="visi"
+				<textarea
+					name="visi"
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
 					rows="2"
 				></textarea>
 
 				<h2 class="font-bold text-2xl mt-2" id="isi">Misi</h2>
-				<textarea name="misi"
+				<textarea
+					name="misi"
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
 					rows="2"
 				></textarea>
 
 				<h2 class="font-bold text-2xl mt-2" id="isi">Pesan Ketua</h2>
-				<textarea name="pesanKetua"
+				<textarea
+					name="pesanKetua"
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
 					rows="2"
 				></textarea>
 
 				<h2 class="font-bold text-2xl mt-2" id="isi">Tujuan</h2>
-				<textarea name="tujuan"
+				<textarea
+					name="tujuan"
 					class="w-full mt-2 p-2 border bg-field rounded-md w-full focus:outline-none focus:ring-2 focus:ring-base"
 					rows="2"
 				></textarea>
@@ -223,12 +226,12 @@
 				<option>Berita 3</option>
 			</select>
 
-			<div class="mt-4">
-				<textarea
-					class="bg-field w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-base"
-					rows="3"
-				></textarea>
-			</div>
+			<textarea
+				class="bg-field w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-base mt-4"
+				name="deskripsi"
+				rows="3"
+			></textarea>
+
 			<button
 				class="mt-4 bg-base hover:bg-slate-300 text-black items-center justify-center py-2 px-4 rounded hover:bg-slate-300 hover:border-black ease-in duration-400 flex"
 				>Post</button

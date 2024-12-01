@@ -56,7 +56,6 @@
 					<label for="username" class="font-medium">Username</label>
 					<input
 						type="text"
-						id="username"
 						name="username"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan username"
@@ -68,7 +67,6 @@
 					<label for="email" class="font-medium">Email</label>
 					<input
 						type="email"
-						id="email"
 						name="email"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan email"
@@ -80,7 +78,6 @@
 					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
 					<input
 						type="date"
-						id="tanggal_lahir"
 						name="tanggal_lahir"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						required
@@ -90,28 +87,25 @@
 
 			<div class="flex flex-col space-y-4">
 				<div class="flex flex-col">
-					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
+					<label for="password" class="font-medium">Password</label>
 					<input
-						type="tel"
-						id="nomor_telepon"
-						name="nomor_telepon"
+						type="password"
+						name="password"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
-						placeholder="Masukkan nomor telepon"
+						placeholder="Masukkan password"
 						required
 					/>
 				</div>
 
 				<div class="flex flex-col">
-					<label for="roles" class="font-medium">Roles</label>
-					<select
-						id="roles"
-						name="roles"
+					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
+					<input
+						type="tel"
+						name="nomor_telepon"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
+						placeholder="Masukkan nomor telepon"
 						required
-					>
-						<option value="BPH">BPH</option>
-						<option value="User" selected>User</option>
-					</select>
+					/>
 				</div>
 			</div>
 		</div>

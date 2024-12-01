@@ -3,6 +3,7 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,20 +39,20 @@ func GETAllAnggota() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&anggota.Id, 
+			&anggota.Id,
 			&anggota.IdHf,
-			&anggota.Nama, 
+			&anggota.Nama,
 			&anggota.Username,
 			&anggota.Password,
-			&anggota.Email, 
-			&anggota.NomorTelepon, 
+			&anggota.Email,
+			&anggota.NomorTelepon,
 			&anggota.TanggalLahir,
 			&anggota.Poin,
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
 		)
-		
+
 		if err != nil {
 			return res, err
 		}
@@ -102,13 +103,13 @@ func GETAnggotaById(id int) (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&anggota.Id, 
+			&anggota.Id,
 			&anggota.IdHf,
-			&anggota.Nama, 
+			&anggota.Nama,
 			&anggota.Username,
 			&anggota.Password,
-			&anggota.Email, 
-			&anggota.NomorTelepon, 
+			&anggota.Email,
+			&anggota.NomorTelepon,
 			&anggota.TanggalLahir,
 			&anggota.Poin,
 			&anggota.CreatedAt,
@@ -206,6 +207,7 @@ func AddAnggota(c echo.Context) error {
 
 	result, err := POSTAnggota(anggota)
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
@@ -218,8 +220,8 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO anggota (username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir 	)
+	sqlStatement := "INSERT INTO anggota (username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, NOW(), NOW())"
+	_, err := con.Exec(sqlStatement, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
 		return res, err
@@ -227,7 +229,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	res.Status = http.StatusCreated
 	res.Message = "Anggota added successfully"
-	res.Data = anggota 
+	res.Data = anggota
 
 	return res, nil
 }
@@ -306,7 +308,7 @@ func UpdateDeletedAtToNullAnggota(id int) (models.Response, error) {
 
 func FetchAbsensiById(c echo.Context) error {
 	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam	)
+	id, err := strconv.Atoi(idParam)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
@@ -362,4 +364,3 @@ func GetAbsensiById(id int) (models.Response, error) {
 
 	return response, err
 }
-
