@@ -494,3 +494,40 @@ func UpdatePassword(id int, newPassword string) (models.Response, error) {
 	return res, nil
 }
 
+func EditProfil(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	nama := c.FormValue("nama")
+	tanggalLahir := c.FormValue("tanggal_lahir")
+	email := c.FormValue("email")
+	nomorTelepon := c.FormValue("nomor_telepon")
+
+	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func PUTProfilAnggota(id int, nama string, tanggalLahir string, email string, nomorTelepon string) (models.Response, error) {
+	var res models.Response
+
+	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, updated_at = NOW() WHERE id = ?"
+
+	con := db.CreateCon()
+	_, err := con.Exec(sqlStatement, nama, tanggalLahir, email, nomorTelepon, id)
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Profile updated successfully"
+	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
