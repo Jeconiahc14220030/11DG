@@ -11,7 +11,7 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
-	let username = localStorage.getItem('username')
+	let username = localStorage.getItem('username');
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
 	// Fetch Anggota berdasarkan Username
@@ -180,6 +180,51 @@
 		}
 	}
 
+	let userRoles = [];
+
+	async function fetchRoles() {
+		try {
+			const response = await fetch('http://localhost:8080/roles'); // Pastikan API roles sesuai
+			const data = await response.json();
+
+			if (data.status === 200) {
+				// Mendapatkan data roles
+				const rolesData = data.data;
+
+				// Ambil data anggota roles
+				const roleResponse = await fetch('http://localhost:8080/anggotaRoles'); // Pastikan API anggota roles sesuai
+				const roleData = await roleResponse.json();
+
+				if (roleData.status === 200) {
+					// Map roles berdasarkan id
+					const rolesMap = rolesData.reduce((map, role) => {
+						map[role.id] = role.roles;
+						return map;
+					}, {});
+
+					// Mencocokkan data anggota dengan roles mereka dan filter berdasarkan userId
+					userRoles = roleData.data
+						.filter((userRole) => userRole.id_anggota === userId) // Hanya ambil data roles yang sesuai dengan userId
+						.map((userRole) => {
+							const roleName = rolesMap[userRole.id_roles];
+							return {
+								...userRole,
+								roleName: roleName || 'Unknown Role' // Ganti dengan 'Unknown Role' jika role tidak ditemukan
+							};
+						});
+
+					console.log(userRoles); // Pastikan data roles muncul di console
+				} else {
+					console.error('Error fetching anggotaRoles:', roleData.message);
+				}
+			} else {
+				console.error('Error fetching roles:', data.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
 	// Fungsi untuk memformat tanggal
 	function formatDate(dateString) {
 		const date = new Date(dateString);
@@ -205,22 +250,16 @@
 		showModal = false;
 	};
 
-	let roles = [
-		{ title: 'BPH' },
-		{ title: 'Koordinator' },
-		{ title: 'Fasilitator HF' },
-		{ title: 'Usher' },
-		{ title: 'Anggota' }
-	];
-
 	// Ambil data setelah komponen mounted
 	onMount(async () => {
 		await fetchAnggotaByUsername(); // Dapatkan userId dari username
 		if (userId) {
 			// Jika userId ada, ambil data lainnya
+			console.log(userRoles); // Tambahkan untuk debugging
 			fetchAnggota();
 			fetchRiwayatVoucher();
 			fetchPoins();
+			fetchRoles();
 		}
 	});
 </script>
@@ -339,9 +378,9 @@
 				<div
 					class={`max-h-0 overflow-hidden transition-all duration-500 ${showRoles ? 'max-h-screen' : ''}`}
 				>
-					{#each roles as role}
+					{#each userRoles as userRole}
 						<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-							<h2 class="font-semibold">{role.title}</h2>
+							<h2 class="font-semibold">{userRole.roleName}</h2>
 						</div>
 					{/each}
 				</div>
