@@ -10,7 +10,38 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
-	const userId = 1;
+	let username = localStorage.getItem('username')
+	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
+
+	// Fetch Anggota berdasarkan Username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			if (result.status === 200 && result.data) {
+				// Cari user berdasarkan username
+				const user = result.data.find((user) => user.username === username);
+
+				if (user) {
+					userId = user.id; // Set userId sesuai dengan hasil pencarian
+					console.log('User ID:', userId);
+				} else {
+					console.log('Pengguna tidak ditemukan');
+				}
+			} else {
+				console.log('Data tidak valid:', result.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
 
 	let user = [];
 	let vouchers = [];
@@ -147,6 +178,33 @@
 		}
 	}
 
+	// Data roles
+	let roles = [];
+
+	// Fungsi untuk GET roles
+	async function fetchRoles() {
+		try {
+			const response = await fetch('http://localhost:8080/roles', {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			if (result.data && result.data.length > 0) {
+				roles = result.data.map((role) => ({ title: role.nama_role }));
+			} else {
+				console.log('Tidak ada data roles ditemukan.');
+			}
+		} catch (error) {
+			console.error('Error saat mengambil roles:', error);
+		}
+	}
+
+
 	function displayPoints(points) {
 		points.forEach((point) => {
 			point.date = new Date(point.date).toISOString().split('T')[0]; // Ubah format ke YYYY-MM-DD
@@ -183,18 +241,17 @@
 		return `${year}-${month}-${day}`; // Mengembalikan format 'YYYY-MM-DD'
 	}
 
-	let roles = [
-		{ title: 'BPH' },
-		{ title: 'Koordinator' },
-		{ title: 'Fasilitator HF' },
-		{ title: 'Usher' },
-		{ title: 'Anggota' }
-	];
 
-	onMount(() => {
-		fetchAnggota();
-		fetchRiwayatVoucher();
-		fetchPoins();
+	// Ambil data setelah komponen mounted
+	onMount(async () => {
+		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		if (userId) {
+			// Jika userId ada, ambil data lainnya
+			fetchAnggota();
+			fetchRiwayatVoucher();
+			fetchPoins();
+			fetchRoles();
+		}
 	});
 
 	let softwareVersion = 'V 1.2.2(67)';
@@ -279,14 +336,14 @@
 						>
 							{#each points as point}
 							<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-							<h2 class="font-semibold">{point.title}</h2>
+							<h2 class="font-semibold">{point.topik}</h2>
 							<div class="flex justify-between items-center mt-2">
 								<div class="flex flex-col">
-								<p class="text-sm text-gray-500">{point.date}</p>
+								<p class="text-sm text-gray-500">Tanggal : {point.date}</p>
 								</div>
 								<div class="flex items-center">
-								<span class="text-xs text-gray-600 mr-4">{point.role}</span>
-								<span class="text-green-600 font-bold">{point.point}</span>
+								<span class="text-xs text-gray-600 mr-2">Point yang di dapat :</span>
+								<span class="text-green-600 font-bold">{point.point} point </span>
 								</div>
 							</div>
 							</div>
@@ -310,14 +367,15 @@
 							class="bg-white p-6 rounded-lg w-full h-1/2 overflow-y-auto transform transition-all duration-500 ease-out"
 							on:click|stopPropagation
 						>
-							{#each vouchers as voucher, index}
-								<div
-									class={`p-4 rounded-xl mb-3 border-2 border-black ${index === 0 ? 'bg-green-300' : index === 1 ? 'bg-gray-300' : 'bg-red-300'}`}
-									key={voucher.date}
-								>
-									<h2 class="font-semibold">{voucher.title}</h2>
-									<p class="text-sm text-gray-500">Tanggal Penukaran Voucher: {voucher.date}</p>
+							{#each vouchers as voucher}
+							<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+								<p class="text-sm text-gray-500">{voucher.status_voucher}</p>
+									<h2 class="font-semibold">{voucher.nama_voucher}</h2>
+									<div class="flex flex-col">
+									<p class="text-sm text-gray-500">Harga: Rp {voucher.harga_voucher}</p>
+									</div>
 								</div>
+								
 							{/each}
 						</div>
 					</div>
