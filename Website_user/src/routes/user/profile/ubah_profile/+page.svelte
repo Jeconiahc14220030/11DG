@@ -68,7 +68,7 @@
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
         <div class="flex items-center">
-            <a href="#" on:click|preventDefault="{() => window.history.back()}">
+            <a href="/user/profile">
                 <img src="/src/lib/image/return.svg" alt="return" class="w-6 h-6">
             </a>
             <h1 class="ml-2 text-lg md:text-xl font-bold">Ubah Profile</h1>

@@ -10,7 +10,7 @@
 		window.location.href = '/user/profile/ganti_password';
 	}
 
-	let username = localStorage.getItem('username')
+	let username = localStorage.getItem('username');
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
 	// Fetch Anggota berdasarkan Username
@@ -178,40 +178,59 @@
 		}
 	}
 
-	// Data roles
-	let roles = [];
+	let userRoles = [];
 
-	// Fungsi untuk GET roles
 	async function fetchRoles() {
 		try {
-			const response = await fetch('http://localhost:8080/roles', {
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' },
-			});
+			const response = await fetch('http://localhost:8080/roles'); // Pastikan API roles sesuai
+			const data = await response.json();
 
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
+			if (data.status === 200) {
+				// Mendapatkan data roles
+				const rolesData = data.data;
 
-			const result = await response.json();
-			if (result.data && result.data.length > 0) {
-				roles = result.data.map((role) => ({ title: role.nama_role }));
+				// Ambil data anggota roles
+				const roleResponse = await fetch('http://localhost:8080/anggotaRoles'); // Pastikan API anggota roles sesuai
+				const roleData = await roleResponse.json();
+
+				if (roleData.status === 200) {
+					// Map roles berdasarkan id
+					const rolesMap = rolesData.reduce((map, role) => {
+						map[role.id] = role.roles;
+						return map;
+					}, {});
+
+					// Mencocokkan data anggota dengan roles mereka dan filter berdasarkan userId
+					userRoles = roleData.data
+						.filter((userRole) => userRole.id_anggota === userId) // Hanya ambil data roles yang sesuai dengan userId
+						.map((userRole) => {
+							const roleName = rolesMap[userRole.id_roles];
+							return {
+								...userRole,
+								roleName: roleName || 'Unknown Role' // Ganti dengan 'Unknown Role' jika role tidak ditemukan
+							};
+						});
+
+					console.log(userRoles); // Pastikan data roles muncul di console
+				} else {
+					console.error('Error fetching anggotaRoles:', roleData.message);
+				}
 			} else {
-				console.log('Tidak ada data roles ditemukan.');
+				console.error('Error fetching roles:', data.message);
 			}
 		} catch (error) {
-			console.error('Error saat mengambil roles:', error);
+			console.error('Terjadi kesalahan:', error);
 		}
 	}
 
+	// Fungsi untuk memformat tanggal
+	function formatDate(dateString) {
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
 
-	function displayPoints(points) {
-		points.forEach((point) => {
-			point.date = new Date(point.date).toISOString().split('T')[0]; // Ubah format ke YYYY-MM-DD
-		});
-
-		// Pastikan UI diperbarui, jika menggunakan framework seperti Svelte, cukup pastikan variable "points" diperbarui.
-		console.log(points); // Debug untuk memastikan data terformat dengan benar
+		return `${year}-${month}-${day}`;
 	}
 
 	let showModal = false; // Control for logout modal
@@ -228,25 +247,15 @@
 
 	const handleNo = () => {
 		console.log('Logout dibatalkan!');
-		showModal = false; // Close modal
-	};	
-
-	// Fungsi untuk memformat tanggal menjadi 'tahun-bulan-tanggal'
-	function formatDate(dateString) {
-		const date = new Date(dateString); // Mengonversi string tanggal menjadi objek Date
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero jika bulan kurang dari 10
-		const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero jika tanggal kurang dari 10
-
-		return `${year}-${month}-${day}`; // Mengembalikan format 'YYYY-MM-DD'
-	}
-
+		showModal = false;
+	};
 
 	// Ambil data setelah komponen mounted
 	onMount(async () => {
 		await fetchAnggotaByUsername(); // Dapatkan userId dari username
 		if (userId) {
 			// Jika userId ada, ambil data lainnya
+			console.log(userRoles); // Tambahkan untuk debugging
 			fetchAnggota();
 			fetchRiwayatVoucher();
 			fetchPoins();
@@ -397,9 +406,9 @@
 							class="bg-white p-6 rounded-lg w-full h-1/2 overflow-y-auto transform transition-all duration-500 ease-out"
 							on:click|stopPropagation
 						>
-							{#each roles as role}
+							{#each userRoles as userRole}
 								<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-									<h2 class="font-semibold">{role.title}</h2>
+									<h2 class="font-semibold">{userRole.roleName}</h2>
 								</div>
 							{/each}
 						</div>

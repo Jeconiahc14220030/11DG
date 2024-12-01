@@ -11,21 +11,23 @@ import (
 
 func AddKehadiranAbsensi(c echo.Context) error {
 	idAnggotaStr := c.FormValue("idAnggota")
-	idJadwalStr := c.FormValue("idJadwal")
-
-	idJadwal, err := strconv.Atoi(idJadwalStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idJadwal" + idJadwalStr})
-	}
+	idHfStr := c.FormValue("idHf")
+	tanggal := c.FormValue("tanggal")
 
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
 
+	idHf, err := strconv.Atoi(idHfStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idHf: " + idHfStr})
+	}
+
 	absensiHf := models.AbsensiHf{
 		IdAnggota: idAnggota,
-		IdJadwal:  idJadwal,
+		Idhf: idHf,
+		Tanggal: tanggal,
 	}
 
 	result, err := POSTAbsensiHf(absensiHf)
@@ -42,7 +44,7 @@ func POSTAbsensi(absensi models.Absensi) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_jadwal) VALUES (?, ?)"
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, NOW())"
 	_, err := con.Exec(sqlStatement, absensi.IdAnggota, absensi.IdJadwal)
 
 	if err != nil {
