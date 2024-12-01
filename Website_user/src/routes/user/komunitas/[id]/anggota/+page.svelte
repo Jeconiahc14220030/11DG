@@ -9,9 +9,42 @@
 		manfaat: ''
 	};
 
+	let username = localStorage.getItem('username')
+	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
+
+	// Fetch Anggota berdasarkan Username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			if (result.status === 200 && result.data) {
+				// Cari user berdasarkan username
+				const user = result.data.find((user) => user.username === username);
+
+				if (user) {
+					userId = user.id; // Set userId sesuai dengan hasil pencarian
+					console.log('User ID:', userId);
+				} else {
+					console.log('Pengguna tidak ditemukan');
+				}
+			} else {
+				console.log('Data tidak valid:', result.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
 	let anggotaList = [];
 	let anggotaDetail = {}; // Menyimpan detail anggota yang dipilih
-
+	
 	async function fetchDetail() {
 		try {
 			const id = $page.params.id; // Mengambil ID dari params
@@ -36,24 +69,26 @@
 	}
 
 	// Fungsi untuk mengambil detail anggota berdasarkan id_anggota
-	async function fetchAnggota(id) {
+	async function fetchDetailAnggota(idAnggota) {
 		try {
-			const response = await fetch(`http://localhost:8080/anggota/${id}`);
+			const response = await fetch(`http://localhost:8080/anggota/${idAnggota}`);
+
 			if (!response.ok) {
 				throw new Error(`Http error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			anggotaDetail = result.data[0]; // Mengambil data anggota pertama
+			return result.data; // Ambil objek data dari respons
 		} catch (error) {
-			console.error("Terjadi kesalahan saat mengambil data anggota:", error);
+			console.error('Gagal mengambil detail anggota:', error);
+			return null; // Kembalikan null jika terjadi kesalahan
 		}
 	}
 
 	// Fungsi untuk mengambil anggota yang terkait dengan komunitas
 	async function fetchAnggotaKomunitas() {
 		try {
-			const id = $page.params.id; // ID komunitas dari URL
+			const idKomunitas = $page.params.id; // ID komunitas dari URL
 			const response = await fetch('http://localhost:8080/anggotakomunitas/member');
 
 			if (!response.ok) {
@@ -62,21 +97,31 @@
 
 			const result = await response.json();
 
-			// Filter hanya anggota yang memiliki id_komunitas sesuai dengan ID yang dipilih
-			anggotaList = result.data.filter((anggota) => anggota.id_komunitas === parseInt(id));
+			// Filter hanya anggota yang memiliki id_komunitas sesuai
+			const filteredAnggota = result.data.filter(
+				(anggota) => anggota.id_komunitas === parseInt(idKomunitas)
+			);
 
-			// Ambil data anggota untuk anggota pertama jika ada
-			if (anggotaList.length > 0) {
-				fetchAnggota(anggotaList[0].id_anggota); // Ambil detail anggota pertama
-			}
+			// Ambil detail anggota dan gabungkan datanya
+			anggotaList = await Promise.all(
+				filteredAnggota.map(async (anggota) => {
+					const detailAnggota = await fetchDetailAnggota(anggota.id_anggota);
+					return { ...anggota, ...detailAnggota }; // Gabungkan data komunitas dengan detail anggota
+				})
+			);
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
 		}
 	}
 
-	onMount(() => {
-		fetchDetail();
-		fetchAnggotaKomunitas();
+	// Ambil data setelah komponen mounted
+	onMount(async () => {
+		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		if (userId) {
+			// Jika userId ada, ambil data lainnya
+			fetchDetail();
+			fetchAnggotaKomunitas();
+		}
 	});
 </script>
 
@@ -111,14 +156,17 @@
 							</div>
 							<div class="flex flex-col">
 								<div class="font-bold">
-									<span>{anggotaDetail.nama}</span>
+									<span>{anggota.nama}</span>
 								</div>
 								<div>
-									<span>{anggotaDetail.nomor_telepon}</span>
+									<span>{anggota.nomor_telepon}</span>
+								</div>
+								<div>
+									<span>Email: {anggota.email}</span>
 								</div>
 							</div>
 							<div class="flex flex-row ml-auto">
-								<span>(ID: {anggotaDetail.id})</span>
+								<span>(ID: {anggota.id_anggota})</span>
 							</div>
 						</div>
 					</div>
