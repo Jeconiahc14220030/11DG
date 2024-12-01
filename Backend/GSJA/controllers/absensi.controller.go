@@ -11,49 +11,40 @@ import (
 
 func AddKehadiranAbsensi(c echo.Context) error {
 	idAnggotaStr := c.FormValue("idAnggota")
-	idHfStr := c.FormValue("idHf")
-	tanggal := c.FormValue("tanggal")
+	idJadwalStr := c.FormValue("idJadwal")
+
+	idJadwal, err := strconv.Atoi(idJadwalStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idJadwal" + idJadwalStr})
+	}
 
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
 
-	idHf, err := strconv.Atoi(idHfStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idHf: " + idHfStr})
-	}
-
-	absensiHf := models.AbsensiHf{
+	absensi := models.Absensi{
 		IdAnggota: idAnggota,
-		Idhf: idHf,
-		Tanggal: tanggal,
+		IdJadwal:  idJadwal,
 	}
-
-	result, err := POSTAbsensiHf(absensiHf)
+	result, err := POSTAbsensi(absensi)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
-
 	return c.JSON(http.StatusCreated, result)
 }
 
 func POSTAbsensi(absensi models.Absensi) (models.Response, error) {
 	var res models.Response
-
 	con := db.CreateCon()
 	defer con.Close()
-
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, NOW())"
+	sqlStatement := "INSERT INTO absensi id_anggota, id_jadwal) VALUES (?, ?)"
 	_, err := con.Exec(sqlStatement, absensi.IdAnggota, absensi.IdJadwal)
-
 	if err != nil {
 		return res, err
 	}
-
 	res.Status = http.StatusCreated
-	res.Message = "Absensi hf berhasil ditambahkan"
+	res.Message = "Absensi berhasil ditambahkan"
 	res.Data = absensi
-
 	return res, nil
 }
