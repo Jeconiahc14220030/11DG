@@ -94,7 +94,7 @@ func Init() *echo.Echo {
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
 
-	e.POST("absensihf/add", controllers.AddAbsensiHfJson) // perlu dipikirkan lagi struktur tanggal
+	e.POST("absensihf/add", controllers.AddAbsensiHfForm) // perlu dipikirkan lagi struktur tanggal
 
 	e.POST("jadwallatihan/add", controllers.AddJadwalLatihan) // perlu dipikirkan lagi struktur tanggal
 
