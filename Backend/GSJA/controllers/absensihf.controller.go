@@ -149,6 +149,28 @@ func AddAbsensiHfForm(c echo.Context) error {
 	return c.JSON(http.StatusCreated, result)
 }
 
+func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Tanggal)
+
+	if err != nil {
+		fmt.Println(err)
+		return res, err
+	}
+
+	res.Status = http.StatusCreated
+	res.Message = "Absensi hf berhasil ditambahkan"
+	res.Data = absensiHf
+
+	defer con.Close()
+
+	return res, nil
+}
+
 func AddAbsensiHfJson(c echo.Context) error {
 	AbsensiHf := models.AbsensiHf{}
 	if err := c.Bind(&AbsensiHf); err != nil {
@@ -164,27 +186,6 @@ func AddAbsensiHfJson(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, AbsensiHf)
-}
-
-func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
-	var res models.Response
-
-	con := db.CreateCon()
-	defer con.Close()
-
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Tanggal)
-
-	if err != nil {
-		fmt.Println(err)
-		return res, err
-	}
-
-	res.Status = http.StatusCreated
-	res.Message = "Absensi hf berhasil ditambahkan"
-	res.Data = absensiHf
-
-	return res, nil
 }
 
 func SoftDeleteAbsensiHf(c echo.Context) error {
