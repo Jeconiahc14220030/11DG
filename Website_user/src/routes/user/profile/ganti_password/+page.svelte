@@ -1,15 +1,43 @@
 <script>
+    let current_password = '';
     let newPassword = '';
     let confirmPassword = '';
     let showModal = false;
 
-    function savePassword() {
+    async function savePassword() {
         if (newPassword !== confirmPassword) {
             alert('Password tidak cocok!');
             return;
         }
-        // Tampilkan modal konfirmasi
-        showModal = true;
+
+        // ID pengguna (misalnya diset dari sesi atau URL)
+        const userId = 1; // Ganti dengan ID yang sesuai
+
+         // Kirim permintaan PUT ke API Go
+            try {
+                const response = await fetch(`http://localhost:8080/anggota/changePassword/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        current_password: current_password, // Ganti dengan nilai password lama
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    // Menampilkan modal konfirmasi jika berhasil
+                    showModal = true;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal memperbarui password');
+                }
     }
 
     function handleBack() {
@@ -31,6 +59,10 @@
     <div class="flex flex-col justify-center items-center px-6 pb-16 mt-4">
         <!-- Form untuk Ganti Password -->
         <div class="w-full">
+            <div class="mb-4">
+                <label for="newPassword" class="block text-sm font-medium text-gray-700">Password Lama</label>
+                <input type="password" id="newPassword" bind:value={current_password} placeholder="Password" class="mt-1 p-2 w-full border border-gray-300 rounded-md" />
+            </div>
             <div class="mb-4">
                 <label for="newPassword" class="block text-sm font-medium text-gray-700">Password Baru</label>
                 <input type="password" id="newPassword" bind:value={newPassword} placeholder="Password" class="mt-1 p-2 w-full border border-gray-300 rounded-md" />

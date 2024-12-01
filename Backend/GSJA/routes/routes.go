@@ -106,5 +106,6 @@ func Init() *echo.Echo {
 
 	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
 
+
 	return e
 }

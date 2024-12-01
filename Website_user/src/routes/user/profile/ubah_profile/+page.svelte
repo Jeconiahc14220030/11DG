@@ -1,17 +1,66 @@
 <script>
+    import { onMount } from 'svelte';
+    
     let name = '';
     let birthdate = '';
     let email = '';
     let phone = '';
     let showModal = false;
 
-    function saveProfile() {
-        // Tampilkan modal pop-up setelah menyimpan profil
-        showModal = true;
+    // Ambil data profil dari server (GET Request)
+    onMount(async () => {
+        try {
+            const response = await fetch('/api/profile', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                name = data.name;
+                birthdate = data.birthdate;
+                email = data.email;
+                phone = data.phone;
+            } else {
+                console.error('Gagal mengambil data profil');
+            }
+        } catch (error) {
+            console.error('Terjadi kesalahan:', error);
+        }
+    });
+
+    // Fungsi untuk mengirim data profil yang diperbarui (POST Request)
+    async function saveProfile() {
+        const profileData = {
+            name,
+            birthdate,
+            email,
+            phone,
+        };
+
+        try {
+            const response = await fetch('/api/ubah_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(profileData),
+            });
+
+            if (response.ok) {
+                // Menampilkan modal setelah berhasil menyimpan
+                showModal = true;
+            } else {
+                console.error('Gagal memperbarui profil');
+            }
+        } catch (error) {
+            console.error('Terjadi kesalahan:', error);
+        }
     }
 
     function handleBack() {
-        // Tutup modal pop-up
         showModal = false;
     }
 </script>
