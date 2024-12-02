@@ -147,7 +147,6 @@ func POSTCarousel(carousel models.Carousel) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4)
@@ -167,8 +166,6 @@ func UpdateDeletedatCarousel(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
-
 	sqlStatement := "UPDATE carousel SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)
 

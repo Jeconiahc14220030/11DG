@@ -3,6 +3,7 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,10 +39,10 @@ func GETAllAbsensihf() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&absensihf.Id, 
-			&absensihf.Status, 
+			&absensihf.Id,
 			&absensihf.IdAnggota, 
-			&absensihf.IdJadwal, 
+			&absensihf.Idhf,
+			&absensihf.Tanggal,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
 			&absensihf.DeletedAt,
@@ -85,7 +86,7 @@ func GETAbsensihfById(id int) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM absensi_hf WHERE id = ?"
+	sqlStatement := "SELECT * FROM absensi_hf WHERE id_hf = ?"
 
 	rows, err := con.Query(sqlStatement, id)
 
@@ -97,10 +98,10 @@ func GETAbsensihfById(id int) (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&absensihf.Id, 
-			&absensihf.Status, 
+			&absensihf.Id,
 			&absensihf.IdAnggota, 
-			&absensihf.IdJadwal, 
+			&absensihf.Tanggal,
+			&absensihf.Idhf,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
 			&absensihf.DeletedAt,
@@ -120,29 +121,27 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	return response, err
 }
 
-func AddAbsensiHf(c echo.Context) error {
-	status := c.FormValue("status")
+func AddAbsensiHfForm(c echo.Context) error {
 	idAnggotaStr := c.FormValue("id_anggota")
-	idJadwalStr := c.FormValue("id_jadwal")
-
+	idHFStr := c.FormValue("id_hf")
+	tanggal := c.FormValue("tanggal")
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_anggota"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
 
-	idJadwal, err := strconv.Atoi(idJadwalStr)
+	idHF, err := strconv.Atoi(idHFStr)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_jadwal"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_hf"})
 	}
 
 	absensiHf := models.AbsensiHf{
-		Status:    status,
 		IdAnggota: idAnggota,
-		IdJadwal:  idJadwal,
+		Idhf: idHF,
+		Tanggal: tanggal,
 	}
 
 	result, err := POSTAbsensiHf(absensiHf)
-
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -154,12 +153,12 @@ func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
-	sqlStatement := "INSERT INTO absensi_hf (status, id_anggota, id_jadwal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, absensiHf.Status, absensiHf.IdAnggota, absensiHf.IdJadwal)
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Tanggal)
 
 	if err != nil {
+		fmt.Println(err)
 		return res, err
 	}
 
@@ -168,6 +167,23 @@ func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
 	res.Data = absensiHf
 
 	return res, nil
+}
+
+func AddAbsensiHfJson(c echo.Context) error {
+	AbsensiHf := models.AbsensiHf{}
+	if err := c.Bind(&AbsensiHf); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
+	_, err := con.Exec(sqlStatement, AbsensiHf.IdAnggota, AbsensiHf.Idhf, AbsensiHf.Tanggal)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, AbsensiHf)
 }
 
 func SoftDeleteAbsensiHf(c echo.Context) error {
@@ -191,8 +207,7 @@ func UpdateDeletedatAbsensiHf(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
-
+	
 	sqlStatement := "UPDATE absensi_hf SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)
 

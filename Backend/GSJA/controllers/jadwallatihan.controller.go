@@ -4,7 +4,9 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"net/http"
+	"strconv"
 
+	// "strconv"
 	"github.com/labstack/echo/v4"
 )
 
@@ -95,6 +97,18 @@ func AddJadwalLatihan(c echo.Context) error {
 	// }
 
 	// jadwalLatihan := models.JadwalLatihan{
+	// 	// Tanggal: tanggal,
+	// 	Lokasi: lokasi,
+	// 	IdAnggota: idAnggota,
+	// 	IdKomunitas: idKomunitas,
+	// }
+	// jadwalLatihan := models.JadwalLatihan{
+	// 	// Tanggal: tanggal,
+	// 	Lokasi: lokasi,
+	// 	IdAnggota: idAnggota,
+	// 	IdKomunitas: idKomunitas,
+	// }
+	// jadwalLatihan := models.JadwalLatihan{
 	// 	// // Tanggal: tanggal,
 	// 	Lokasi: lokasi,
 	// 	IdAnggota: idAnggota,
@@ -118,7 +132,6 @@ func POSTJadwalLatihan(jadwalLatihan models.JadwalLatihan) (models.Response, err
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "INSERT INTO jadwal_latihan (tanggal, lokasi, id_anggota, id_komunitas) VALUES (?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement, jadwalLatihan.Tanggal, jadwalLatihan.Lokasi, jadwalLatihan.IdAnggota, jadwalLatihan.IdKomunitas)
@@ -135,7 +148,11 @@ func POSTJadwalLatihan(jadwalLatihan models.JadwalLatihan) (models.Response, err
 }
 
 func SoftDeletedataJadwalLatihan(c echo.Context) error {
-	id := c.Param("id")
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id"})
+	}
 
 	result, err := UpdateDeletedAtJadwalLatihan(id)
 
@@ -146,11 +163,10 @@ func SoftDeletedataJadwalLatihan(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func UpdateDeletedAtJadwalLatihan(id string) (models.Response, error) {
+func UpdateDeletedAtJadwalLatihan(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	defer con.Close()
 
 	sqlStatement := "UPDATE jadwal_latihan SET deleted_at = NOW() WHERE id = ?"
 
