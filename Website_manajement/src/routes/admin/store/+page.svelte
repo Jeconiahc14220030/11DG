@@ -13,21 +13,15 @@
 		}
 	}
 
-	onMount(() => {
-		fetchdata();
-
-		const editBtn = document.getElementById('create');
-
-		if (editBtn) {
-			editBtn.addEventListener('click', () => {
-				Swal.fire({
-					title: 'Edit Data Pengguna',
-					width: '600px',
-					padding: '1em',
-					customClass: {
-						popup: 'fixed-swal'
-					},
-					html: `
+	function create() {
+		Swal.fire({
+			title: 'Edit Data Pengguna',
+			width: '600px',
+			padding: '1em',
+			customClass: {
+				popup: 'fixed-swal'
+			},
+			html: `
                 <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
                     <label for="Voucher" style="display: block; margin-bottom: 5px;">Foto Voucher:</label>
                     <input type="file" id="Voucher" name="Voucher" style="width: 80%;" required>
@@ -40,48 +34,113 @@
                     <span style="white-space: nowrap;">Point</span>
                 </form>
             `,
-					confirmButtonText: 'Submit',
-					confirmButtonColor: '#F0A242',
-					focusConfirm: false,
-					preConfirm: () => {
-						const formElement = document.getElementById('voucher-form');
-						const formData = new FormData(formElement);
+			confirmButtonText: 'Submit',
+			confirmButtonColor: '#F0A242',
+			focusConfirm: false,
+			preConfirm: () => {
+				const formElement = document.getElementById('voucher-form');
+				const formData = new FormData(formElement);
 
-						const voucher = formData.get('Voucher');
-						const nama = formData.get('Nama');
-						const laporan = formData.get('laporan');
+				const voucher = formData.get('Voucher');
+				const nama = formData.get('Nama');
+				const laporan = formData.get('laporan');
 
-						if (!voucher || !nama || !laporan) {
-							Swal.showValidationMessage('Semua input harus diisi');
-							return false;
+				if (!voucher || !nama || !laporan) {
+					Swal.showValidationMessage('Semua input harus diisi');
+					return false;
+				}
+
+				return fetch('http://localhost:8080/voucher/add', {
+					method: 'POST',
+					body: formData
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Gagal menyimpan data');
 						}
-
-						return fetch('http://localhost:8080/voucher/add', {
-							method: 'POST',
-							body: formData
-						})
-							.then((response) => {
-								if (!response.ok) {
-									throw new Error('Gagal menyimpan data');
-								}
-								return response.json();
-							})
-							.catch((error) => {
-								Swal.showValidationMessage(`Request failed: ${error.message}`);
-							});
-					}
-				}).then((result) => {
-					if (result.isConfirmed) {
-						Swal.fire({
-							icon: 'success',
-							title: 'Voucher Berhasil Ditambahkan',
-							showConfirmButton: false,
-							timer: 1500
-						});
-					}
+						return response.json();
+					})
+					.catch((error) => {
+						Swal.showValidationMessage(`Request failed: ${error.message}`);
+					});
+			}
+		}).then((result) => {
+			if (result.isConfirmed) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Voucher Berhasil Ditambahkan',
+					showConfirmButton: false,
+					timer: 1500
 				});
-			});
-		}
+			}
+		});
+	}
+
+	function edit() {
+		Swal.fire({
+			title: 'Edit Data Pengguna',
+			width: '600px',
+			padding: '1em',
+			customClass: {
+				popup: 'fixed-swal'
+			},
+			html: `
+                <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <label for="Voucher" style="display: block; margin-bottom: 5px;">Foto Voucher:</label>
+                    <input type="file" id="Voucher" name="Voucher" style="width: 80%;" required>
+
+                    <label for="Nama" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher:</label>
+                    <input type="text" id="Nama" name="Nama" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
+
+                    <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point:</label>
+                    <input type="text" id="laporan" name="laporan" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>
+                    <span style="white-space: nowrap;">Point</span>
+                </form>
+            `,
+			confirmButtonText: 'Submit',
+			confirmButtonColor: '#F0A242',
+			focusConfirm: false,
+			preConfirm: () => {
+				const formElement = document.getElementById('voucher-form');
+				const formData = new FormData(formElement);
+
+				const voucher = formData.get('Voucher');
+				const nama = formData.get('Nama');
+				const laporan = formData.get('laporan');
+
+				if (!voucher || !nama || !laporan) {
+					Swal.showValidationMessage('Semua input harus diisi');
+					return false;
+				}
+
+				return fetch('http://localhost:8080/voucher/add', {
+					method: 'POST',
+					body: formData
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Gagal menyimpan data');
+						}
+						return response.json();
+					})
+					.catch((error) => {
+						Swal.showValidationMessage(`Request failed: ${error.message}`);
+					});
+			}
+		}).then((result) => {
+			if (result.isConfirmed) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Voucher Berhasil Ditambahkan',
+					showConfirmButton: false,
+					timer: 1500
+				});
+			}
+		});
+	}
+
+	onMount(() => {
+		fetchdata();
 	});
 </script>
 
@@ -165,9 +224,9 @@
 			</label>
 
 			<button
-				id="create"
 				type="submit"
 				class="bg-base text-2xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400"
+				on:click={create}
 			>
 				<svg
 					class="w-15 h-15 mr-0.5 mt-1"
@@ -189,9 +248,9 @@
 			<div class="flex flex-wrap items-center justify-center gap-4 mt-20">
 				{#each voucher as item, i}
 					<div class="max-w-xs bg-white shadow-lg rounded-lg overflow-hidden border border-black">
-						<!-- <img class="w-full h-32 object-cover" src="path_to_image/bakso.jpg" alt="Bakso"> -->
+						<img class="w-full h-32 object-cover" src="/src/lib/image/profil.jpg" alt="Bakso">
 						<div class="p-4">
-							<h4 class="text-gray-700 font-bold">{item.nama_voucher}</h4>
+							<button on:click={edit} class="text-gray-700 font-bold">{item.nama_voucher}</button>
 							<p class="text-yellow-500 font-semibold">{item.harga} point</p>
 						</div>
 					</div>

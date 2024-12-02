@@ -33,6 +33,7 @@ func AddKehadiranAbsensi(c echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, result)
 }
+
 func POSTAbsensi(absensi models.Absensi) (models.Response, error) {
 	var res models.Response
 	con := db.CreateCon()

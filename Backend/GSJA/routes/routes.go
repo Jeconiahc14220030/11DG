@@ -64,6 +64,7 @@ func Init() *echo.Echo {
 	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
 	e.GET("/hf", controllers.FetchAllHf)
+	
 	e.GET("/anggotakomunitas", controllers.FetchAllAnggotaKomunitas); e.GET("/anggotakomunitas/pending", controllers.FetchPendingRequest); e.GET("/anggotakomunitas/member", controllers.FetchAllMemberAnggotaKomunitas);
 
 	e.GET("/jadwal/:id", controllers.FetchJadwalById)
@@ -91,7 +92,7 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
-	e.PUT("anggota/changePassword/:id", controllers.ChangePassword)
+
 	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
@@ -107,6 +108,8 @@ func Init() *echo.Echo {
 	e.PUT("anggota/delete/:id", controllers.SoftDeleteAnggota); e.PUT("anggota/restore/:id", controllers.RestoreDeletedAnggota);
 
 	e.POST("anggotaKomunitas/request", controllers.RequestJoinKomunitas)
+
+	e.POST("absensi/add", controllers.AddKehadiranAbsensi)
 
 	e.PUT("anggota/:id/editprofil", controllers.EditProfil)
 	return e

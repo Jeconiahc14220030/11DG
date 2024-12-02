@@ -3,6 +3,7 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -69,6 +70,7 @@ func AddBerita(c echo.Context) error {
 	result, err := POSTBerita(berita)
 
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 

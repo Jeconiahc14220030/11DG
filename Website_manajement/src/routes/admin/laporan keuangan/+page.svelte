@@ -26,11 +26,14 @@
             <label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
             <input type="date" id="tanggal" name="tanggal" class="swal2-input" style="width: 80%;" required>
 
+			<label for="jenis" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jenis:</label>
+            <input type="text" id="jenis" name="jenis" class="swal2-input" style="width: 80%;" placeholder="Masukkan Jenis Laporan" required>
+
             <label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
             <input type="text" id="nominal" name="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
 
             <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
-            <input type="text" id="laporan" name="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
+            <input type="text" id="laporan" name="id_pembuat" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
         </form>
     `,
 			confirmButtonText: 'Create',
@@ -38,13 +41,14 @@
 			focusConfirm: false,
 			preConfirm: () => {
 				const formElement = document.getElementById('laporankeuangan');
-				const formData = new FormData(formElement); 
+				const formData = new FormData(formElement);
 
 				const tanggal = formData.get('tanggal');
+				const jenis = formData.get('jenis');
 				const nominal = formData.get('nominal');
-				const laporan = formData.get('laporan');
+				const laporan = formData.get('id_pembuat');
 
-				if (!tanggal || !nominal || !laporan) {
+				if (!tanggal || !nominal || !laporan || !jenis) {
 					Swal.showValidationMessage('Semua input harus diisi');
 					return false;
 				}
@@ -145,6 +149,7 @@
 								<th class="py-3 px-6 text-left text-black">No</th>
 								<th class="py-3 px-6 text-left text-black">Tanggal</th>
 								<th class="py-3 px-6 text-left text-black">Penulis</th>
+								<th class="py-3 px-6 text-left text-black">Jenis</th>
 								<th class="py-3 px-6 text-left text-black">Nominal</th>
 								<th class="py-3 px-6 text-left text-black">Aksi</th>
 							</tr>
@@ -154,6 +159,7 @@
 								<tr class="bg border-b border-black hover:bg-gray-100">
 									<td class="py-3 px-6 text-left text-black">{i + 1}</td>
 									<td class="py-3 px-6 text-left text-black">{item.tanggal}</td>
+									<td class="py-3 px-6 text-left text-black">{item.id_pembuat}</td>
 									<td class="py-3 px-6 text-left text-black">{item.jenis}</td>
 									<td class="py-3 px-6 text-left text-black">{item.nominal}</td>
 									<td class="py-3 px-6 text-center">
