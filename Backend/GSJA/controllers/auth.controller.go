@@ -35,10 +35,9 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-		
+	
 
-
-	sqlStatement := "SELECT id,  username,  password FROM anggota WHERE username = ?"
+	sqlStatement := "SELECT id, username, password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
 
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
@@ -67,18 +66,4 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 		fmt.Println("Password tidak cocok")
 		return res, errors.New("password tidak cocok")
 	}
-
-	// if user.Password == password {
-	// 	fmt.Println("Password cocok")
-	// 	return res, nil
-	// } else {
-	// 	fmt.Println("Password tidak cocok")
-	// 	return res, errors.New("password tidak cocok")
-	// }
-
-	res.Status = http.StatusOK
-	res.Message = "Login successful"
-	res.Data = user
-
-	return res, nil
 }
