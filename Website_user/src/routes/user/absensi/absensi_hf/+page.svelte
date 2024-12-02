@@ -36,6 +36,36 @@
 		}
 	}
 
+	async function simpanAbsensi() {
+		// Filter anggota dengan status 'hadir'
+		const hadirAnggota = filteredAnggota.filter((anggota) => anggota.status === 'hadir');
+
+		for (const anggota of hadirAnggota) {
+			console.log(`Mengirim data untuk anggota ${anggota.id}`);
+			const formData = new FormData();
+			formData.append('id_hf', selectedHF);
+			formData.append('id_anggota', anggota.id);
+			formData.append('tanggal', new Date().toISOString().split('T')[0]);
+
+			try {
+				const response = await fetch('http://localhost:8080/absensihf/add', {
+					method: 'POST',
+					body: formData
+				});
+
+				if (!response.ok) {
+					console.error(`Gagal menyimpan anggota ${anggota.nama}:`, response.status);
+				} else {
+					console.log(`Data anggota ${anggota.nama} berhasil disimpan.`);
+				}
+			} catch (error) {
+				console.error(`Terjadi kesalahan saat menyimpan anggota ${anggota.nama}:`, error);
+			}
+		}
+
+		alert('Proses penyimpanan selesai!');
+	}
+
 	function filterAnggota() {
 		// Filter anggota berdasarkan HF yang dipilih
 		filteredAnggota = anggotaList.filter((anggota) => anggota.id_hf === selectedHF);
@@ -156,6 +186,11 @@
 		</table>
 
 		<!-- Tombol Simpan -->
-		<button class="w-full bg-[#F9C067] text-black py-2 rounded-md font-bold mt-6">Simpan</button>
+		<button
+			class="w-full bg-[#F9C067] text-black py-2 rounded-md font-bold mt-6"
+			on:click={simpanAbsensi}
+		>
+			Simpan
+		</button>
 	</div>
 </div>
