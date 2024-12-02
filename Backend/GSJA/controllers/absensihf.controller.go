@@ -121,6 +121,65 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	return response, err
 }
 
+func FetchAbsensihfByAnggotaId(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := GetAbsensiHfAnggotaById(id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetAbsensiHfAnggotaById(id_anggota int) (models.Response, error) {
+	var absensihf models.AbsensiHf
+	var arrayAbsensihf []models.AbsensiHf
+	var response models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM absensi_hf WHERE id_anggota = ?"
+
+	rows, err := con.Query(sqlStatement, id_anggota)
+
+	if err != nil {
+		return response, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&absensihf.Id,
+			&absensihf.IdAnggota, 
+			&absensihf.IdJadwal, 
+			&absensihf.Idhf,
+			&absensihf.CreatedAt, 
+			&absensihf.UpdatedAt, 
+			&absensihf.DeletedAt,
+		)
+
+		if err != nil {
+			return response, err
+		}
+
+		arrayAbsensihf = append(arrayAbsensihf, absensihf)
+	}
+
+	response.Status = http.StatusOK
+	response.Message = "OK"
+	response.Data = arrayAbsensihf
+
+	return response, err
+}
+
 func AddAbsensiHfForm(c echo.Context) error {
 	idAnggotaStr := c.FormValue("id_anggota")
 	idHFStr := c.FormValue("id_hf")
