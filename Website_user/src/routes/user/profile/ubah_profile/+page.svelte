@@ -1,38 +1,12 @@
 <script>
-    import { onMount } from 'svelte';
-    
-    let id = 1; // Ganti dengan ID anggota yang relevan
+    let id = 1; // ID pengguna, ganti sesuai kebutuhan
     let name = '';
     let birthdate = '';
     let email = '';
     let phone = '';
     let showModal = false;
 
-    // Ambil data profil dari server (GET Request)
-    onMount(async () => {
-        try {
-            const response = await fetch(`/anggota/${id}/editprofil`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                name = data.name;
-                birthdate = data.birthdate;
-                email = data.email;
-                phone = data.phone;
-            } else {
-                console.error('Gagal mengambil data profil');
-            }
-        } catch (error) {
-            console.error('Terjadi kesalahan:', error);
-        }
-    });
-
-    // Fungsi untuk mengirim data profil yang diperbarui (PUT Request)
+    // Kirim data yang diperbarui ke server (PUT)
     async function saveProfile() {
         const profileData = {
             name,
@@ -42,7 +16,7 @@
         };
 
         try {
-            const response = await fetch(`/anggota/${id}/editprofil`, {
+            const response = await fetch(`http://localhost:8080/anggota/${id}/editprofil`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,21 +25,19 @@
             });
 
             if (response.ok) {
-                // Menampilkan modal setelah berhasil menyimpan
-                showModal = true;
+                showModal = true; // Tampilkan modal jika berhasil
             } else {
-                console.error('Gagal memperbarui profil');
+                console.error('Gagal memperbarui profil:', response.statusText);
             }
         } catch (error) {
             console.error('Terjadi kesalahan:', error);
         }
     }
 
-    function handleBack() {
+    function closeModal() {
         showModal = false;
     }
 </script>
-
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
@@ -141,14 +113,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4m-6 6l-6-6m0 0l6 6m-6-6l6 6" />
             </svg>
 
-            <!-- Pesan konfirmasi ubah profil -->
             <p class="text-center text-lg font-semibold text-gray-800 mb-6">Ubah profil berhasil!</p>
 
-            <!-- Tombol aksi "Kembali" -->
             <div class="flex justify-center">
                 <button 
                     class="px-6 py-2 bg-yellow-400 text-black font-semibold rounded-full hover:bg-yellow-500 transition duration-300"
-                    on:click={handleBack}
+                    on:click={closeModal}
                 >
                     Kembali
                 </button>
