@@ -56,6 +56,7 @@
 					<label for="username" class="font-medium">Username</label>
 					<input
 						type="text"
+						id="username"
 						name="username"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan username"
@@ -64,22 +65,25 @@
 				</div>
 
 				<div class="flex flex-col">
-					<label for="email" class="font-medium">Email</label>
+					<label for= "nama" class="font-medium">Nama</label>
 					<input
-						type="email"
-						name="email"
+						type="text"
+						id= "nama"
+						name= "nama"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
-						placeholder="Masukkan email"
+						placeholder="Masukkan Nama"
 						required
 					/>
 				</div>
 
 				<div class="flex flex-col">
-					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
+					<label for="email" class="font-medium">Email</label>
 					<input
-						type="date"
-						name="tanggal_lahir"
+						type="email"
+						id="email"
+						name="email"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
+						placeholder="Masukkan email"
 						required
 					/>
 				</div>
@@ -90,6 +94,7 @@
 					<label for="password" class="font-medium">Password</label>
 					<input
 						type="password"
+						id="password"
 						name="password"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan password"
@@ -101,9 +106,21 @@
 					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
 					<input
 						type="tel"
+						id="nomor_telepon"
 						name="nomor_telepon"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan nomor telepon"
+						required
+					/>
+				</div>
+
+				<div class="flex flex-col">
+					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
+					<input
+						type="date"
+						id="tanggal_lahir"
+						name="tanggal_lahir"
+						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						required
 					/>
 				</div>

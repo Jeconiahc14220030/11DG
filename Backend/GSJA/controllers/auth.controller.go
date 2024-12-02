@@ -6,21 +6,20 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"net/http"
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 func Login(c echo.Context) error {
-	var user models.User
+	// Struktur untuk menampung data JSON yang diterima
+
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
+	fmt.Println(username)
+	fmt.Println(password)
 
+	// Autentikasi pengguna
 	result, err := AuthenticateUser(username, password)
 	if err != nil {
 		fmt.Println("error 3")
@@ -36,8 +35,9 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
+	
 
-	sqlStatement := "SELECT id,username,password FROM anggota WHERE username = ?"
+	sqlStatement := "SELECT id, username, password FROM anggota WHERE username = ?"
 	row := con.QueryRow(sqlStatement, username)
 
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
@@ -48,23 +48,22 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 		return res, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		fmt.Println("Password tidak cocok:", err)
-	return res, errors.New("invalid password")
-	}
+	// defer con.Close()
+
+	// if err != nil {
+	// 	fmt.Println("Password does not match:", err)
+	// } else {
+	// 	fmt.Println("Password matches!")
+	// }
 
 	if user.Password == password {
 		fmt.Println("Password cocok")
+		res.Status = http.StatusOK
+		res.Message = "Berhasil login"
+		res.Data = user
 		return res, nil
 	} else {
 		fmt.Println("Password tidak cocok")
 		return res, errors.New("password tidak cocok")
 	}
-
-	res.Status = http.StatusOK
-	res.Message = "Login successful"
-	res.Data = user
-
-	return res, nil
 }

@@ -196,6 +196,7 @@ func AddAnggota(c echo.Context) error {
 	email := c.FormValue("email")
 	nomorTelepon := c.FormValue("nomor_telepon")
 	tanggalLahir := c.FormValue("tanggal_lahir")
+	nama := c.FormValue("nama")
 
 	anggota := models.Anggota{
 		Username:     username,
@@ -203,6 +204,7 @@ func AddAnggota(c echo.Context) error {
 		Email:        email,
 		NomorTelepon: nomorTelepon,
 		TanggalLahir: tanggalLahir,
+		Nama:         nama,
 	}
 
 	result, err := POSTAnggota(anggota)
@@ -220,8 +222,8 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 	con := db.CreateCon()
 	defer con.Close()
 
-	sqlStatement := "INSERT INTO anggota (username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, NOW(), NOW())"
-	_, err := con.Exec(sqlStatement, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
+	sqlStatement := "INSERT INTO anggota (username, nama, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())"
+	_, err := con.Exec(sqlStatement,anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
 		return res, err
