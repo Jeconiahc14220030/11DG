@@ -112,5 +112,7 @@ func Init() *echo.Echo {
 	e.POST("absensi/add", controllers.AddKehadiranAbsensi)
 
 	e.PUT("anggota/:id/editprofil", controllers.EditProfil)
+
+	e.POST("anggota/tukarvoucher", controllers.TukarVoucher)
 	return e
 }
