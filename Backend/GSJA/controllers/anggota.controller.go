@@ -505,8 +505,8 @@ func EditProfil(c echo.Context) error {
 	}
 
 	nama := c.FormValue("nama")
-	tanggalLahir := c.FormValue("tanggal_lahir")
 	email := c.FormValue("email")
+	tanggalLahir := c.FormValue("tanggal_lahir")
 	nomorTelepon := c.FormValue("nomor_telepon")
 
 	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon)
@@ -517,7 +517,7 @@ func EditProfil(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func PUTProfilAnggota(id int, nama string, tanggalLahir string, email string, nomorTelepon string) (models.Response, error) {
+func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string) (models.Response, error) {
 	var res models.Response
 
 	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, updated_at = NOW() WHERE id = ?"
