@@ -250,20 +250,20 @@ func GETRiwayatVoucherAnggota(id int) (models.Response, error) {
 }
 
 func AddAnggota(c echo.Context) error {
+	nama := c.FormValue("nama")
+	email := c.FormValue("email")
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-	email := c.FormValue("email")
-	nomorTelepon := c.FormValue("nomor_telepon")
 	tanggalLahir := c.FormValue("tanggal_lahir")
-	nama := c.FormValue("nama")
-
+	nomorTelepon := c.FormValue("nomor_telepon")
+	
 	anggota := models.Anggota{
+		Nama:         nama,
+		Email:        email,
 		Username:     username,
 		Password:     password,
-		Email:        email,
-		NomorTelepon: nomorTelepon,
 		TanggalLahir: tanggalLahir,
-		Nama:         nama,
+		NomorTelepon: nomorTelepon,
 	}
 
 	result, err := POSTAnggota(anggota)
@@ -280,8 +280,8 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (username, nama, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())"
-	_, err := con.Exec(sqlStatement,anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
+	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (NULL, ?, ?, ?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
 		return res, err
