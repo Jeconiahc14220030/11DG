@@ -55,14 +55,25 @@
 			if (response.ok) {
 				const result = await response.json();
 				if (result.data && result.data.length > 0) {
-					const fetchedKonten = result.data[0];
-					konten.visi = fetchedKonten.visi;
-					konten.misi = fetchedKonten.misi;
-					konten.pesan_ketua = fetchedKonten.pesan_ketua;
-					konten.tujuan = fetchedKonten.tujuan;
+					// Urutkan data berdasarkan updated_at secara descending
+					const sortedData = result.data.sort(
+						(a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+					);
+					// Ambil data terbaru
+					const terbaru = sortedData[0];
+
+					// Update variabel konten
+					konten.visi = terbaru.visi;
+					konten.misi = terbaru.misi;
+					konten.pesan_ketua = terbaru.pesan_ketua;
+					konten.tujuan = terbaru.tujuan;
+
+					console.log('Konten terbaru berhasil diambil:', terbaru);
 				} else {
-					console.error('Gagal mengambil data.');
+					console.error('Data kosong atau tidak ditemukan.');
 				}
+			} else {
+				console.error('Gagal mengambil data dari server. Status:', response.status);
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
