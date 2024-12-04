@@ -68,6 +68,9 @@ func AddJadwalLatihan(c echo.Context) error {
 	// lokasi := c.FormValue("lokasi")
 	// strIdAnggota := c.FormValue("id_anggota")
 	// strIdKomunitas := c.FormValue("id_komunitas")
+	// lokasi := c.FormValue("lokasi")
+	// strIdAnggota := c.FormValue("id_anggota")
+	// strIdKomunitas := c.FormValue("id_komunitas")
 
 	// // idAnggota, err := strconv.Atoi(strIdAnggota)
 
@@ -101,6 +104,12 @@ func AddJadwalLatihan(c echo.Context) error {
 	// }
 	// jadwalLatihan := models.JadwalLatihan{
 	// 	// Tanggal: tanggal,
+	// 	Lokasi: lokasi,
+	// 	IdAnggota: idAnggota,
+	// 	IdKomunitas: idKomunitas,
+	// }
+	// jadwalLatihan := models.JadwalLatihan{
+	// 	// // Tanggal: tanggal,
 	// 	Lokasi: lokasi,
 	// 	IdAnggota: idAnggota,
 	// 	IdKomunitas: idKomunitas,

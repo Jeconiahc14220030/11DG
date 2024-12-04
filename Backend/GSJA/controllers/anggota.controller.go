@@ -4,6 +4,7 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -39,20 +40,20 @@ func GETAllAnggota() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&anggota.Id, 
+			&anggota.Id,
 			&anggota.IdHf,
-			&anggota.Nama, 
+			&anggota.Nama,
 			&anggota.Username,
 			&anggota.Password,
-			&anggota.Email, 
-			&anggota.NomorTelepon, 
+			&anggota.Email,
+			&anggota.NomorTelepon,
 			&anggota.TanggalLahir,
 			&anggota.Poin,
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
 		)
-		
+
 		if err != nil {
 			return res, err
 		}
@@ -178,13 +179,12 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 		if err != nil {
 			return res, err
 		}
-
+		res.Data = anggota
 		arrayAnggota = append(arrayAnggota, anggota)
 	}
 
 	res.Status = http.StatusOK
 	res.Message = "Success"
-	res.Data = arrayAnggota
 
 	return res, nil
 }
@@ -250,22 +250,25 @@ func GETRiwayatVoucherAnggota(id int) (models.Response, error) {
 }
 
 func AddAnggota(c echo.Context) error {
+	nama := c.FormValue("nama")
+	email := c.FormValue("email")
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-	email := c.FormValue("email")
-	nomorTelepon := c.FormValue("nomor_telepon")
 	tanggalLahir := c.FormValue("tanggal_lahir")
-
+	nomorTelepon := c.FormValue("nomor_telepon")
+	
 	anggota := models.Anggota{
+		Nama:         nama,
+		Email:        email,
 		Username:     username,
 		Password:     password,
-		Email:        email,
-		NomorTelepon: nomorTelepon,
 		TanggalLahir: tanggalLahir,
+		NomorTelepon: nomorTelepon,
 	}
 
 	result, err := POSTAnggota(anggota)
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
@@ -277,8 +280,8 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir 	)
+	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (NULL, ?, ?, ?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
 		return res, err
@@ -286,7 +289,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	res.Status = http.StatusCreated
 	res.Message = "Anggota added successfully"
-	res.Data = anggota 
+	res.Data = anggota
 
 	return res, nil
 }
@@ -365,7 +368,7 @@ func UpdateDeletedAtToNullAnggota(id int) (models.Response, error) {
 
 func FetchAbsensiById(c echo.Context) error {
 	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam	)
+	id, err := strconv.Atoi(idParam)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
@@ -502,8 +505,8 @@ func EditProfil(c echo.Context) error {
 	}
 
 	nama := c.FormValue("nama")
-	tanggalLahir := c.FormValue("tanggal_lahir")
 	email := c.FormValue("email")
+	tanggalLahir := c.FormValue("tanggal_lahir")
 	nomorTelepon := c.FormValue("nomor_telepon")
 
 	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon)
@@ -514,7 +517,7 @@ func EditProfil(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func PUTProfilAnggota(id int, nama string, tanggalLahir string, email string, nomorTelepon string) (models.Response, error) {
+func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string) (models.Response, error) {
 	var res models.Response
 
 	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, updated_at = NOW() WHERE id = ?"
@@ -528,6 +531,54 @@ func PUTProfilAnggota(id int, nama string, tanggalLahir string, email string, no
 	res.Status = http.StatusOK
 	res.Message = "Profile updated successfully"
 	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+func TukarVoucher(c echo.Context) error {
+	idAnggotaStr := c.FormValue("idAnggota")
+	idVoucherStr := c.FormValue("idVoucher")
+
+	idAnggota, err := strconv.Atoi(idAnggotaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	idVoucher, err := strconv.Atoi(idVoucherStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	voucher := models.HistoryPembelianVoucher {
+		IdAnggota: idAnggota,
+		IdVoucher: idVoucher,
+	} 
+
+	result, err := POSTPenukaranVoucher(voucher)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func POSTPenukaranVoucher(voucher models.HistoryPembelianVoucher) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO history_pembelian_voucher (tanggal, id_anggota, id_voucher) VALUES (NOW, ?, ?)"
+	_, err := con.Exec(sqlStatement, voucher.IdAnggota, voucher.IdVoucher)
+
+	if err != nil {
+		return res, err
+	}
+
+	defer con.Close()
+
+	res.Status = http.StatusCreated
+	res.Message = "Penukaran voucher berhasil ditambahkan"
+	res.Data = voucher
 
 	return res, nil
 }
