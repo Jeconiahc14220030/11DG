@@ -218,8 +218,8 @@ func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Tanggal)
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, topik, tanggal) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Topik, absensiHf.Tanggal)
 
 	if err != nil {
 		fmt.Println(err)
