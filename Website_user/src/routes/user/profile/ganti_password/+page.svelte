@@ -1,50 +1,63 @@
 <script>
-    let current_password = ''; // Variabel untuk password lama
-    let newPassword = '';      // Variabel untuk password baru
-    let confirmPassword = '';  // Variabel untuk konfirmasi password
-    let showModal = false;     // State untuk menampilkan modal
+    let current_password = ''; 
+    let newPassword = '';     
+    let confirmPassword = '';  
+    let showModal = false;     
 
     async function savePassword() {
-    if (newPassword !== confirmPassword) {
-        alert('Password tidak cocok!');
-        return;
-    }
-
-    // ID pengguna (misalnya diset dari sesi atau URL)
-    const userId = 1; // Ganti dengan ID yang sesuai
-
-    // Kirim permintaan PUT ke API Go
-    try {
-        const response = await fetch(`http://localhost:8080/anggota/changePassword/${userId}`, {
-            method: 'PUT', // Ganti dari POST menjadi PUT
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                current_password: current_password, // Ganti dengan nilai password lama
-                new_password: newPassword,
-                confirm_password: confirmPassword
-            }),
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-            // Menampilkan modal konfirmasi jika berhasil
-            showModal = true;
-        } else {
-            alert(data.message);
+        // Validasi: Pastikan semua password tidak kosong
+        if (!current_password.trim() || !newPassword.trim() || !confirmPassword.trim()) {
+            alert('Password tidak boleh kosong!');
+            return;
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Gagal memperbarui password');
+
+        // Validasi: Password baru dan konfirmasi harus cocok
+        if (newPassword !== confirmPassword) {
+            alert('Password baru dan konfirmasi password tidak cocok!');
+            return;
+        }
+
+        // Validasi: Password baru tidak boleh sama dengan password lama
+        if (newPassword === current_password) {
+            alert('Password baru tidak boleh sama dengan password lama!');
+            return;
+        }
+
+        // ID pengguna
+        const userId = 7; // Ganti dengan ID yang sesuai
+
+        // Kirim permintaan API 
+        try {
+            const response = await fetch(`http://localhost:8080/anggota/changePassword/${userId}`, {
+                method: 'PUT', 
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    current_password: current_password, 
+                    new_password: newPassword,
+                    confirm_password: confirmPassword
+                }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                showModal = true;
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Gagal memperbarui password');
+        }
     }
-}
 
     function handleBack() {
-        // Tutup modal
         showModal = false;
     }
 </script>
+
+
 
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">

@@ -1,21 +1,50 @@
 <script>
-    let id = 1; // ID pengguna, ganti sesuai kebutuhan
+    import { onMount } from 'svelte';
+
+    let id = 7; // ID pengguna, ganti sesuai kebutuhan
     let name = '';
     let birthdate = '';
     let email = '';
     let phone = '';
     let showModal = false;
+    let errorMessage = '';
 
-    // Kirim data yang diperbarui ke server (PUT)
+    // Ambil data pengguna dari backend 
+    onMount(async () => {
+        console.log("Memulai pengambilan data pengguna...");
+        try {
+            const response = await fetch(`http://localhost:8080/anggota/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                name = data.nama || '';
+                birthdate = data.tanggal_lahir || '';
+                email = data.email || '';
+                phone = data.nomor_telepon || '';
+                console.log(`Data pengguna berhasil dimuat: Nama: ${data.nama}, Tanggal Lahir: ${data.tanggal_lahir}, Email: ${data.email}, No. Telp: ${data.nomor_telepon}`);
+            } else {
+                console.error('Gagal memuat data pengguna');
+                errorMessage = 'Gagal memuat data pengguna';
+            }
+        } catch (error) {
+            console.error('Terjadi kesalahan saat memuat data pengguna:', error);
+            errorMessage = 'Terjadi kesalahan saat memuat data pengguna';
+        }
+    });
+
+    // Kirim data yang diperbarui 
     async function saveProfile() {
-        const profileData = {
-            name,
-            birthdate,
-            email,
-            phone,
-        };
+        const profileData = {};
+
+        if (name) profileData.nama = name;
+        if (birthdate) profileData.tanggal_lahir = birthdate;
+        if (email) profileData.email = email;
+        if (phone) profileData.nomor_telepon = phone;
+
+        // Tambahkan log untuk mengecek data sebelum dikirim
+        console.log('Data yang akan dikirim ke backend:', JSON.stringify(profileData));
 
         try {
+            console.log("Memulai pengiriman data ke server...");
             const response = await fetch(`http://localhost:8080/anggota/${id}/editprofil`, {
                 method: 'PUT',
                 headers: {
@@ -25,16 +54,22 @@
             });
 
             if (response.ok) {
-                showModal = true; // Tampilkan modal jika berhasil
+                showModal = true; 
+                errorMessage = ''; 
+                console.log('Profil berhasil diperbarui');
             } else {
-                console.error('Gagal memperbarui profil:', response.statusText);
+                const data = await response.json();
+                errorMessage = data.message || 'Gagal memperbarui profil.';
+                console.error(`Error Response: ${JSON.stringify(data)}`);
             }
         } catch (error) {
+            errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
             console.error('Terjadi kesalahan:', error);
         }
     }
 
     function closeModal() {
+        console.log("Menutup modal...");
         showModal = false;
     }
 </script>
@@ -67,6 +102,7 @@
                     bind:value={name} 
                     placeholder="Name" 
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                    
                 />
             </div>
             <div>
@@ -98,6 +134,11 @@
             </div>
         </div>
 
+        <!-- Pesan error jika ada masalah -->
+        {#if errorMessage}
+            <div class="text-red-500 text-sm mt-4">{errorMessage}</div>
+        {/if}
+
         <!-- Tombol Simpan -->
         <button on:click={saveProfile} class="bg-[#F9C067] text-white py-2 px-4 mt-6 rounded-full w-full max-w-xs font-semibold">
             Simpan
@@ -117,7 +158,7 @@
 
             <div class="flex justify-center">
                 <button 
-                    class="px-6 py-2 bg-yellow-400 text-black font-semibold rounded-full hover:bg-yellow-500 transition duration-300"
+                    class="px-6 py-2 bg-[#F9C067] text-black font-semibold rounded-full"
                     on:click={closeModal}
                 >
                     Kembali
