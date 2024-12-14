@@ -4,7 +4,12 @@ import (
 	"GSJA/db"
 	"GSJA/models"
 	"database/sql"
+	"fmt"
+	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"strconv"
 	"fmt"
 
@@ -44,6 +49,7 @@ func GETAllAnggota() (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama,
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email,
 			&anggota.NomorTelepon,
@@ -108,6 +114,7 @@ func GETAnggotaById(id int) (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email, 
 			&anggota.NomorTelepon, 
@@ -127,9 +134,63 @@ func GETAnggotaById(id int) (models.Response, error) {
 
 	res.Status = http.StatusOK
 	res.Message = "Success"
+	res.Data = arrayAnggota
 
 	return res, nil
 }
+
+func FetchAnggotaByUsername(c echo.Context) error {
+	username := c.Param("username")
+
+	result, err := GETAnggotaByUsername(username)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GETAnggotaByUsername(username string) (models.Response, error) {
+	var anggota models.Anggota
+	var arrayAnggota []models.Anggota
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM anggota WHERE username = ?"
+
+	rows, err := con.Query(sqlStatement, username)
+
+	if err != nil {
+		return res, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&anggota.Id, 
+			&anggota.IdHf,
+			&anggota.Nama, 
+			&anggota.Username,
+			&anggota.FotoProfil,
+			&anggota.Password,
+			&anggota.Email, 
+			&anggota.NomorTelepon, 
+			&anggota.TanggalLahir,
+			&anggota.Poin,
+			&anggota.CreatedAt,
+			&anggota.UpdatedAt,
+			&anggota.DeletedAt,
+		)
+
+		if err != nil {
+			return res, err
+		}
+		res.Data = anggota
+		arrayAnggota = append(arrayAnggota, anggota)
+	}
 
 func FetchAnggotaByUsername(c echo.Context) error {
 	username := c.Param("username")
@@ -186,6 +247,7 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 	res.Status = http.StatusOK
 	res.Message = "Success"
 	res.Data = arrayAnggota
+
 
 	return res, nil
 }
@@ -251,20 +313,20 @@ func GETRiwayatVoucherAnggota(id int) (models.Response, error) {
 }
 
 func AddAnggota(c echo.Context) error {
+	nama := c.FormValue("nama")
+	email := c.FormValue("email")
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-	email := c.FormValue("email")
-	nomorTelepon := c.FormValue("nomor_telepon")
 	tanggalLahir := c.FormValue("tanggal_lahir")
-	nama := c.FormValue("nama")
-
+	nomorTelepon := c.FormValue("nomor_telepon")
+	
 	anggota := models.Anggota{
+		Nama:         nama,
+		Email:        email,
 		Username:     username,
 		Password:     password,
-		Email:        email,
-		NomorTelepon: nomorTelepon,
 		TanggalLahir: tanggalLahir,
-		Nama:         nama,
+		NomorTelepon: nomorTelepon,
 	}
 
 	result, err := POSTAnggota(anggota)
@@ -281,8 +343,8 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (username, nama, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement,anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
+	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (NULL, ?, ?, ?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
 		return res, err
@@ -506,11 +568,25 @@ func EditProfil(c echo.Context) error {
 	}
 
 	nama := c.FormValue("nama")
-	tanggalLahir := c.FormValue("tanggal_lahir")
 	email := c.FormValue("email")
+	tanggalLahir := c.FormValue("tanggal_lahir")
 	nomorTelepon := c.FormValue("nomor_telepon")
 
-	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon)
+	// Handle file upload for profile photo
+	fotoFile, err := c.FormFile("photo")
+	var filename string
+	if err == nil {
+		// Upload photo and get the filename
+		folder := "profiles"
+		result, uploadErr := UploadFotoFolder(fotoFile, int64(id), folder)
+		if uploadErr != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": uploadErr.Error()})
+		}
+		filename = result.Data.(map[string]string)["filename"]
+	}
+
+	// Update the profile in the database
+	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon, filename)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -518,13 +594,13 @@ func EditProfil(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func PUTProfilAnggota(id int, nama string, tanggalLahir string, email string, nomorTelepon string) (models.Response, error) {
+func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string, fotoProfile string) (models.Response, error) {
 	var res models.Response
 
-	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, updated_at = NOW() WHERE id = ?"
+	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, foto_profile = ?, updated_at = NOW() WHERE id = ?"
 
 	con := db.CreateCon()
-	_, err := con.Exec(sqlStatement, nama, tanggalLahir, email, nomorTelepon, id)
+	_, err := con.Exec(sqlStatement, nama, tanggalLahir, email, nomorTelepon, fotoProfile, id)
 	if err != nil {
 		return res, err
 	}
@@ -532,6 +608,75 @@ func PUTProfilAnggota(id int, nama string, tanggalLahir string, email string, no
 	res.Status = http.StatusOK
 	res.Message = "Profile updated successfully"
 	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+func UploadFoto(c echo.Context) error {
+	folder := "profiles"
+	ip := c.RealIP()
+	id := c.FormValue("id")
+	fotoFile, err := c.FormFile("photo")
+	if err != nil {
+		// Log error jika terjadi kesalahan saat mengambil file foto
+		models.InsertLogError(ip, "UploadFoto", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	nId, err := strconv.Atoi(id)
+	if err != nil {
+		models.InsertLogError(ip, "UploadFoto", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID format"})
+	}
+	tId := int64(nId)
+
+	result, err := UploadFotoFolder(fotoFile, tId, folder)
+	if err != nil {
+		models.InsertLogError(ip, "UploadFoto", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	models.InsertLogError(ip, "UploadFoto", nil)
+	return c.JSON(http.StatusOK, result)
+}
+
+func UploadFotoFolder(file *multipart.FileHeader, id int64, folder string) (models.Response, error) {
+	var res models.Response
+	log.Println("Upload Foto")
+
+	src, err := file.Open()
+	if err != nil {
+		log.Println(err.Error())
+		return res, err
+	}
+	defer src.Close()
+
+	destinationFolder := "uploads/" + folder
+	if _, err := os.Stat(destinationFolder); os.IsNotExist(err) {
+		if err := os.MkdirAll(destinationFolder, os.ModePerm); err != nil {
+			log.Println(err.Error())
+			return res, err
+		}
+	}
+
+	filename := folder + "-" + strconv.Itoa(int(id)) + ".png"
+	destinationPath := destinationFolder + "/" + filename
+
+	dst, err := os.Create(destinationPath)
+	if err != nil {
+		log.Println(err.Error())
+		return res, err
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		log.Println(err.Error())
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses Upload Foto"
+	res.Data = map[string]string{"filename": filename}
 
 	return res, nil
 }

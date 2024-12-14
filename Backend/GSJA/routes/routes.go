@@ -111,5 +111,6 @@ func Init() *echo.Echo {
 	e.POST("absensi/add", controllers.AddKehadiranAbsensi)
 
 	e.PUT("anggota/:id/editprofil", controllers.EditProfil)
+	e.PUT("anggota/changePassword/:id", controllers.ChangePassword)
 	return e
 }

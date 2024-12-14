@@ -13,6 +13,7 @@ type Anggota struct {
 	Nama         string     `json:"nama" db:"nama"`
 	Username     string     `json:"username" db:"username"`
 	Password     string     `json:"password" db:"password"`
+	FotoProfil   string     `json:"foto_profil" db:"foto_profil"`
 	Email        string     `json:"email" db:"email"`
 	NomorTelepon string     `json:"nomor_telepon" db:"nomor_telepon"`
 	TanggalLahir string     `json:"tanggal_lahir" db:"tanggal_lahir"`

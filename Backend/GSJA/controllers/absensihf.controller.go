@@ -42,6 +42,7 @@ func GETAllAbsensihf() (models.Response, error) {
 			&absensihf.Id,
 			&absensihf.IdAnggota, 
 			&absensihf.Idhf,
+			&absensihf.Topik,
 			&absensihf.Tanggal,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
@@ -100,8 +101,9 @@ func GETAbsensihfById(id int) (models.Response, error) {
 		err = rows.Scan(
 			&absensihf.Id,
 			&absensihf.IdAnggota, 
-			&absensihf.Tanggal,
 			&absensihf.Idhf,
+			&absensihf.Topik,
+			&absensihf.Tanggal,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
 			&absensihf.DeletedAt,
@@ -161,6 +163,8 @@ func GetAbsensiHfAnggotaById(id_anggota int) (models.Response, error) {
 			&absensihf.IdAnggota, 
 			// &absensihf.IdJadwal, 
 			&absensihf.Idhf,
+			&absensihf.Topik,
+			&absensihf.Tanggal,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 
 			&absensihf.DeletedAt,
@@ -183,6 +187,7 @@ func GetAbsensiHfAnggotaById(id_anggota int) (models.Response, error) {
 func AddAbsensiHfForm(c echo.Context) error {
 	idAnggotaStr := c.FormValue("id_anggota")
 	idHFStr := c.FormValue("id_hf")
+	topik := c.FormValue("topik")
 	tanggal := c.FormValue("tanggal")
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
 	if err != nil {
@@ -197,6 +202,7 @@ func AddAbsensiHfForm(c echo.Context) error {
 	absensiHf := models.AbsensiHf{
 		IdAnggota: idAnggota,
 		Idhf: idHF,
+		Topik: topik,
 		Tanggal: tanggal,
 	}
 
@@ -213,8 +219,8 @@ func POSTAbsensiHf(absensiHf models.AbsensiHf) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Tanggal)
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, topik, tanggal) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, absensiHf.IdAnggota, absensiHf.Idhf, absensiHf.Topik, absensiHf.Tanggal)
 
 	if err != nil {
 		fmt.Println(err)
@@ -236,8 +242,8 @@ func AddAbsensiHfJson(c echo.Context) error {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, tanggal) VALUES (?, ?, ?)"
-	_, err := con.Exec(sqlStatement, AbsensiHf.IdAnggota, AbsensiHf.Idhf, AbsensiHf.Tanggal)
+	sqlStatement := "INSERT INTO absensi_hf (id_anggota, id_hf, topik, tanggal) VALUES (?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, AbsensiHf.IdAnggota, AbsensiHf.Idhf, AbsensiHf.Topik, AbsensiHf.Tanggal)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
