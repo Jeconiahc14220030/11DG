@@ -48,6 +48,7 @@ func GETAllAnggota() (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama,
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email,
 			&anggota.NomorTelepon,
@@ -56,7 +57,6 @@ func GETAllAnggota() (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.FotoProfil,
 		)
 
 		if err != nil {
@@ -113,6 +113,7 @@ func GETAnggotaById(id int) (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email, 
 			&anggota.NomorTelepon, 
@@ -121,7 +122,6 @@ func GETAnggotaById(id int) (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.FotoProfil,
 		)
 
 		if err != nil {
@@ -173,6 +173,7 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email, 
 			&anggota.NomorTelepon, 
@@ -181,7 +182,6 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 			&anggota.CreatedAt,
 			&anggota.UpdatedAt,
 			&anggota.DeletedAt,
-			&anggota.FotoProfil,
 		)
 
 		if err != nil {
