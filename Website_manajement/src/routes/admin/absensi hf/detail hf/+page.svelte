@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	let dummyData = [
 		{ nama: 'Kelompok A', tanggal: '26 November 2024' },
 		{ nama: 'Kelompok B', tanggal: '26 November 2024' },
@@ -74,8 +76,30 @@
 			}
 		});
 	}
-</script>
 
+	let anggota = [];
+	let errorMessage = '';
+	let idHf = '';
+
+	async function fetchAnggotaHF() {
+		try {
+			const response = await fetch(`http://localhost:8080/Anggotahf/${idHf}`);
+			if (!response.ok) {
+				throw new Error(`HTTP Error! status: ${response.status}`);
+			}
+			anggota = await response.json();
+			console.log('Data anggota berhasil diambil:', anggota);
+		} catch (err) {
+			errorMessage = `Error fetching anggota: ${err.message}`;
+			console.error('Error fetching anggota:', err);
+		}
+	}
+
+	onMount(() => {
+		idHf = '1';
+		fetchAnggotaHF();
+	});
+</script>
 
 <div class="bg-background w-screen h-auto justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
@@ -85,26 +109,33 @@
 					<h1 class="text-xl font-bold mb-4 text-center">Anggota</h1>
 					<table class="w-full h-full border-collapse border border-black">
 						<thead>
-							<tr class="bg-blue-100 text-gray-600 uppercase text-sm leading-normal border-black border-b">
+							<tr
+								class="bg-blue-100 text-gray-600 uppercase text-sm leading-normal border-black border-b"
+							>
 								<th class="py-3 px-6 text-left text-black w-1/2">Anggota</th>
 							</tr>
 						</thead>
 						<tbody class="text-gray-600 text-sm">
-							{#each dummyData as item}
+							{#each anggota as item}
 								<tr class="border-b border-black hover:bg-gray-100">
-									<td class="py-3 px-6 text-left">{item.nama}</td>
+									<td class="py-3 px-6 text-left">{item.id}</td>
 								</tr>
 							{/each}
 						</tbody>
 					</table>
-					<button class="bg-blue-200 text-xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-200 hover:border-[0.2px] hover:border-black ease-in duration-400 mt-5">Tambah Anggota</button>
+					<button
+						class="bg-blue-200 text-xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-200 hover:border-[0.2px] hover:border-black ease-in duration-400 mt-5"
+						>Tambah Anggota</button
+					>
 				</div>
 
-				<div class="flex flex-col items-center w-full ">
+				<div class="flex flex-col items-center w-full">
 					<h1 class="text-xl font-bold mb-4 text-center">Absensi</h1>
 					<table class="w-full h-full border-collapse border border-black">
 						<thead>
-							<tr class="bg-red-100 text-gray-600 uppercase text-sm leading-normal border-black border-b">
+							<tr
+								class="bg-red-100 text-gray-600 uppercase text-sm leading-normal border-black border-b"
+							>
 								<th class="py-3 px-6 text-left text-black w-1/4">Topik HF</th>
 								<th class="py-3 px-6 text-center text-black w-1/4">Tanggal</th>
 								<th class="py-3 px-6 text-center text-black w-1/4">Aksi</th>
@@ -120,7 +151,11 @@
 							{/each}
 						</tbody>
 					</table>
-					<button on:click={absensihf} class="bg-red-200 text-xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-200 hover:border-[0.1px] hover:border-black ease-in duration-400 mt-5">Create</button>
+					<button
+						on:click={absensihf}
+						class="bg-red-200 text-xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-200 hover:border-[0.1px] hover:border-black ease-in duration-400 mt-5"
+						>Create</button
+					>
 				</div>
 			</div>
 		</div>

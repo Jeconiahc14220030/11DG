@@ -159,7 +159,7 @@ func GetAbsensiHfAnggotaById(id_anggota int) (models.Response, error) {
 		err = rows.Scan(
 			&absensihf.Id,
 			&absensihf.IdAnggota, 
-			&absensihf.IdJadwal, 
+			// &absensihf.IdJadwal, 
 			&absensihf.Idhf,
 			&absensihf.CreatedAt, 
 			&absensihf.UpdatedAt, 

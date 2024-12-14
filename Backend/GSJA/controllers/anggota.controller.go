@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"net/http"
 	"strconv"
+	"fmt"
 
 	"github.com/labstack/echo/v4"
 )
@@ -94,64 +95,6 @@ func GETAnggotaById(id int) (models.Response, error) {
 	sqlStatement := "SELECT * FROM anggota WHERE id = ?"
 
 	rows, err := con.Query(sqlStatement, id)
-
-	if err != nil {
-		return res, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(
-			&anggota.Id, 
-			&anggota.IdHf,
-			&anggota.Nama, 
-			&anggota.Username,
-			&anggota.Password,
-			&anggota.Email, 
-			&anggota.NomorTelepon, 
-			&anggota.TanggalLahir,
-			&anggota.Poin,
-			&anggota.CreatedAt,
-			&anggota.UpdatedAt,
-			&anggota.DeletedAt,
-		)
-
-		if err != nil {
-			return res, err
-		}
-		res.Data = anggota
-		arrayAnggota = append(arrayAnggota, anggota)
-	}
-
-	res.Status = http.StatusOK
-	res.Message = "Success"
-
-	return res, nil
-}
-
-func FetchAnggotaByUsername(c echo.Context) error {
-	username := c.Param("username")
-
-	result, err := GETAnggotaByUsername(username)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-func GETAnggotaByUsername(username string) (models.Response, error) {
-	var anggota models.Anggota
-	var arrayAnggota []models.Anggota
-	var res models.Response
-
-	con := db.CreateCon()
-
-	sqlStatement := "SELECT * FROM anggota WHERE username = ?"
-
-	rows, err := con.Query(sqlStatement, username)
 
 	if err != nil {
 		return res, err
@@ -338,7 +281,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (username, nama, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())"
+	sqlStatement := "INSERT INTO anggota (username, nama, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement,anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {

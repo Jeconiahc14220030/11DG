@@ -52,6 +52,18 @@
 	<form id="tambahanggota" on:submit={tambahangota}>
 		<div class="flex flex-row space-x-8">
 			<div class="flex flex-col space-y-4">
+				<!-- <div class="flex flex-col">
+					<label for="id_HF" class="font-medium">Id HF</label>
+					<input
+						type="text"
+						id="id_HF"
+						name="id_HF"
+						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
+						placeholder="Masukkan Id"
+						required
+					/>
+				</div> -->
+
 				<div class="flex flex-col">
 					<label for="username" class="font-medium">Username</label>
 					<input
@@ -65,11 +77,11 @@
 				</div>
 
 				<div class="flex flex-col">
-					<label for= "nama" class="font-medium">Nama</label>
+					<label for="nama" class="font-medium">Nama</label>
 					<input
 						type="text"
-						id= "nama"
-						name= "nama"
+						id="nama"
+						name="nama"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						placeholder="Masukkan Nama"
 						required
@@ -91,6 +103,18 @@
 
 			<div class="flex flex-col space-y-4">
 				<div class="flex flex-col">
+					<label for="roles" class="font-medium">Roles</label>
+					<select
+						id="roles"
+						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
+					>
+						<option>BPH</option>
+						<option>Paw</option>
+						<option>Musik</option>
+					</select>
+				</div>
+
+				<!-- <div class="flex flex-col">
 					<label for="password" class="font-medium">Password</label>
 					<input
 						type="password"
@@ -100,7 +124,7 @@
 						placeholder="Masukkan password"
 						required
 					/>
-				</div>
+				</div> -->
 
 				<div class="flex flex-col">
 					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
@@ -117,9 +141,10 @@
 				<div class="flex flex-col">
 					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
 					<input
-						type="date"
+						type="text"
 						id="tanggal_lahir"
 						name="tanggal_lahir"
+						placeholder="dd-mm-yyyy"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
 						required
 					/>
