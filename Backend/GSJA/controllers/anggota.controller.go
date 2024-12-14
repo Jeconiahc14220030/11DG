@@ -541,7 +541,7 @@ func EditProfil(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string) (models.Response, error) {
+func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string, fotoProfile string) (models.Response, error) {
 	var res models.Response
 
 	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, foto_profile = ?, updated_at = NOW() WHERE id = ?"
