@@ -5,7 +5,11 @@ import (
 	"GSJA/models"
 	"database/sql"
 	"fmt"
+	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -44,6 +48,7 @@ func GETAllAnggota() (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama,
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email,
 			&anggota.NomorTelepon,
@@ -108,6 +113,7 @@ func GETAnggotaById(id int) (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email, 
 			&anggota.NomorTelepon, 
@@ -127,6 +133,7 @@ func GETAnggotaById(id int) (models.Response, error) {
 
 	res.Status = http.StatusOK
 	res.Message = "Success"
+	res.Data = arrayAnggota
 
 	return res, nil
 }
@@ -166,6 +173,7 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama, 
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email, 
 			&anggota.NomorTelepon, 
@@ -185,6 +193,8 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 
 	res.Status = http.StatusOK
 	res.Message = "Success"
+	res.Data = arrayAnggota
+
 
 	return res, nil
 }
@@ -509,7 +519,21 @@ func EditProfil(c echo.Context) error {
 	tanggalLahir := c.FormValue("tanggal_lahir")
 	nomorTelepon := c.FormValue("nomor_telepon")
 
-	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon)
+	// Handle file upload for profile photo
+	fotoFile, err := c.FormFile("photo")
+	var filename string
+	if err == nil {
+		// Upload photo and get the filename
+		folder := "profiles"
+		result, uploadErr := UploadFotoFolder(fotoFile, int64(id), folder)
+		if uploadErr != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": uploadErr.Error()})
+		}
+		filename = result.Data.(map[string]string)["filename"]
+	}
+
+	// Update the profile in the database
+	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon, filename)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -520,10 +544,10 @@ func EditProfil(c echo.Context) error {
 func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string) (models.Response, error) {
 	var res models.Response
 
-	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, updated_at = NOW() WHERE id = ?"
+	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, foto_profile = ?, updated_at = NOW() WHERE id = ?"
 
 	con := db.CreateCon()
-	_, err := con.Exec(sqlStatement, nama, tanggalLahir, email, nomorTelepon, id)
+	_, err := con.Exec(sqlStatement, nama, tanggalLahir, email, nomorTelepon, fotoProfile, id)
 	if err != nil {
 		return res, err
 	}
@@ -535,50 +559,71 @@ func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  n
 	return res, nil
 }
 
-func TukarVoucher(c echo.Context) error {
-	idAnggotaStr := c.FormValue("idAnggota")
-	idVoucherStr := c.FormValue("idVoucher")
-
-	idAnggota, err := strconv.Atoi(idAnggotaStr)
+func UploadFoto(c echo.Context) error {
+	folder := "profiles"
+	ip := c.RealIP()
+	id := c.FormValue("id")
+	fotoFile, err := c.FormFile("photo")
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
-
-	idVoucher, err := strconv.Atoi(idVoucherStr)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	}
-
-	voucher := models.HistoryPembelianVoucher {
-		IdAnggota: idAnggota,
-		IdVoucher: idVoucher,
-	} 
-
-	result, err := POSTPenukaranVoucher(voucher)
-	if err != nil {
+		// Log error jika terjadi kesalahan saat mengambil file foto
+		models.InsertLogError(ip, "UploadFoto", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
+	nId, err := strconv.Atoi(id)
+	if err != nil {
+		models.InsertLogError(ip, "UploadFoto", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID format"})
+	}
+	tId := int64(nId)
+
+	result, err := UploadFotoFolder(fotoFile, tId, folder)
+	if err != nil {
+		models.InsertLogError(ip, "UploadFoto", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	models.InsertLogError(ip, "UploadFoto", nil)
 	return c.JSON(http.StatusOK, result)
 }
 
-func POSTPenukaranVoucher(voucher models.HistoryPembelianVoucher) (models.Response, error) {
+func UploadFotoFolder(file *multipart.FileHeader, id int64, folder string) (models.Response, error) {
 	var res models.Response
+	log.Println("Upload Foto")
 
-	con := db.CreateCon()
-
-	sqlStatement := "INSERT INTO history_pembelian_voucher (tanggal, id_anggota, id_voucher) VALUES (NOW, ?, ?)"
-	_, err := con.Exec(sqlStatement, voucher.IdAnggota, voucher.IdVoucher)
-
+	src, err := file.Open()
 	if err != nil {
+		log.Println(err.Error())
+		return res, err
+	}
+	defer src.Close()
+
+	destinationFolder := "uploads/" + folder
+	if _, err := os.Stat(destinationFolder); os.IsNotExist(err) {
+		if err := os.MkdirAll(destinationFolder, os.ModePerm); err != nil {
+			log.Println(err.Error())
+			return res, err
+		}
+	}
+
+	filename := folder + "-" + strconv.Itoa(int(id)) + ".png"
+	destinationPath := destinationFolder + "/" + filename
+
+	dst, err := os.Create(destinationPath)
+	if err != nil {
+		log.Println(err.Error())
+		return res, err
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		log.Println(err.Error())
 		return res, err
 	}
 
-	defer con.Close()
-
-	res.Status = http.StatusCreated
-	res.Message = "Penukaran voucher berhasil ditambahkan"
-	res.Data = voucher
+	res.Status = http.StatusOK
+	res.Message = "Sukses Upload Foto"
+	res.Data = map[string]string{"filename": filename}
 
 	return res, nil
 }
