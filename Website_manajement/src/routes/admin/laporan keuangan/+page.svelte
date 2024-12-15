@@ -145,11 +145,11 @@
 		chart = new Chart(ctx, {
 			type: 'line',
 			data: {
-				labels: ['2 November', '9 November', '16 November', '23 November'],
+				labels: ['2 November', '9 November', '16 November', '23 November', '21 Desember'],
 				datasets: [
 					{
 						label: 'Laporan Keuangan Bulanan',
-						data: [450000, 500000, 450000, 500000,],
+						data: [450000, 500000, 450000, 500000, 550000,],
 						backgroundColor: 'rgba(54, 162, 235, 0.2)',
 						borderColor: 'rgba(54, 162, 235, 1)',
 						borderWidth: 2,

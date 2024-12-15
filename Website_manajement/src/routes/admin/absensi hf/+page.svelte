@@ -31,12 +31,8 @@
             <label for="kelompok" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Nama Kelompok:</label>
             <input type="text" id="kelompok" class="swal2-input" style="width: 80%;" placeholder="Nama Kelompok" required>
 
-            <label for="anggota" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Nama Anggota:</label>
-            <select id="anggota" class="swal2-input" style="width: 80%;" required>
-                <option>Agus Sudah Besar1</option>
-                <option>Agus Sudah Besar2</option>
-                <option>Agus Sudah Besar3</option>
-            </select>
+            <label for="anggota" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">List Nama Anggota:</label>
+            <textarea id="anggota" class="swal2-input" style="width: 80%;" placeholder="List Kelompok Anggota"></textarea>
 		</div>
 	`,
 			confirmButtonText: 'Create',
@@ -199,7 +195,7 @@
 													/>
 												</svg>
 											</button>
-											<button
+											<!-- <button
 												on:click={detailhf}
 												class="w-4 mr-4 transform hover:text-rose-400 hover:scale-110"
 											>
@@ -214,7 +210,7 @@
 														d="M8 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8m9 0a3 3 0 1 0 0-6a3 3 0 0 0 0 6M4.25 14A2.25 2.25 0 0 0 2 16.25v.25S2 21 8 21s6-4.5 6-4.5v-.25A2.25 2.25 0 0 0 11.75 14zM17 19.5c-1.171 0-2.068-.181-2.755-.458a5.5 5.5 0 0 0 .736-2.207A4 4 0 0 0 15 16.55v-.3a3.24 3.24 0 0 0-.902-2.248L14.2 14h5.6a2.2 2.2 0 0 1 2.2 2.2s0 3.3-5 3.3"
 													/>
 												</svg>
-											</button>
+											</button> -->
 										</div>
 									</td>
 								</tr>

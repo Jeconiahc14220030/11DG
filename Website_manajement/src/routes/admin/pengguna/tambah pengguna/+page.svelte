@@ -38,6 +38,44 @@
 			console.error('Error during adding anggota:', err);
 		}
 	}
+
+	// async function addRoles(event) {
+	// 	event.preventDefault();
+
+	// 	const formData = new FormData(document.getElementById('rolesForm'));
+
+	// 	try {
+	// 		const response = await fetch('http://localhost:8080/roles/add', {
+	// 			method: 'POST',
+	// 			body: formData
+	// 		});
+
+	// 		if (!response.ok) {
+	// 			const errorData = await response.json();
+	// 			throw new Error(errorData.message || 'Failed to add role');
+	// 		}
+
+	// 		const result = await response.json();
+
+	// 		Swal.fire({
+	// 			title: 'Success!',
+	// 			text: 'Role successfully added!',
+	// 			icon: 'success',
+	// 			confirmButtonColor: '#4CAF50'
+	// 		});
+	// 		console.log('Role added:', result);
+
+	// 		document.getElementById('rolesForm').reset();
+	// 	} catch (error) {
+	// 		Swal.fire({
+	// 			title: 'Error!',
+	// 			text: error.message || 'Something went wrong',
+	// 			icon: 'error',
+	// 			confirmButtonColor: '#FF0000'
+	// 		});
+	// 		console.error('Error adding role:', error);
+	// 	}
+	// }
 </script>
 
 <div class="bg-background w-screen h-screen flex flex-col items-center justify-center">
@@ -50,7 +88,7 @@
 	</div>
 
 	<form id="tambahanggota" on:submit={tambahangota}>
-		<div class="flex flex-row space-x-8">
+		<form class="flex flex-row space-x-8">
 			<div class="flex flex-col space-y-4">
 				<!-- <div class="flex flex-col">
 					<label for="id_HF" class="font-medium">Id HF</label>
@@ -102,7 +140,7 @@
 			</div>
 
 			<div class="flex flex-col space-y-4">
-				<div class="flex flex-col">
+				<!-- <form id="rolesForm" on:submit={addRoles} class="flex flex-col">
 					<label for="roles" class="font-medium">Roles</label>
 					<select
 						id="roles"
@@ -112,9 +150,9 @@
 						<option>Paw</option>
 						<option>Musik</option>
 					</select>
-				</div>
+				</form> -->
 
-				<!-- <div class="flex flex-col">
+				<div class="flex flex-col">
 					<label for="password" class="font-medium">Password</label>
 					<input
 						type="password"
@@ -124,12 +162,12 @@
 						placeholder="Masukkan password"
 						required
 					/>
-				</div> -->
+				</div>
 
 				<div class="flex flex-col">
 					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
 					<input
-						type="tel"
+						type="text"
 						id="nomor_telepon"
 						name="nomor_telepon"
 						class="bg-field p-2 border border-gray-300 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-base"
@@ -141,7 +179,7 @@
 				<div class="flex flex-col">
 					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
 					<input
-						type="text"
+						type="date"
 						id="tanggal_lahir"
 						name="tanggal_lahir"
 						placeholder="dd-mm-yyyy"
@@ -150,7 +188,7 @@
 					/>
 				</div>
 			</div>
-		</div>
+		</form>
 
 		<div class="flex flex-row items-center justify-center">
 			<input

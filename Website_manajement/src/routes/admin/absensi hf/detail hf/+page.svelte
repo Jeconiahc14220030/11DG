@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	import { onMount } from 'svelte';
 
 	let dummyData = [
@@ -160,4 +160,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->

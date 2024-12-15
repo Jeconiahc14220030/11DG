@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"fmt"
 
 	"github.com/labstack/echo/v4"
 )
@@ -110,14 +109,14 @@ func GETAnggotaById(id int) (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&anggota.Id, 
+			&anggota.Id,
 			&anggota.IdHf,
-			&anggota.Nama, 
+			&anggota.Nama,
 			&anggota.Username,
 			&anggota.FotoProfil,
 			&anggota.Password,
-			&anggota.Email, 
-			&anggota.NomorTelepon, 
+			&anggota.Email,
+			&anggota.NomorTelepon,
 			&anggota.TanggalLahir,
 			&anggota.Poin,
 			&anggota.CreatedAt,
@@ -138,59 +137,6 @@ func GETAnggotaById(id int) (models.Response, error) {
 
 	return res, nil
 }
-
-func FetchAnggotaByUsername(c echo.Context) error {
-	username := c.Param("username")
-
-	result, err := GETAnggotaByUsername(username)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-func GETAnggotaByUsername(username string) (models.Response, error) {
-	var anggota models.Anggota
-	var arrayAnggota []models.Anggota
-	var res models.Response
-
-	con := db.CreateCon()
-
-	sqlStatement := "SELECT * FROM anggota WHERE username = ?"
-
-	rows, err := con.Query(sqlStatement, username)
-
-	if err != nil {
-		return res, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(
-			&anggota.Id, 
-			&anggota.IdHf,
-			&anggota.Nama, 
-			&anggota.Username,
-			&anggota.FotoProfil,
-			&anggota.Password,
-			&anggota.Email, 
-			&anggota.NomorTelepon, 
-			&anggota.TanggalLahir,
-			&anggota.Poin,
-			&anggota.CreatedAt,
-			&anggota.UpdatedAt,
-			&anggota.DeletedAt,
-		)
-
-		if err != nil {
-			return res, err
-		}
-		res.Data = anggota
-		arrayAnggota = append(arrayAnggota, anggota)
-	}
 
 func FetchAnggotaByUsername(c echo.Context) error {
 	username := c.Param("username")
@@ -227,6 +173,7 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 			&anggota.IdHf,
 			&anggota.Nama,
 			&anggota.Username,
+			&anggota.FotoProfil,
 			&anggota.Password,
 			&anggota.Email,
 			&anggota.NomorTelepon,
@@ -240,7 +187,7 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 		if err != nil {
 			return res, err
 		}
-
+		res.Data = anggota
 		arrayAnggota = append(arrayAnggota, anggota)
 	}
 
@@ -248,10 +195,8 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 	res.Message = "Success"
 	res.Data = arrayAnggota
 
-
 	return res, nil
 }
-
 
 func FetchRiwayatVoucherByAnggotaId(c echo.Context) error {
 	idParam := c.Param("id")
@@ -319,7 +264,7 @@ func AddAnggota(c echo.Context) error {
 	password := c.FormValue("password")
 	tanggalLahir := c.FormValue("tanggal_lahir")
 	nomorTelepon := c.FormValue("nomor_telepon")
-	
+
 	anggota := models.Anggota{
 		Nama:         nama,
 		Email:        email,
@@ -343,7 +288,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (NULL, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
@@ -493,12 +438,10 @@ func ChangePassword(c echo.Context) error {
 	newPassword := c.FormValue("new_password")
 	confirmPassword := c.FormValue("confirm_password")
 
-	
 	if newPassword != confirmPassword {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "New password and confirm password do not match"})
 	}
 
-	
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID"})
@@ -530,7 +473,7 @@ func ValidateCurrentPassword(id int, currentPassword string) (bool, error) {
 	err := con.QueryRow(sqlStatement, id).Scan(&passwordFromDB)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return false, nil 
+			return false, nil
 		}
 		return false, err
 	}
@@ -594,7 +537,7 @@ func EditProfil(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  nomorTelepon string, fotoProfile string) (models.Response, error) {
+func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string, nomorTelepon string, fotoProfile string) (models.Response, error) {
 	var res models.Response
 
 	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, foto_profile = ?, updated_at = NOW() WHERE id = ?"
