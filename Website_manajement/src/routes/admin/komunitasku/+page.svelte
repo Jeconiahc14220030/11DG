@@ -1,5 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { writable } from 'svelte/store';
+
+	export const requests = writable([]);
 
 	let komunitas = [];
 	let anggota = [];
@@ -10,12 +14,79 @@
 			komunitas = await response.json();
 			komunitas = komunitas.data;
 
-			const anggotaResponse = await fetch('http://localhost:8080/anggota');
+			const anggotaResponse = await fetch('http://localhost:8080/anggotakomunitas');
 			anggota = await anggotaResponse.json();
-			anggota = anggota.data;
+			anggota = anggota.data.filter((item) => item.status == 'pending');
 		} catch (err) {
 			console.log(err);
 		}
+	}
+
+	async function fetchRequest() {
+		const idKomunitas = $page.params.id;
+
+		try {
+			const response = await fetch('http://localhost:8080/anggotakomunitas/pending');
+			if (!response.ok) {
+				console.error(`Gagal mengambil data. Status HTTP: ${response.status}`);
+				return;
+			}
+
+			const { status, data } = await response.json();
+
+			if (status == 200) {
+				const filteredData = data.filter(
+					(item) =>
+						item.id_komunitas == idKomunitas &&
+						(item.status == 'ditolak' || item.status == 'pending')
+				);
+
+				const enrichedRequests = await Promise.all(
+					filteredData.map(async (item) => {
+						return {
+							id_anggota: item.id_anggota,
+							id_komunitas: item.id_komunitas
+						};
+					})
+				);
+
+				requests.set(enrichedRequests);
+			} else {
+				console.error('Gagal mengambil data, status:', status);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan saat mem-fetch data:', error);
+		}
+	}
+
+	async function updateStatusRequest(id_anggota, id_komunitas, statusBaru) {
+		try {
+			console.log(`Body dikirim ke API:`, {
+				id: id_anggota, 
+				id: id_komunitas,
+				status: statusBaru
+			});
+
+			const response = await fetch(`http://localhost:8080/anggotaKomunitas/updatestatus`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id: id_anggota, 
+					id: id_komunitas,
+					status: statusBaru
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error(`Gagal memperbarui status. HTTP: ${response.status}`);
+			}
+			console.log('Status berhasil diperbarui');
+			terima();
+
+			await fetchRequest();
+		} catch (error) {
+			console.error('Terjadi kesalahan saat memperbarui status:', error);
+		}hapus();
 	}
 
 	function terima() {
@@ -29,28 +100,12 @@
 
 	function hapus() {
 		Swal.fire({
-			title: 'Apakah Anda yakin?',
-			text: 'Anda tidak akan dapat mengembalikannya!',
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Hapus!'
-		}).then((result) => {
-			if (result.isConfirmed) {
-				Swal.fire({
-					title: 'Hapus!',
-					text: 'Pengguna berhasil dihapus.',
-					icon: 'success',
-					showConfirmButton: false
-				});
-			}
+			title: 'Delete',
+			text: 'Pengguna berhasil dihapus',
+			icon: 'error',
+			showConfirmButton: false
 		});
 	}
-
-	onMount(() => {
-		fetchdata();
-	});
 
 	onMount(() => {
 		const createBtn = document.getElementById('create');
@@ -107,30 +162,36 @@
 			});
 		}
 	});
+
+	onMount(() => {
+		fetchdata();
+		fetchRequest();
+	});
 </script>
 
 <div class="h-screen w-screen flex justify-center items-center bg-background">
 	<div class="flex flex-col mx-6 pb-16 justify-center w-full max-w-3xl">
 		{#each komunitas as item}
-				<div class="flex flex-col mt-5">
-					<div
-						class="bg-card rounded shadow flex flex-col sm:flex-row justify-between items-center p-4 mb-4 border border-black"
-					>
-						<div class="flex flex-col sm:w-2/3 w-full">
-							<h1 class="text-lg md:text-xl font-bold">{item.nama_komunitas}</h1>
-							<p class="truncate text-black w-full md:max-w-3xl">
-								{item.deskripsi}
-							</p>
-						</div>
-						<div class="mt-4 sm:mt-0">
-							<a
-								href="/admin/komunitasku/detail pengguna"
-								class="bg-base hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400 px-4 py-2 rounded-full w-full sm:w-auto"
-								>Detail</a
-							>
-						</div>
+			<!-- {#if komunitas == pending, tolak} -->
+			<div class="flex flex-col mt-5">
+				<div
+					class="bg-card rounded shadow flex flex-col sm:flex-row justify-between items-center p-4 mb-4 border border-black"
+				>
+					<div class="flex flex-col sm:w-2/3 w-full">
+						<h1 class="text-lg md:text-xl font-bold">{item.nama_komunitas}</h1>
+						<p class="truncate text-black w-full md:max-w-3xl">
+							{item.deskripsi}
+						</p>
+					</div>
+					<div class="mt-4 sm:mt-0">
+						<a
+							href="/admin/komunitasku/detail pengguna"
+							class="bg-base hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400 px-4 py-2 rounded-full w-full sm:w-auto"
+							>Detail</a
+						>
 					</div>
 				</div>
+			</div>
 		{/each}
 	</div>
 
@@ -140,10 +201,7 @@
 				class="mt-5 bg-white rounded shadow flex flex-col sm:flex-row justify-between items-center p-4 border border-black w-96 h-20"
 			>
 				<div class="flex flex-col sm:w-2/3 w-full">
-					<h1 class="text-lg md:text-xl text-center font-bold">{item.id}</h1>
-					<!-- <p>
-						{item.id_anggota}
-					</p> -->
+					<h1 class="text-lg md:text-xl text-center font-bold">{item.id_anggota}</h1>
 					<p class="text-black text-center overflow-hidden overflow-ellipsis whitespace-nowrap">
 						{item.id_komunitas}
 					</p>
@@ -151,7 +209,7 @@
 
 				<div class="flex justify-between items-center">
 					<div class="flex items-center">
-						<button on:click={terima}>
+						<button on:click={() => updateStatusRequest('diterima')}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="2.5em"
@@ -172,7 +230,7 @@
 					</div>
 
 					<div class="flex items-center">
-						<button on:click={hapus}>
+						<button on:click={() => updateStatusRequest('ditolak')}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="2.5em"

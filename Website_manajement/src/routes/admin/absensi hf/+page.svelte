@@ -113,7 +113,7 @@
 			}
 		});
 	}
-	
+
 	onMount(() => {
 		fetchdata();
 	});
@@ -121,16 +121,56 @@
 	function detailhf() {
 		goto('/admin/absensi hf/detail hf');
 	}
+
+	let chart;
+
+	onMount(() => {
+		const ctx = document.getElementById('myChart').getContext('2d');
+		chart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: ['Oktober', 'November', 'Desember', 'Januari', 'Februari', 'Maret', 'April'],
+				datasets: [
+					{
+						label: 'Laporan absensi',
+						data: [168, 151, 156, 157, 177, 170, 174],
+						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 2,
+						tension: 0.4,
+						fill: true
+					}
+				]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+	});
+
+	import { onDestroy } from 'svelte';
+	onDestroy(() => {
+		if (chart) {
+			chart.destroy();
+		}
+	});
 </script>
 
 <div class="bg-background w-screen h-screen justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
 		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
-			<div class="grid md:grid-cols-2 gap-6 mt-6">
-				<h1 class="text-4xl font-bold text-center" id="isi">Grafik Bulanan</h1>
+			<h1 class="text-4xl font-bold text-center mb-6" id="isi">Grafik Bulanan</h1>
+			<div class="grid grid-cols-2 mt-6 gap-6">
+				<div class="bg-white p-4 rounded-lg border">
+					<canvas id="myChart"></canvas>
+				</div>
 
 				<div>
-					<table class="w-full border-collapse border border-black">
+					<table class="min-w-full border-collapse border border-black">
 						<thead>
 							<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
 								<th class="py-3 px-6 text-left text-black w-1/2">Nama Kelompok</th>
@@ -139,7 +179,7 @@
 						</thead>
 						<tbody class="text-gray-600 text-sm">
 							{#each hanyafasilitator as item}
-								<tr class="border-b border-black hover:bg-gray-100">
+								<tr class="border border-black hover:bg-gray-100">
 									<td class="py-3 px-6 text-left text-black">{item.nama}</td>
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center">
@@ -159,7 +199,7 @@
 													/>
 												</svg>
 											</button>
-											<button 
+											<button
 												on:click={detailhf}
 												class="w-4 mr-4 transform hover:text-rose-400 hover:scale-110"
 											>
@@ -181,7 +221,7 @@
 							{/each}
 						</tbody>
 					</table>
-
+	
 					<div class="flex justify-center mt-32">
 						<button on:click={tambahabsensi}>
 							<svg
