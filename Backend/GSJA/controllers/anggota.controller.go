@@ -290,7 +290,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (NULL, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir, foto_profile) VALUES (NULL, ?, ?, ?, ?, ?, ?, 'dummy.png')"
 	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
