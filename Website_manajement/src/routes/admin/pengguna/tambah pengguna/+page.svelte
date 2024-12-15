@@ -151,6 +151,7 @@
 						required
 					/>
 				</div>
+				</div>
 
 				<div class="flex flex-col">
 					<label for="nomor_telepon" class="font-medium">Nomor Telepon</label>
@@ -167,6 +168,7 @@
 				<div class="flex flex-col">
 					<label for="tanggal_lahir" class="font-medium">Tanggal Lahir</label>
 					<input
+						type="date"
 						type="date"
 						id="tanggal_lahir"
 						name="tanggal_lahir"
