@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-
+	"log"
 	"github.com/labstack/echo/v4"
 )
 
@@ -538,6 +538,8 @@ func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string,  n
 func TukarVoucher(c echo.Context) error {
 	idAnggotaStr := c.FormValue("idAnggota")
 	idVoucherStr := c.FormValue("idVoucher")
+
+	log.Printf("Data diterima - idAnggota: %s, idVoucher: %s\n", idAnggotaStr, idVoucherStr)
 
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
 	if err != nil {

@@ -39,7 +39,8 @@
 
 			const data = jsonResponse.data;
 			if (!data || !Array.isArray(data)) {
-				console.error('Data tidak valid:', data);
+				console.warn('Tidak ada data ditemukan atau data tidak berbentuk array');
+				requests.set([]); // Kosongkan requests jika tidak ada data
 				return;
 			}
 

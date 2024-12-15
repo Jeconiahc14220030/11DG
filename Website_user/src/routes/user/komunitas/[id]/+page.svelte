@@ -48,9 +48,11 @@
 			}
 
 			const result = await response.json();
-			if (result.status === 200 && result.data.length > 0) {
-				// Pastikan data tidak kosong
-				idAnggota = result.data[0].id; // Ambil ID dari elemen pertama array
+			console.log('Data dari API:', result);
+
+			if (result.status === 200 && result.data) {
+				// Ambil ID dari objek data
+				idAnggota = result.data.id;
 				console.log('ID Anggota:', idAnggota);
 			} else {
 				throw new Error('Data anggota tidak ditemukan.');

@@ -21,9 +21,9 @@
 			const result = await response.json();
 			console.log('Response JSON:', result); // Debug respons dari backend
 
-			if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
-				const user = result.data.find((u) => u.username === username); // Cari user berdasarkan username
-				if (user) {
+			if (result && result.data) {
+				const user = result.data; // Karena result.data adalah objek, kita langsung mengambilnya
+				if (user && user.username === username) {
 					userId = user.id; // Gunakan ID user yang sesuai
 					console.log('User ID:', userId);
 				} else {
@@ -38,6 +38,12 @@
 	}
 
 	async function savePassword() {
+		console.log({
+			current_password,
+			newPassword,
+			confirmPassword
+		});
+
 		if (!current_password.trim() || !newPassword.trim() || !confirmPassword.trim()) {
 			alert('Password tidak boleh kosong!');
 			return;
