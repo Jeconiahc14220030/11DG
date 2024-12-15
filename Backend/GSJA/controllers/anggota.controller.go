@@ -192,7 +192,6 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 	}
 
 	res.Status = http.StatusOK
-	res.Message = "Success"
 	res.Data = arrayAnggota
 
 	return res, nil
