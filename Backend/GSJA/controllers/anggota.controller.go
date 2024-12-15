@@ -507,6 +507,56 @@ func UpdatePassword(id int, newPassword string) (models.Response, error) {
 	return res, nil
 }
 
+func TukarVoucher(c echo.Context) error {
+	idAnggotaStr := c.FormValue("idAnggota")
+	idVoucherStr := c.FormValue("idVoucher")
+
+	log.Printf("Data diterima - idAnggota: %s, idVoucher: %s\n", idAnggotaStr, idVoucherStr)
+
+	idAnggota, err := strconv.Atoi(idAnggotaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	idVoucher, err := strconv.Atoi(idVoucherStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	voucher := models.HistoryPembelianVoucher {
+		IdAnggota: idAnggota,
+		IdVoucher: idVoucher,
+	} 
+
+	result, err := POSTPenukaranVoucher(voucher)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func POSTPenukaranVoucher(voucher models.HistoryPembelianVoucher) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO history_pembelian_voucher (tanggal, id_anggota, id_voucher) VALUES (NOW, ?, ?)"
+	_, err := con.Exec(sqlStatement, voucher.IdAnggota, voucher.IdVoucher)
+
+	if err != nil {
+		return res, err
+	}
+
+	defer con.Close()
+
+	res.Status = http.StatusCreated
+	res.Message = "Penukaran voucher berhasil ditambahkan"
+	res.Data = voucher
+
+	return res, nil
+}
+
 func EditProfil(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
