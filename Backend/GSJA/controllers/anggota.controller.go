@@ -190,67 +190,12 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 		res.Data = anggota
 		arrayAnggota = append(arrayAnggota, anggota)
 	}
-
-func FetchAnggotaByUsername(c echo.Context) error {
-	username := c.Param("username")
-
-	result, err := GETAnggotaByUsername(username)
-
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-func GETAnggotaByUsername(username string) (models.Response, error) {
-	var anggota models.Anggota
-	var arrayAnggota []models.Anggota
-	var res models.Response
-
-	con := db.CreateCon()
-
-	sqlStatement := "SELECT * FROM anggota WHERE username = ?"
-
-	rows, err := con.Query(sqlStatement, username)
-
-	if err != nil {
-		return res, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(
-			&anggota.Id,
-			&anggota.IdHf,
-			&anggota.Nama,
-			&anggota.Username,
-			&anggota.Password,
-			&anggota.Email,
-			&anggota.NomorTelepon,
-			&anggota.TanggalLahir,
-			&anggota.Poin,
-			&anggota.CreatedAt,
-			&anggota.UpdatedAt,
-			&anggota.DeletedAt,
-		)
-
-		if err != nil {
-			return res, err
-		}
-
-		arrayAnggota = append(arrayAnggota, anggota)
-	}
-
 	res.Status = http.StatusOK
 	res.Message = "Success"
 	res.Data = arrayAnggota
 
-
 	return res, nil
 }
-
 
 func FetchRiwayatVoucherByAnggotaId(c echo.Context) error {
 	idParam := c.Param("id")
