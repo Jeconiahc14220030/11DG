@@ -88,19 +88,16 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-		<form id="laporankeuangan" style="text-align: left; max-width: 500px; margin: 0 auto;">
-            <label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
-            <input type="date" id="tanggal" name="tanggal" class="swal2-input" style="width: 80%;" required>
+					<form style="text-align: left; max-width: 500px; margin: 0 auto;">
+						<label for="tanggal" style="display: block; margin-bottom: 5px;">Tanggal:</label>
+						<input type="date" id="tanggal" class="swal2-input" style="width: 80%;" required>
 
-			<label for="jenis" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jenis:</label>
-            <input type="text" id="jenis" name="jenis" class="swal2-input" style="width: 80%;" placeholder="Masukkan Jenis Laporan" required>
+						<label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
+						<input type="text" id="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
 
-            <label for="nominal" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nominal Uang:</label>
-            <input type="text" id="nominal" name="nominal" class="swal2-input" style="width: 80%;" placeholder="Masukkan nominal uang" required>
-
-            <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
-            <input type="text" id="laporan" name="id_pembuat" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
-        </form>
+						<label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Penulisan Laporan:</label>
+						<input type="text" id="laporan" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Penulis" required>
+					</form>
 				`,
 			confirmButtonText: 'Update',
 			confirmButtonColor: '#F0A242',
@@ -179,11 +176,8 @@
 <div class="bg-background w-screen h-screen justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
 		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
-			<div class="grid md:grid-cols-2 mt-6 gap-6">
-				<h1 class="text-4xl font-bold text-center col-span-2" id="isi">Grafik Bulanan</h1>
-				<div class="bg-white p-4 rounded-lg border">
-					<canvas id="myChart"></canvas>
-				</div>
+			<div class="grid md:grid-cols-2 gap-6 mt-6">
+				<h1 class="text-4xl font-bold text-center" id="isi">Grafik Bulanan</h1>
 
 				<div>
 					<table class="min-w-full border-collapse border border-black">
@@ -206,10 +200,21 @@
 									<td class="py-3 px-6 text-left text-black">{item.jenis}</td>
 									<td class="py-3 px-6 text-left text-black">{item.nominal}</td>
 									<td class="py-3 px-6 text-center">
-										<div class="flex items-center justify-center">
-											<button on:click={editlaporan} class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110">
-												<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 16 16">
-													<path fill="currentColor" d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z" />
+										<div class="flex item-center justify-center">
+											<button
+												on:click={editlaporan}
+												class="w-4 mr-4 transform hover:text-blue-500 hover:scale-110"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="1.5em"
+													height="1.5em"
+													viewBox="0 0 16 16"
+												>
+													<path
+														fill="currentColor"
+														d="M10.529 1.764a2.621 2.621 0 1 1 3.707 3.707l-.779.779L9.75 2.543zM9.043 3.25L2.657 9.636a2.96 2.96 0 0 0-.772 1.354l-.87 3.386a.5.5 0 0 0 .61.608l3.385-.869a2.95 2.95 0 0 0 1.354-.772l6.386-6.386z"
+													/>
 												</svg>
 											</button>
 										</div>

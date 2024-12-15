@@ -37,8 +37,8 @@ func AddKehadiranAbsensi(c echo.Context) error {
 func POSTAbsensi(absensi models.Absensi) (models.Response, error) {
 	var res models.Response
 	con := db.CreateCon()
-	defer con.Close()
-	sqlStatement := "INSERT INTO absensi id_anggota, id_jadwal) VALUES (?, ?)"
+	// defer con.Close()
+	sqlStatement := "INSERT INTO absensi (id_anggota, id_jadwal) VALUES (?, ?)"
 	_, err := con.Exec(sqlStatement, absensi.IdAnggota, absensi.IdJadwal)
 	if err != nil {
 		return res, err
