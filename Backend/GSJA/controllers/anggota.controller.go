@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"fmt"
 
 	"github.com/labstack/echo/v4"
 )
@@ -191,6 +190,8 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 		res.Data = anggota
 		arrayAnggota = append(arrayAnggota, anggota)
 	}
+	res.Status = http.StatusOK
+	res.Data = arrayAnggota
 	return res, nil
 }
 
