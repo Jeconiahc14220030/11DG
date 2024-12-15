@@ -28,52 +28,58 @@
 
 		try {
 			const response = await fetch('http://localhost:8080/anggotakomunitas/pending');
-			if (!response.ok) {
+			const jsonResponse = await response.json();
+
+			console.log('Response JSON dari API:', jsonResponse);
+
+			if (!response.ok || !jsonResponse || jsonResponse.status !== 200) {
 				console.error(`Gagal mengambil data. Status HTTP: ${response.status}`);
 				return;
 			}
 
-			const { status, data } = await response.json();
-
-			if (status === 200) {
-				// Filter data berdasarkan id_komunitas dan status "ditolak" atau "pending"
-				const filteredData = data.filter(
-					(item) =>
-						item.id_komunitas == idKomunitas &&
-						(item.status === 'ditolak' || item.status === 'pending')
-				);
-
-				// Gabungkan data dengan detail anggota
-				const enrichedRequests = await Promise.all(
-					filteredData.map(async (item) => {
-						const detailAnggota = await fetchDetailAnggota(item.id_anggota);
-						return { ...item, ...detailAnggota }; // Merge detail anggota ke data permintaan
-					})
-				);
-
-				requests.set(enrichedRequests); // Simpan data gabungan ke store
-			} else {
-				console.error('Gagal mengambil data, status:', status);
+			const data = jsonResponse.data;
+			if (!data || !Array.isArray(data)) {
+				console.warn('Tidak ada data ditemukan atau data tidak berbentuk array');
+				requests.set([]); // Kosongkan requests jika tidak ada data
+				return;
 			}
+
+			// Filter data berdasarkan id_komunitas dan status
+			const filteredData = data.filter(
+				(item) =>
+					item.id_komunitas == idKomunitas &&
+					(item.status === 'ditolak' || item.status === 'pending')
+			);
+
+			// Gabungkan data dengan detail anggota
+			const enrichedRequests = await Promise.all(
+				filteredData.map(async (item) => {
+					const detailAnggota = await fetchDetailAnggota(item.id_anggota);
+					return { ...item, ...detailAnggota }; // Merge detail anggota ke data permintaan
+				})
+			);
+
+			requests.set(enrichedRequests);
 		} catch (error) {
 			console.error('Terjadi kesalahan saat mem-fetch data:', error);
 		}
 	}
 
-	async function updateStatusRequest(idRequest, statusBaru) {
+	async function updateStatusRequest(request, statusBaru) {
 		try {
-			console.log(`Body dikirim ke API:`, {
-				id: idRequest,
+			// Mengirimkan data yang sesuai dengan backend (id_anggota dan id_komunitas)
+			const anggotaKomunitas = {
+				id_anggota: request.id_anggota, // Ubah menjadi snake_case sesuai dengan struktur di backend
+				id_komunitas: Number($page.params.id), // id komunitas dari parameter halaman
 				status: statusBaru
-			});
+			};
 
-			const response = await fetch(`http://localhost:8080/anggotaKomunitas/updatestatus`, {
+			console.log('Body dikirim ke API:', JSON.stringify(anggotaKomunitas));
+
+			const response = await fetch('http://localhost:8080/anggotaKomunitas/updatestatus', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					id: idRequest,
-					status: statusBaru
-				})
+				body: JSON.stringify(anggotaKomunitas) // Kirim data dengan nama properti yang benar
 			});
 
 			if (!response.ok) {
@@ -145,13 +151,13 @@
 						<div class="flex flex-row space-x-2">
 							<button
 								class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-								on:click={() => updateStatusRequest(request.id, 'diterima')}
+								on:click={() => updateStatusRequest(request, 'diterima')}
 							>
 								Terima
 							</button>
 							<button
 								class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-								on:click={() => updateStatusRequest(request.id, 'ditolak')}
+								on:click={() => updateStatusRequest(request, 'ditolak')}
 							>
 								Tolak
 							</button>

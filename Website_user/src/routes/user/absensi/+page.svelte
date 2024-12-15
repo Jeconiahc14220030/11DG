@@ -1,14 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let username = localStorage.getItem('username')
+	let username = localStorage.getItem('username');
+	console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
-	// Fetch Anggota berdasarkan Username
+	// Fungsi untuk mengambil anggota berdasarkan username
 	async function fetchAnggotaByUsername() {
 		try {
 			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
-			const response = await fetch(`http://localhost:8080/${username}`);
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
@@ -16,24 +17,53 @@
 
 			const result = await response.json();
 
-			if (result.status === 200 && result.data) {
-				// Cari user berdasarkan username
-				const user = result.data.find((user) => user.username === username);
-
-				if (user) {
-					userId = user.id; // Set userId sesuai dengan hasil pencarian
-					console.log('User ID:', userId);
-				} else {
-					console.log('Pengguna tidak ditemukan');
-				}
+			// Periksa apakah result.data adalah objek (bukan array)
+			if (result.data) {
+				const user = result.data;
+				userId = user.id; // Set userId sesuai dengan hasil pencarian
+				console.log('User ID:', userId);
 			} else {
-				console.log('Data tidak valid:', result.message);
+				console.log('Pengguna tidak ditemukan');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
 		}
 	}
 
+	// Fungsi untuk menampilkan data absensi
+	function displayAbsensi(absensiItems) {
+		const absensiContainer = document.getElementById('absensi-container');
+
+		if (absensiItems.length === 0) {
+			absensiContainer.innerHTML = '<p>Tidak ada absensi untuk ditampilkan.</p>';
+			return;
+		}
+
+		const absensiHTML = absensiItems
+			.map((item) => {
+				return `
+            <div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <p class="font-bold">Tanggal</p>
+                        <p class="font-bold">Topik</p>
+                        <p class="font-bold">Jenis Ibadah</p>
+                    </div>
+                    <div>
+                        <p>: ${formatDate(item.jadwal_tanggal)}</p> <!-- Ganti dengan tanggal jadwal -->
+                        <p>: ${item.jadwal_topik}</p>
+                        <p>: ${item.jadwal_jenis_ibadah}</p>
+                    </div>
+                </div>
+            </div>
+            `;
+			})
+			.join('');
+
+		absensiContainer.innerHTML = absensiHTML;
+	}
+
+	// Perbaikan pada bagian fetchAbsensi
 	async function fetchAbsensi() {
 		try {
 			const responseAbsensi = await fetch(`http://localhost:8080/anggota/${userId}/absensi`);
@@ -63,7 +93,7 @@
 						...absensi,
 						jadwal_topik: jadwalInfo?.topik,
 						jadwal_jenis_ibadah: jadwalInfo?.jenis_ibadah,
-						jadwal_tanggal: jadwalInfo?.tanggal
+						jadwal_tanggal: jadwalInfo?.tanggal // Pastikan tanggal yang digunakan adalah tanggal dari jadwal
 					};
 				});
 
@@ -77,36 +107,13 @@
 		}
 	}
 
-	function displayAbsensi(absensiItems) {
-		const absensiContainer = document.getElementById('absensi-container');
-
-		if (absensiItems.length === 0) {
-			absensiContainer.innerHTML = '<p>Tidak ada absensi untuk ditampilkan.</p>';
-			return;
-		}
-
-		const absensiHTML = absensiItems
-			.map((item) => {
-				return `
-      <div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <p class="font-bold">Tanggal</p>
-            <p class="font-bold">Topik</p>
-            <p class="font-bold">Jenis Ibadah</p>
-          </div>
-          <div>
-            <p>: ${formatDate(item.created_at)}</p>
-            <p>: ${item.jadwal_topik}</p>
-            <p>: ${item.jadwal_jenis_ibadah}</p>
-          </div>
-        </div>
-      </div>
-    `;
-			})
-			.join('');
-
-		absensiContainer.innerHTML = absensiHTML;
+	// Fungsi untuk mengubah format tanggal menjadi YYYY-MM-DD
+	function formatDate(dateString) {
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan 1 untuk mendapatkan bulan yang benar
+		const day = String(date.getDate()).padStart(2, '0');
+		return `${year}-${month}-${day}`;
 	}
 
 	async function fetchJadwal() {
@@ -175,15 +182,6 @@
 		const modal = document.getElementById('jadwalModal');
 		modal.classList.add('hidden');
 		modal.classList.remove('flex');
-	}
-
-	// Fungsi untuk mengubah format tanggal menjadi YYYY-MM-DD
-	function formatDate(dateString) {
-		const date = new Date(dateString);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan 1 untuk mendapatkan bulan yang benar
-		const day = String(date.getDate()).padStart(2, '0');
-		return `${year}-${month}-${day}`;
 	}
 
 	onMount(async () => {

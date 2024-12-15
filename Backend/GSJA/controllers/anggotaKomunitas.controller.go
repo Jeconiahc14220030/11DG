@@ -1,9 +1,10 @@
 package controllers
-import(
+
+import (
 	"GSJA/db"
 	"GSJA/models"
-	"net/http"
 	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 func GETAllRequest() (models.Response, error) {
@@ -25,15 +26,15 @@ func GETAllRequest() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&AnggotaKomunitas.Id, 
-			&AnggotaKomunitas.IdKomunitas, 
+			&AnggotaKomunitas.Id,
+			&AnggotaKomunitas.IdKomunitas,
 			&AnggotaKomunitas.IdAnggota,
 			&AnggotaKomunitas.RequestAt,
 			&AnggotaKomunitas.UpdatedAt,
 			&AnggotaKomunitas.DeletedAt,
-            &AnggotaKomunitas.Status, 
+			&AnggotaKomunitas.Status,
 		)
-		
+
 		if err != nil {
 			return res, err
 		}
@@ -46,7 +47,7 @@ func GETAllRequest() (models.Response, error) {
 	res.Data = arrayAnggotaKomunitas
 
 	return res, nil
-}	
+}
 
 func FetchAllAnggotaKomunitas(c echo.Context) error {
 	result, err := GETAllRequest()
@@ -77,15 +78,15 @@ func GetPendingRequest() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&AnggotaKomunitas.Id, 
-			&AnggotaKomunitas.IdKomunitas, 
+			&AnggotaKomunitas.Id,
+			&AnggotaKomunitas.IdKomunitas,
 			&AnggotaKomunitas.IdAnggota,
 			&AnggotaKomunitas.RequestAt,
 			&AnggotaKomunitas.UpdatedAt,
 			&AnggotaKomunitas.DeletedAt,
-			&AnggotaKomunitas.Status, 
+			&AnggotaKomunitas.Status,
 		)
-		
+
 		if err != nil {
 			return res, err
 		}
@@ -129,15 +130,15 @@ func GETMember() (models.Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(
-			&AnggotaKomunitas.Id, 
-			&AnggotaKomunitas.IdKomunitas, 
+			&AnggotaKomunitas.Id,
+			&AnggotaKomunitas.IdKomunitas,
 			&AnggotaKomunitas.IdAnggota,
 			&AnggotaKomunitas.RequestAt,
 			&AnggotaKomunitas.UpdatedAt,
 			&AnggotaKomunitas.DeletedAt,
-			&AnggotaKomunitas.Status, 
+			&AnggotaKomunitas.Status,
 		)
-		
+
 		if err != nil {
 			return res, err
 		}
@@ -163,41 +164,41 @@ func FetchAllMemberAnggotaKomunitas(c echo.Context) error {
 }
 
 func RequestJoinKomunitas(c echo.Context) error {
-    // Bind data JSON dari request body ke struct AnggotaKomunitas
-    anggotaKomunitas := models.AnggotaKomunitas{}
-    if err := c.Bind(&anggotaKomunitas); err != nil {
-        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
-    }
+	// Bind data JSON dari request body ke struct AnggotaKomunitas
+	anggotaKomunitas := models.AnggotaKomunitas{}
+	if err := c.Bind(&anggotaKomunitas); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid input"})
+	}
 
-    // Validasi input
-    if anggotaKomunitas.IdAnggota == 0 || anggotaKomunitas.IdKomunitas == 0 {
-        return c.JSON(http.StatusBadRequest, map[string]string{"message": "id_anggota and id_komunitas are required"})
-    }
+	// Validasi input
+	if anggotaKomunitas.IdAnggota == 0 || anggotaKomunitas.IdKomunitas == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "id_anggota and id_komunitas are required"})
+	}
 
-    // Database connection
-    con := db.CreateCon()
+	// Database connection
+	con := db.CreateCon()
 
-    // Cek apakah pasangan id_anggota dan id_komunitas sudah ada
-    sqlStatement := "SELECT COUNT(*) FROM anggota_komunitas WHERE id_anggota = ? AND id_komunitas = ?"
-    var count int
-    err := con.QueryRow(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas).Scan(&count)
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to check existing data"})
-    }
+	// Cek apakah pasangan id_anggota dan id_komunitas sudah ada
+	sqlStatement := "SELECT COUNT(*) FROM anggota_komunitas WHERE id_anggota = ? AND id_komunitas = ?"
+	var count int
+	err := con.QueryRow(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas).Scan(&count)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to check existing data"})
+	}
 
-    if count > 0 {
-        return c.JSON(http.StatusConflict, map[string]string{"message": "Data already exists"})
-    }
+	if count > 0 {
+		return c.JSON(http.StatusConflict, map[string]string{"message": "Data already exists"})
+	}
 
-    // Insert data baru ke tabel anggota_komunitas
-    sqlStatement = "INSERT INTO anggota_komunitas (id_anggota, id_komunitas, status) VALUES (?, ?, ?)"
-    _, err = con.Exec(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas, "pending")
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create request"})
-    }
+	// Insert data baru ke tabel anggota_komunitas
+	sqlStatement = "INSERT INTO anggota_komunitas (id_anggota, id_komunitas, status) VALUES (?, ?, ?)"
+	_, err = con.Exec(sqlStatement, anggotaKomunitas.IdAnggota, anggotaKomunitas.IdKomunitas, "pending")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create request"})
+	}
 
-    // Respon sukses
-    return c.JSON(http.StatusOK, map[string]string{"message": "Request to join komunitas created successfully"})
+	// Respon sukses
+	return c.JSON(http.StatusOK, map[string]string{"message": "Request to join komunitas created successfully"})
 }
 
 func UpdateRequestStatus(c echo.Context) error {

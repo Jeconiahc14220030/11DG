@@ -40,12 +40,12 @@ func GETAllAbsensihf() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&absensihf.Id,
-			&absensihf.IdAnggota, 
+			&absensihf.IdAnggota,
 			&absensihf.Idhf,
 			&absensihf.Topik,
 			&absensihf.Tanggal,
-			&absensihf.CreatedAt, 
-			&absensihf.UpdatedAt, 
+			&absensihf.CreatedAt,
+			&absensihf.UpdatedAt,
 			&absensihf.DeletedAt,
 		)
 
@@ -100,12 +100,12 @@ func GETAbsensihfById(id int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&absensihf.Id,
-			&absensihf.IdAnggota, 
+			&absensihf.IdAnggota,
 			&absensihf.Idhf,
 			&absensihf.Topik,
 			&absensihf.Tanggal,
-			&absensihf.CreatedAt, 
-			&absensihf.UpdatedAt, 
+			&absensihf.CreatedAt,
+			&absensihf.UpdatedAt,
 			&absensihf.DeletedAt,
 		)
 
@@ -164,8 +164,8 @@ func GetAbsensiHfAnggotaById(id_anggota int) (models.Response, error) {
 			&absensihf.Idhf,
 			&absensihf.Topik,
 			&absensihf.Tanggal,
-			&absensihf.CreatedAt, 
-			&absensihf.UpdatedAt, 
+			&absensihf.CreatedAt,
+			&absensihf.UpdatedAt,
 			&absensihf.DeletedAt,
 		)
 
@@ -189,6 +189,9 @@ func AddAbsensiHfForm(c echo.Context) error {
 	topik := c.FormValue("topik")
 	tanggal := c.FormValue("tanggal")
 	idAnggota, err := strconv.Atoi(idAnggotaStr)
+
+	fmt.Println("Received id_anggota:", idAnggota, "id_hf:", idHFStr, "tanggal:", tanggal, "topik", topik)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid idAnggota: " + idAnggotaStr})
 	}
@@ -200,9 +203,9 @@ func AddAbsensiHfForm(c echo.Context) error {
 
 	absensiHf := models.AbsensiHf{
 		IdAnggota: idAnggota,
-		Idhf: idHF,
-		Topik: topik,
-		Tanggal: tanggal,
+		Idhf:      idHF,
+		Topik:     topik,
+		Tanggal:   tanggal,
 	}
 
 	result, err := POSTAbsensiHf(absensiHf)
@@ -271,7 +274,7 @@ func UpdateDeletedatAbsensiHf(id int) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
-	
+
 	sqlStatement := "UPDATE absensi_hf SET deleted_at = NOW() WHERE id = ?"
 	_, err := con.Exec(sqlStatement, id)
 
