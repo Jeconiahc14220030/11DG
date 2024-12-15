@@ -287,7 +287,7 @@ func POSTAnggota(anggota models.Anggota) (models.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO anggota (id_hf, nama, username, password, email, nomor_telepon, tanggal_lahir, foto_profile) VALUES (NULL, ?, ?, ?, ?, ?, ?, 'dummy.png')"
 	_, err := con.Exec(sqlStatement, anggota.Nama, anggota.Username, anggota.Password, anggota.Email, anggota.NomorTelepon, anggota.TanggalLahir)
 
 	if err != nil {
@@ -498,6 +498,56 @@ func UpdatePassword(id int, newPassword string) (models.Response, error) {
 	res.Status = http.StatusOK
 	res.Message = "Password updated successfully"
 	res.Data = map[string]int{"id": id}
+
+	return res, nil
+}
+
+func TukarVoucher(c echo.Context) error {
+	idAnggotaStr := c.FormValue("idAnggota")
+	idVoucherStr := c.FormValue("idVoucher")
+
+	log.Printf("Data diterima - idAnggota: %s, idVoucher: %s\n", idAnggotaStr, idVoucherStr)
+
+	idAnggota, err := strconv.Atoi(idAnggotaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	idVoucher, err := strconv.Atoi(idVoucherStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	voucher := models.HistoryPembelianVoucher {
+		IdAnggota: idAnggota,
+		IdVoucher: idVoucher,
+	} 
+
+	result, err := POSTPenukaranVoucher(voucher)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func POSTPenukaranVoucher(voucher models.HistoryPembelianVoucher) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO history_pembelian_voucher (tanggal, id_anggota, id_voucher) VALUES (NOW, ?, ?)"
+	_, err := con.Exec(sqlStatement, voucher.IdAnggota, voucher.IdVoucher)
+
+	if err != nil {
+		return res, err
+	}
+
+	defer con.Close()
+
+	res.Status = http.StatusCreated
+	res.Message = "Penukaran voucher berhasil ditambahkan"
+	res.Data = voucher
 
 	return res, nil
 }

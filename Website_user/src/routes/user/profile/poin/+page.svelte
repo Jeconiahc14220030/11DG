@@ -3,6 +3,35 @@
 
 	let vouchers = [];
 
+	let username = localStorage.getItem('username');
+	console.log(username);
+	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
+
+	// Fungsi untuk mengambil anggota berdasarkan username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			// Periksa apakah result.data adalah objek (bukan array)
+			if (result.data) {
+				const user = result.data;
+				userId = user.id; // Set userId sesuai dengan hasil pencarian
+				console.log('User ID:', userId);
+			} else {
+				console.log('Pengguna tidak ditemukan');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
 	async function fetchVouchers() {
 		try {
 			const response = await fetch('http://localhost:8080/voucher');
@@ -20,8 +49,54 @@
 		}
 	}
 
-	onMount(() => {
-		fetchVouchers();
+	async function fetchTukarVoucher(idAnggota, idVoucher) {
+		try {
+			// Data yang akan dikirim dalam body permintaan
+			const data = new URLSearchParams();
+			data.append('idAnggota', idAnggota);
+			data.append('idVoucher', idVoucher);
+
+			console.log('Mengirim data:', { idAnggota, idVoucher });
+
+			// Melakukan fetch dengan metode POST
+			const response = await fetch('http://localhost:8080/anggota/tukarvoucher', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: data
+			});
+
+			// Cek jika respons berhasil
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			// Parsing hasil respons
+			const result = await response.json();
+
+			// Log atau lakukan sesuatu dengan hasil
+			console.log('Penukaran berhasil:', result);
+			return result; // Kembalikan hasil jika diperlukan
+		} catch (error) {
+			console.error('Gagal menukar voucher:', error);
+		}
+	}
+
+	async function handleTukar(voucher) {
+		const result = await fetchTukarVoucher(userId, voucher.id);
+		if (result) {
+			openSuccessModal(); // Tampilkan modal sukses jika berhasil
+		}
+	}
+
+	// Ambil data setelah komponen mounted
+	onMount(async () => {
+		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		if (userId) {
+			// Jika userId ada, ambil data lainnya
+			fetchVouchers();
+		}
 	});
 </script>
 
@@ -75,8 +150,10 @@
 							<span class="font-bold">{voucher.harga}</span>
 							<button
 								class="bg-[#F0A242] text-white rounded px-2 py-1"
-								on:click={() => openModal(voucher)}>Tukar</button
+								on:click={() => handleTukar(voucher)}
 							>
+								Tukar
+							</button>
 						</div>
 					</div>
 				{/each}

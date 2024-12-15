@@ -5,6 +5,7 @@ import (
 	"GSJA/models"
 	"net/http"
 	"strconv"
+	"time"
 
 	// "strconv"
 	"github.com/labstack/echo/v4"
@@ -64,69 +65,47 @@ func GETJadwalLatihan() (models.Response, error) {
 }
 
 func AddJadwalLatihan(c echo.Context) error {
-	// tanggal := c.FormValue("tanggal")
-	// lokasi := c.FormValue("lokasi")
-	// strIdAnggota := c.FormValue("id_anggota")
-	// strIdKomunitas := c.FormValue("id_komunitas")
-	// lokasi := c.FormValue("lokasi")
-	// strIdAnggota := c.FormValue("id_anggota")
-	// strIdKomunitas := c.FormValue("id_komunitas")
+    // Ambil data dari form
+    tanggalStr := c.FormValue("tanggal") // Tanggal dari form dalam string
+    lokasi := c.FormValue("lokasi")
+    idAnggotaStr := c.FormValue("id_anggota")
+    idKomunitasStr := c.FormValue("id_komunitas")
 
-	// // idAnggota, err := strconv.Atoi(strIdAnggota)
+    // Parse idAnggota dan idKomunitas ke integer
+    idAnggota, err := strconv.Atoi(idAnggotaStr)
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_anggota"})
+    }
 
-	// // if err != nil {
-	// // 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id anggota"})
-	// // }
+    idKomunitas, err := strconv.Atoi(idKomunitasStr)
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id_komunitas"})
+    }
 
-	// // idKomunitas, err := strconv.Atoi(strIdKomunitas)
+    // Parse tanggal ke format YYYY-MM-DD
+    tanggal, err := time.Parse("2006-01-02", tanggalStr) // "2006-01-02" adalah layout Go untuk YYYY-MM-DD
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid date format. Use YYYY-MM-DD"})
+    }
 
-	// formattanggal, err := time.Parse("2024-11-20", tanggal)
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
-	// }
+    // Buat instance dari JadwalLatihan
+    jadwalLatihan := models.JadwalLatihan{
+        Tanggal:    tanggal,
+        Lokasi:     lokasi,
+        IdAnggota:  idAnggota,
+        IdKomunitas: idKomunitas,
+    }
 
-	// idKomunitas, err := strconv.Atoi(strIdKomunitas)
+    // Simpan ke database
+    result, err := POSTJadwalLatihan(jadwalLatihan)
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+    }
 
-	// formattanggal, err := time.Parse("2024-11-20", tanggal)
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
-	// }
-	// formattanggal, err := time.Parse("2024-11-20", tanggal)
-	// if err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid Tanggal"})
-	// }
-
-	// jadwalLatihan := models.JadwalLatihan{
-	// 	// Tanggal: tanggal,
-	// 	Lokasi: lokasi,
-	// 	IdAnggota: idAnggota,
-	// 	IdKomunitas: idKomunitas,
-	// }
-	// jadwalLatihan := models.JadwalLatihan{
-	// 	// Tanggal: tanggal,
-	// 	Lokasi: lokasi,
-	// 	IdAnggota: idAnggota,
-	// 	IdKomunitas: idKomunitas,
-	// }
-	// jadwalLatihan := models.JadwalLatihan{
-	// 	// // Tanggal: tanggal,
-	// 	Lokasi: lokasi,
-	// 	IdAnggota: idAnggota,
-	// 	IdKomunitas: idKomunitas,
-	// }
-
-	// if err := c.Bind(&jadwalLatihan); err != nil {
-	// 	return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
-	// }
-
-	// result, err := POSTJadwalLatihan(jadwalLatihan)
-	// if err != nil {
-	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	// }
-
-	// return c.JSON(http.StatusCreated, result)
-	return c.JSON(http.StatusOK, map[string]string{"message": "OK"})
+    return c.JSON(http.StatusCreated, result)
 }
+
+	
 
 func POSTJadwalLatihan(jadwalLatihan models.JadwalLatihan) (models.Response, error) {
 	var res models.Response

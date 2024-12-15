@@ -164,7 +164,6 @@ func AddPengumuman(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, result)
-	return c.JSON(http.StatusOK, map[string]string{"message": "OK"})
 }
 
 func POSTPengumuman(pengumuman models.Pengumuman, id int) (models.Response, error) {
