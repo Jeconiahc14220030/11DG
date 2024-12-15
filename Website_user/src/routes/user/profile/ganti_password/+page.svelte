@@ -12,25 +12,20 @@
 	// Fetch Anggota berdasarkan Username
 	async function fetchAnggotaByUsername() {
 		try {
-			const response = await fetch(`http://localhost:8080/${username}`);
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			console.log('Response JSON:', result); // Debug respons dari backend
-
-			if (result && result.data) {
-				const user = result.data; // Karena result.data adalah objek, kita langsung mengambilnya
-				if (user && user.username === username) {
-					userId = user.id; // Gunakan ID user yang sesuai
-					console.log('User ID:', userId);
-				} else {
-					console.error('Username tidak ditemukan dalam data:', result.data);
-				}
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
+				console.log('User ID:', userId);
 			} else {
-				console.error('Data tidak valid atau kosong:', result);
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
