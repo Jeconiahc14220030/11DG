@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"log"
+
 	"github.com/labstack/echo/v4"
 )
 
