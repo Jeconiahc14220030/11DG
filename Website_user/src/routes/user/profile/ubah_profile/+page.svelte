@@ -1,17 +1,73 @@
 <script>
+    let id = 7; // ID pengguna, ganti sesuai kebutuhan
     let name = '';
     let birthdate = '';
     let email = '';
     let phone = '';
     let showModal = false;
+    let errorMessage = '';
 
-    function saveProfile() {
-        // Tampilkan modal pop-up setelah menyimpan profil
-        showModal = true;
+    // Ambil data pengguna dari backend 
+    async () => {
+        console.log("Memulai pengambilan data pengguna...");
+        try {
+            const response = await fetch(`http://localhost:8080/anggota/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                name = data.nama || '';
+                birthdate = data.tanggal_lahir || '';
+                email = data.email || '';
+                phone = data.nomor_telepon || '';
+                console.log(`Data pengguna berhasil dimuat: Nama: ${data.nama}, Tanggal Lahir: ${data.tanggal_lahir}, Email: ${data.email}, No. Telp: ${data.nomor_telepon}`);
+            } else {
+                console.error('Gagal memuat data pengguna');
+                errorMessage = 'Gagal memuat data pengguna';
+            }
+        } catch (error) {
+            console.error('Terjadi kesalahan saat memuat data pengguna:', error);
+            errorMessage = 'Terjadi kesalahan saat memuat data pengguna';
+        }
+    };
+
+    // Kirim data yang diperbarui 
+    async function saveProfile() {
+        const profileData = {};
+
+        if (name) profileData.nama = name;
+        if (birthdate) profileData.tanggal_lahir = birthdate;
+        if (email) profileData.email = email;
+        if (phone) profileData.nomor_telepon = phone;
+
+        // Tambahkan log untuk mengecek data sebelum dikirim
+        console.log('Data yang akan dikirim ke backend:', JSON.stringify(profileData));
+
+        try {
+            console.log("Memulai pengiriman data ke server...");
+            const response = await fetch(`http://localhost:8080/anggota/${id}/editprofil`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(profileData),
+            });
+
+            if (response.ok) {
+                showModal = true; 
+                errorMessage = ''; 
+                console.log('Profil berhasil diperbarui');
+            } else {
+                const data = await response.json();
+                errorMessage = data.message || 'Gagal memperbarui profil.';
+                console.error(`Error Response: ${JSON.stringify(data)}`);
+            }
+        } catch (error) {
+            errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+            console.error('Terjadi kesalahan:', error);
+        }
     }
 
-    function handleBack() {
-        // Tutup modal pop-up
+    function closeModal() {
+        console.log("Menutup modal...");
         showModal = false;
     }
 </script>
@@ -19,7 +75,7 @@
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
         <div class="flex items-center">
-            <a href="/user/profile">
+            <a href="#" on:click|preventDefault="{() => window.history.back()}">
                 <img src="/src/lib/image/return.svg" alt="return" class="w-6 h-6">
             </a>
             <h1 class="ml-2 text-lg md:text-xl font-bold">Ubah Profile</h1>
@@ -44,6 +100,7 @@
                     bind:value={name} 
                     placeholder="Name" 
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                    
                 />
             </div>
             <div>
@@ -75,6 +132,11 @@
             </div>
         </div>
 
+        <!-- Pesan error jika ada masalah -->
+        {#if errorMessage}
+            <div class="text-red-500 text-sm mt-4">{errorMessage}</div>
+        {/if}
+
         <!-- Tombol Simpan -->
         <button on:click={saveProfile} class="bg-[#F9C067] text-white py-2 px-4 mt-6 rounded-full w-full max-w-xs font-semibold">
             Simpan
@@ -90,14 +152,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4m-6 6l-6-6m0 0l6 6m-6-6l6 6" />
             </svg>
 
-            <!-- Pesan konfirmasi ubah profil -->
             <p class="text-center text-lg font-semibold text-gray-800 mb-6">Ubah profil berhasil!</p>
 
-            <!-- Tombol aksi "Kembali" -->
             <div class="flex justify-center">
                 <button 
-                    class="px-6 py-2 bg-yellow-400 text-black font-semibold rounded-full hover:bg-yellow-500 transition duration-300"
-                    on:click={handleBack}
+                    class="px-6 py-2 bg-[#F9C067] text-black font-semibold rounded-full"
+                    on:click={closeModal}
                 >
                     Kembali
                 </button>
