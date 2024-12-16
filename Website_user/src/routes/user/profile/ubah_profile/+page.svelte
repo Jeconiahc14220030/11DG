@@ -1,6 +1,4 @@
 <script>
-    import { onMount } from 'svelte';
-
     let id = 7; // ID pengguna, ganti sesuai kebutuhan
     let name = '';
     let birthdate = '';
@@ -10,7 +8,7 @@
     let errorMessage = '';
 
     // Ambil data pengguna dari backend 
-    onMount(async () => {
+    async () => {
         console.log("Memulai pengambilan data pengguna...");
         try {
             const response = await fetch(`http://localhost:8080/anggota/${id}`);
@@ -29,7 +27,7 @@
             console.error('Terjadi kesalahan saat memuat data pengguna:', error);
             errorMessage = 'Terjadi kesalahan saat memuat data pengguna';
         }
-    });
+    };
 
     // Kirim data yang diperbarui 
     async function saveProfile() {
