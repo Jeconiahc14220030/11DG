@@ -212,8 +212,6 @@
 								roleName: roleName || 'Unknown Role' // Ganti dengan 'Unknown Role' jika role tidak ditemukan
 							};
 						});
-
-					console.log(userRoles); // Pastikan data roles muncul di console
 				} else {
 					console.error('Error fetching anggotaRoles:', roleData.message);
 				}
@@ -255,7 +253,6 @@
 		await fetchAnggotaByUsername(); // Dapatkan userId dari username
 		if (userId) {
 			// Jika userId ada, ambil data lainnya
-			console.log(userRoles); // Tambahkan untuk debugging
 			fetchAnggota();
 			fetchRiwayatVoucher();
 			fetchPoins();

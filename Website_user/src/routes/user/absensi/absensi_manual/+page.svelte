@@ -6,6 +6,7 @@
 	let anggota = writable([]);
 	let selectedAnggota = writable([]); // Untuk menyimpan anggota yang dipilih
 	let searchTerm = writable('');
+	let isLoading = writable(false); // Untuk status loading
 
 	// Filter anggota berdasarkan pencarian
 	let filteredAnggota = derived([anggota, searchTerm], ([$anggota, $searchTerm]) => {
@@ -46,6 +47,51 @@
 		} catch (error) {
 			console.error('Terjadi kesalahan saat mengambil data anggota:', error);
 		}
+	}
+
+	async function simpanAbsensi() {
+		if ($selectedAnggota.length === 0) {
+			alert('Silakan pilih anggota terlebih dahulu!');
+			return;
+		}
+
+		isLoading.set(true); // Set loading state
+
+		// Loop untuk mengirim data absensi satu per satu
+		for (const member of $selectedAnggota) {
+			const formData = new FormData();
+
+			// Menambahkan data absensi untuk anggota saat ini ke dalam FormData
+			formData.append('idAnggota', member.id);
+			formData.append('idJadwal', $jadwal.id); // ID Jadwal
+
+			try {
+				// Kirim data absensi untuk anggota ini ke backend menggunakan FormData
+				const response = await fetch('http://localhost:8080/absensi/add', {
+					method: 'POST',
+					body: formData // Mengirim FormData sebagai body request
+				});
+
+				const data = await response.json();
+				// Periksa apakah absensi berhasil disimpan atau tidak
+				if (response.status === 200 || response.status === 201) {
+					alert(`Absensi untuk anggota ${member.nama} berhasil disimpan!`);
+				} else {
+					alert(`Gagal menyimpan absensi untuk anggota ${member.nama}: ${data.message}`);
+				}
+			} catch (error) {
+				console.error(
+					`Terjadi kesalahan saat menyimpan absensi untuk anggota ${member.nama}:`,
+					error
+				);
+				alert(`Terjadi kesalahan saat menyimpan absensi untuk anggota ${member.nama}.`);
+			}
+		}
+
+		isLoading.set(false); // Set loading state to false
+
+		// Setelah looping selesai, refresh halaman
+		window.location.reload(); // Halaman akan di-refresh setelah data disimpan
 	}
 
 	// Tambahkan anggota ke container
@@ -138,6 +184,16 @@
 		</div>
 
 		<!-- Tombol Simpan -->
-		<button class="w-full bg-[#F9C067] text-black py-2 rounded-md font-bold mt-6">Simpan</button>
+		<button
+			class="w-full bg-[#F9C067] text-black py-2 rounded-md font-bold mt-6"
+			on:click={simpanAbsensi}
+			disabled={$isLoading}
+		>
+			{#if $isLoading}
+				<span>Memproses...</span>
+			{:else}
+				<span>Simpan</span>
+			{/if}
+		</button>
 	</div>
 </div>

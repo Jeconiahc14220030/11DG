@@ -51,13 +51,13 @@
 	<form class="flex flex-row space-x-8">
 		<div class="flex flex-col space-y-4">
 			<div class="flex flex-col">
-				<label for="name" class="font-medium">Nama</label>
+				<label for="name" class="font-medium">Username</label>
 				<input
 					type="text"
-					id="name"
-					name="name"
+					id="username"
+					name="username"
 					class="bg-field p-2 border border-gray-300 rounded-lg w-72"
-					placeholder="Masukkan nama"
+					placeholder="username"
 				/>
 			</div>
 
@@ -68,7 +68,7 @@
 					id="email"
 					name="email"
 					class="bg-field p-2 border border-gray-300 rounded-lg w-72"
-					placeholder="Masukkan email"
+					placeholder="email"
 				/>
 			</div>
 
@@ -76,8 +76,8 @@
 				<label for="dob" class="font-medium">Tanggal Lahir</label>
 				<input
 					type="date"
-					id="dob"
-					name="dob"
+					id="tanggal_lahir"
+					name="tanggal_lahir"
 					class="bg-field p-2 border border-gray-300 rounded-lg w-72"
 				/>
 			</div>
@@ -88,10 +88,10 @@
 				<label for="phone" class="font-medium">Nomor Telepon</label>
 				<input
 					type="telphone"
-					id="phone"
-					name="phone"
+					id="nomor_telepon"
+					name="nomor_telepon"
 					class="bg-field p-2 border border-gray-300 rounded-lg w-72"
-					placeholder="Masukkan nomor telepon"
+					placeholder="nomor telepon"
 				/>
 			</div>
 

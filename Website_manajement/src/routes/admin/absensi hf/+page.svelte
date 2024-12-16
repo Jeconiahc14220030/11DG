@@ -69,7 +69,7 @@
 
 	function Editabsensi() {
 		Swal.fire({
-			title: 'Edit Berita HF',
+			title: 'Tambah Topik HF',
 			width: '600px',
 			padding: '1em',
 			customClass: {
@@ -77,8 +77,8 @@
 			},
 			html: `
 		<div style="text-align: center; max-width: 500px; margin: 0 auto;">
-            <label for="topic" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Topic:</label>
-            <textarea id="topic" class="swal2-input" style="width: 80%;" placeholder="Topik Kelompok"></textarea>
+            <label for="topic" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Topik:</label>
+            <input id="topic" type="text" class="swal2-input" style="width: 80%;" placeholder="Topik HF"></input>
 
             <label for="date" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Tanggal Upload:</label>
             <input type="date" id="date" class="swal2-input" style="width: 80%;" required>
