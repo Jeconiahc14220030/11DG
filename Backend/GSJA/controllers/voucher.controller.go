@@ -229,3 +229,59 @@ func UpdateDeletedAtVoucher(id int) (models.Response, error) {
 
 	return res, nil
 }
+
+func EditVoucher(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	namaVoucher := c.FormValue("nama_voucher")
+	status := c.FormValue("status")
+	hargaStr := c.FormValue("harga")
+	harga, err := strconv.Atoi(hargaStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Harga harus berupa angka"})
+	}
+	foto,err := c.FormFile("foto")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+	var filename string
+	if err == nil{
+		folder := "voucher"
+		result, uploadErr := UploadFotoFolder(foto, int64(id), folder)
+		if uploadErr != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": uploadErr.Error()})
+		}
+		filename = result.Data.(map[string]string)["filename"]
+	}
+
+	result, err := PUTVoucher(id, namaVoucher, status, harga, filename)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func PUTVoucher(id int, namaVoucher, status string, harga int, foto string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := `
+		UPDATE voucher
+		SET nama_voucher = ?, status = ?, harga = ?, foto = ?, updated_at = NOW()
+		WHERE id = ?
+	`
+	_, err := con.Exec(sqlStatement, namaVoucher, status, harga, foto, id)
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Voucher updated successfully"
+	return res, nil
+}
