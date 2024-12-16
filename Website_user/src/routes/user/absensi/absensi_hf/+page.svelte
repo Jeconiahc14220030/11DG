@@ -5,6 +5,7 @@
 	let anggotaList = []; // Daftar anggota
 	let selectedHF = null; // HF yang dipilih
 	let filteredAnggota = []; // Anggota yang difilter berdasarkan HF
+	let topik = ''; // Topik yang diinputkan
 
 	async function fetchHF() {
 		try {
@@ -37,34 +38,44 @@
 	}
 
 	async function simpanAbsensi() {
-		// Filter anggota dengan status 'hadir'
-		const hadirAnggota = filteredAnggota.filter((anggota) => anggota.status === 'hadir');
-
-		for (const anggota of hadirAnggota) {
-			console.log(`Mengirim data untuk anggota ${anggota.id}`);
-			const formData = new FormData();
-			formData.append('id_hf', selectedHF);
-			formData.append('id_anggota', anggota.id);
-			formData.append('tanggal', new Date().toISOString().split('T')[0]);
-
-			try {
-				const response = await fetch('http://localhost:8080/absensihf/add', {
-					method: 'POST',
-					body: formData
-				});
-
-				if (!response.ok) {
-					console.error(`Gagal menyimpan anggota ${anggota.nama}:`, response.status);
-				} else {
-					console.log(`Data anggota ${anggota.nama} berhasil disimpan.`);
-				}
-			} catch (error) {
-				console.error(`Terjadi kesalahan saat menyimpan anggota ${anggota.nama}:`, error);
-			}
-		}
-
-		alert('Proses penyimpanan selesai!');
+	// Pastikan topik tidak kosong
+	if (!topik) {
+		alert('Topik harus diisi!');
+		return;
 	}
+
+	// Filter anggota dengan status 'hadir'
+	const hadirAnggota = filteredAnggota.filter((anggota) => anggota.status === 'hadir');
+
+	for (const anggota of hadirAnggota) {
+		console.log(`Mengirim data untuk anggota ${anggota.id}`);
+
+		// Definisikan formData untuk setiap anggota
+		const formData = new FormData();
+		formData.append('id_hf', selectedHF);
+		formData.append('id_anggota', anggota.id);
+		formData.append('tanggal', new Date().toISOString().split('T')[0]);
+		formData.append('topik', topik); // Menambahkan topik ke dalam FormData
+
+		try {
+			const response = await fetch('http://localhost:8080/absensihf/add', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (!response.ok) {
+				console.error(`Gagal menyimpan anggota ${anggota.nama}:`, response.status);
+			} else {
+				console.log(`Data anggota ${anggota.nama} berhasil disimpan.`);
+			}
+		} catch (error) {
+			console.error(`Terjadi kesalahan saat menyimpan anggota ${anggota.nama}:`, error);
+		}
+	}
+
+	alert('Proses penyimpanan selesai!');
+}
+
 
 	function filterAnggota() {
 		// Filter anggota berdasarkan HF yang dipilih
@@ -122,6 +133,18 @@
 				<option value={hf.id}>{hf.nama}</option>
 			{/each}
 		</select>
+	</div>
+
+	<!-- Input Topik -->
+	<div class="flex flex-col mx-4 mb-6">
+		<label for="topik" class="font-bold mb-2">Topik</label>
+		<input
+			id="topik"
+			type="text"
+			class="w-full p-2 border border-gray-300 rounded-md"
+			placeholder="Masukkan topik absensi"
+			bind:value={topik}
+		/>
 	</div>
 
 	<!-- Tabel absensi -->

@@ -9,33 +9,27 @@
 		manfaat: ''
 	};
 
-	let username = localStorage.getItem('username')
+	let username = localStorage.getItem('username');
+	console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
-	// Fetch Anggota berdasarkan Username
+	// Fungsi untuk mengambil anggota berdasarkan username
 	async function fetchAnggotaByUsername() {
 		try {
 			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
-			const response = await fetch(`http://localhost:8080/${username}`);
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-
-			if (result.status === 200 && result.data) {
-				// Cari user berdasarkan username
-				const user = result.data.find((user) => user.username === username);
-
-				if (user) {
-					userId = user.id; // Set userId sesuai dengan hasil pencarian
-					console.log('User ID:', userId);
-				} else {
-					console.log('Pengguna tidak ditemukan');
-				}
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
+				console.log('User ID:', userId);
 			} else {
-				console.log('Data tidak valid:', result.message);
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
@@ -44,7 +38,7 @@
 
 	let anggotaList = [];
 	let anggotaDetail = {}; // Menyimpan detail anggota yang dipilih
-	
+
 	async function fetchDetail() {
 		try {
 			const id = $page.params.id; // Mengambil ID dari params
@@ -74,11 +68,18 @@
 			const response = await fetch(`http://localhost:8080/anggota/${idAnggota}`);
 
 			if (!response.ok) {
-				throw new Error(`Http error! Status: ${response.status}`);
+				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			return result.data; // Ambil objek data dari respons
+
+			// Pastikan hasilnya berupa array dan mengambil data anggota pertama
+			if (Array.isArray(result.data) && result.data.length > 0) {
+				return result.data[0]; // Ambil data pertama dari array
+			} else {
+				console.error('Detail anggota tidak ditemukan.');
+				return null;
+			}
 		} catch (error) {
 			console.error('Gagal mengambil detail anggota:', error);
 			return null; // Kembalikan null jika terjadi kesalahan
@@ -92,15 +93,27 @@
 			const response = await fetch('http://localhost:8080/anggotakomunitas/member');
 
 			if (!response.ok) {
-				throw new Error(`Http error! Status: ${response.status}`);
+				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
+
+			// Pastikan result.data ada dan bukan null/undefined
+			if (!result.data) {
+				console.error('Data anggota tidak ditemukan.');
+				return;
+			}
 
 			// Filter hanya anggota yang memiliki id_komunitas sesuai
 			const filteredAnggota = result.data.filter(
 				(anggota) => anggota.id_komunitas === parseInt(idKomunitas)
 			);
+
+			// Jika tidak ada anggota yang sesuai, berikan feedback
+			if (filteredAnggota.length === 0) {
+				console.log('Tidak ada anggota yang ditemukan untuk komunitas ini.');
+				return;
+			}
 
 			// Ambil detail anggota dan gabungkan datanya
 			anggotaList = await Promise.all(

@@ -1,15 +1,48 @@
 <script>
-    let current_password = ''; 
-    let newPassword = '';     
-    let confirmPassword = '';  
-    let showModal = false;     
+	import { onMount } from 'svelte';
 
-    async function savePassword() {
-        // Validasi: Pastikan semua password tidak kosong
-        if (!current_password.trim() || !newPassword.trim() || !confirmPassword.trim()) {
-            alert('Password tidak boleh kosong!');
-            return;
-        }
+	let current_password = '';
+	let newPassword = '';
+	let confirmPassword = '';
+	let showModal = false;
+
+	let username = '';
+	let userId;
+
+	// Fetch Anggota berdasarkan Username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
+				console.log('User ID:', userId);
+			} else {
+				console.error('Pengguna tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	async function savePassword() {
+		console.log({
+			current_password,
+			newPassword,
+			confirmPassword
+		});
+
+		if (!current_password.trim() || !newPassword.trim() || !confirmPassword.trim()) {
+			alert('Password tidak boleh kosong!');
+			return;
+		}
 
         // Validasi: Password baru dan konfirmasi harus cocok
         if (newPassword !== confirmPassword) {

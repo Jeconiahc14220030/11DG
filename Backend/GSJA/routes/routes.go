@@ -92,7 +92,6 @@ func Init() *echo.Echo {
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
-
 	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
  
 	e.POST("laporankeuangan/add", controllers.AddLaporanKeuangan) // perlu dipikirkan lagi struktur tanggal 
@@ -114,5 +113,7 @@ func Init() *echo.Echo {
 	e.PUT("anggota/:id/editprofil", controllers.EditProfil)
 
 	e.POST("anggota/tukarvoucher", controllers.TukarVoucher)
+
+	e.PUT("anggota/changePassword/:id", controllers.ChangePassword)
 	return e
 }

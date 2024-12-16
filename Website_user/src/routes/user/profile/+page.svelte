@@ -12,32 +12,26 @@
 	}
 
 	let username = localStorage.getItem('username');
+	// console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
-	// Fetch Anggota berdasarkan Username
+	// Fungsi untuk mengambil anggota berdasarkan username
 	async function fetchAnggotaByUsername() {
 		try {
 			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
-			const response = await fetch(`http://localhost:8080/${username}`);
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-
-			if (result.status === 200 && result.data) {
-				// Cari user berdasarkan username
-				const user = result.data.find((user) => user.username === username);
-
-				if (user) {
-					userId = user.id; // Set userId sesuai dengan hasil pencarian
-					console.log('User ID:', userId);
-				} else {
-					console.log('Pengguna tidak ditemukan');
-				}
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
+				console.log('User ID:', userId);
 			} else {
-				console.log('Data tidak valid:', result.message);
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
@@ -63,8 +57,8 @@
 			const result = await response.json();
 
 			// Cek apakah data ada dan valid
-			if (result.data) {
-				const userData = result.data; // Ambil objek data langsung
+			if (result.data && result.data.length > 0) {
+				const userData = result.data[0]; // Ambil objek data pertama dari array
 
 				// Menyimpan nilai poin ke sessionStorage
 				sessionStorage.setItem('poin', userData.poin);
