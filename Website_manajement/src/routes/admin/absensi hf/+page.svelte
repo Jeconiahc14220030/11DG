@@ -72,47 +72,108 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-		<div style="text-align: center; max-width: 500px; margin: 0 auto;">
-            <label for="topic" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Topik:</label>
-            <input id="topic" type="text" class="swal2-input" style="width: 80%;" placeholder="Topik HF"></input>
+        <form id="topikhf" style="text-align: center; max-width: 500px; margin: 0 auto;">
+			<label for="id_anggota" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Penulis Topik HF:</label>
+            <input type="text" id="id_anggota" name="id_anggota" class="swal2-input" style="width: 80%;" placeholder="Penulis Topik HF" required>
 
-            <label for="date" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Tanggal Upload:</label>
-            <input type="date" id="date" class="swal2-input" style="width: 80%;" required>
-		</div>
-	`,
-			confirmButtonText: 'Save',
+			<label for="id_hf" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">ID HF:</label>
+            <input type="text" id="id_hf" name="id_hf" class="swal2-input" style="width: 80%;" placeholder="ID HF" required>
+
+            <label for="topik" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Nama Topik HF:</label>
+            <input type="text" id="topik" name="topik" class="swal2-input" style="width: 80%;" placeholder="Nama Topik HF" required>
+
+            <label for="tanggal" style="display: block; margin-top: 15px; margin-bottom: 5px;" class="text-left">Tanggal:</label>
+            <input id="tanggal" name="tanggal" type="date" class="swal2-input" style="width: 80%;">
+		</form>
+        `,
+			confirmButtonText: 'Submit',
 			confirmButtonColor: '#F0A242',
 			focusConfirm: false,
 			preConfirm: () => {
-				const topic = document.getElementById('topic').value;
-				const date = document.getElementById('date').value;
+				const formElement = document.getElementById('topikhf');
+				const formData = new FormData(formElement);
 
-				if (!topic || !date) {
+				const id_anggota = formData.get('id_anggota');
+				const id_hf = formData.get('id_hf');
+				const topik = formData.get('topik');
+				const tanggal = formData.get('tanggal');
+
+				if (!id_anggota || !id_hf || !topik || !tanggal) {
 					Swal.showValidationMessage('Semua input harus diisi');
 					return false;
 				}
 
-				return { topic, date };
+				return fetch('http://localhost:8080/absensihf/add', {
+					method: 'POST',
+					body: formData
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error('Gagal menyimpan data');
+						}
+						return response.json();
+					})
+					.catch((error) => {
+						Swal.showValidationMessage(`Request failed: ${error.message}`);
+					});
 			}
 		}).then((result) => {
 			if (result.isConfirmed) {
-				const dataInput = result.value;
-				console.log('Tanggal:', dataInput.topic);
-				console.log('Nama Kelompok:', dataInput.date);
-
 				Swal.fire({
 					icon: 'success',
-					title: 'Berita Berhasil Di Tambahkan!',
+					title: 'Topik HF Berhasil Ditambahkan!',
 					showConfirmButton: false,
 					timer: 1500
 				});
 			}
 		});
 	}
-	
+
 	onMount(() => {
 		fetchdata();
 	});
+
+	// let chart;
+
+	// onMount(() => {
+	// 	const ctx = document.getElementById('myChart')?.getContext('2d');
+	// 	if (ctx) {
+	// 		chart = new Chart(ctx, {
+	// 			type: 'line',
+	// 			data: {
+	// 				labels: ['January', 'February'],
+	// 				datasets: [
+	// 					{
+	// 						label: 'Data Tahunan',
+	// 						data: [12, 19],
+	// 						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+	// 						borderColor: 'rgba(54, 162, 235, 1)',
+	// 						borderWidth: 2,
+	// 						tension: 0.5,
+	// 						fill: true
+	// 					}
+	// 				]
+	// 			},
+	// 			options: {
+	// 				responsive: true,
+	// 				maintainAspectRatio: false,
+	// 				scales: {
+	// 					y: {
+	// 						beginAtZero: true
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+	// 	} else {
+	// 		console.error('Canvas element not found');
+	// 	}
+	// });
+
+	// onDestroy(() => {
+	// 	if (chart) {
+	// 		chart.destroy();
+	// 	}
+	// });
 
 	function detailhf() {
 		goto('/admin/absensi hf/detail hf');
@@ -122,8 +183,14 @@
 <div class="bg-background w-screen h-screen justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
 		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
-			<div class="grid md:grid-cols-2 gap-6 mt-6">
-				<h1 class="text-4xl font-bold text-center" id="isi">Grafik Bulanan</h1>
+			<h1 class="text-4xl font-bold text-center items-center justify-center mb-4 flex">
+				Grafik Bulanan
+			</h1>
+
+			<div class="grid md:grid-cols-2 gap-6 items-center">
+				<div>
+					<canvas id="myChart" class="border rounded-md w-full max-h-[500px]"></canvas>
+				</div>
 
 				<div>
 					<table class="w-full border-collapse border border-black">
@@ -155,22 +222,6 @@
 													/>
 												</svg>
 											</button>
-											<!-- <button
-												on:click={detailhf}
-												class="w-4 mr-4 transform hover:text-rose-400 hover:scale-110"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="2em"
-													height="2em"
-													viewBox="0 0 24 24"
-												>
-													<path
-														fill="currentColor"
-														d="M8 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8m9 0a3 3 0 1 0 0-6a3 3 0 0 0 0 6M4.25 14A2.25 2.25 0 0 0 2 16.25v.25S2 21 8 21s6-4.5 6-4.5v-.25A2.25 2.25 0 0 0 11.75 14zM17 19.5c-1.171 0-2.068-.181-2.755-.458a5.5 5.5 0 0 0 .736-2.207A4 4 0 0 0 15 16.55v-.3a3.24 3.24 0 0 0-.902-2.248L14.2 14h5.6a2.2 2.2 0 0 1 2.2 2.2s0 3.3-5 3.3"
-													/>
-												</svg>
-											</button> -->
 										</div>
 									</td>
 								</tr>

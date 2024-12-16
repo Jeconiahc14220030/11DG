@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 
 	let laporankeuangan = [];
 
@@ -138,34 +139,40 @@
 	let chart;
 
 	onMount(() => {
-		const ctx = document.getElementById('myChart').getContext('2d');
-		chart = new Chart(ctx, {
-			type: 'line',
-			data: {
-				labels: ['2 November', '9 November', '16 November', '23 November', '21 Desember'],
-				datasets: [
-					{
-						label: 'Laporan Keuangan Bulanan',
-						data: [450000, 500000, 450000, 500000, 550000,],
-						backgroundColor: 'rgba(54, 162, 235, 0.2)',
-						borderColor: 'rgba(54, 162, 235, 1)',
-						borderWidth: 2,
-						tension: 0.4,
-						fill: true
-					}
-				]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
+		const canvas = document.getElementById('myChart');
+		if (canvas) {
+			const ctx = canvas.getContext('2d');
+			chart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: ['2 November', '9 November', '16 November', '23 November', '21 Desember'],
+					datasets: [
+						{
+							label: 'Laporan Keuangan Bulanan',
+							data: [450000, 500000, 450000, 500000, 550000],
+							backgroundColor: 'rgba(54, 162, 235, 0.2)',
+							borderColor: 'rgba(54, 162, 235, 1)',
+							borderWidth: 2,
+							tension: 0.4,
+							fill: true
+						}
+					]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					scales: {
+						y: {
+							beginAtZero: true
+						}
 					}
 				}
-			}
-		});
+			});
+		} else {
+			console.error('Canvas with id "myChart" not found.');
+		}
 	});
 
-	import { onDestroy } from 'svelte';
 	onDestroy(() => {
 		if (chart) {
 			chart.destroy();
@@ -176,11 +183,15 @@
 <div class="bg-background w-screen h-screen justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
 		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
-			<div class="grid md:grid-cols-2 gap-6 mt-6">
-				<h1 class="text-4xl font-bold text-center" id="isi">Grafik Bulanan</h1>
+			<h1 class="text-4xl font-bold text-center items-center justify-center mb-4 flex">Grafik Bulanan</h1>
+			
+			<div class="grid md:grid-cols-2 gap-6 items-center">
+				<div>
+					<canvas id="myChart" class="border rounded-md w-full max-h-[500px]"></canvas>
+				</div>
 
 				<div>
-					<table class="min-w-full border-collapse border border-black">
+					<table class="min-w-full border-collapse border border-black rounded shadow-md">
 						<thead>
 							<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
 								<th class="py-3 px-6 text-left text-black">No</th>
@@ -193,7 +204,7 @@
 						</thead>
 						<tbody class="text-gray-600 text-sm">
 							{#each laporankeuangan as item, i}
-								<tr class="bg border-b border-black hover:bg-gray-100">
+								<tr class="bg-white border-b border-black hover:bg-gray-100">
 									<td class="py-3 px-6 text-left text-black">{i + 1}</td>
 									<td class="py-3 px-6 text-left text-black">{item.tanggal}</td>
 									<td class="py-3 px-6 text-left text-black">{item.id_pembuat}</td>
