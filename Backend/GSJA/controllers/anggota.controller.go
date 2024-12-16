@@ -603,34 +603,6 @@ func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string, no
 	return res, nil
 }
 
-func UploadFoto(c echo.Context) error {
-	folder := "profiles"
-	ip := c.RealIP()
-	id := c.FormValue("id")
-	fotoFile, err := c.FormFile("photo")
-	if err != nil {
-		// Log error jika terjadi kesalahan saat mengambil file foto
-		models.InsertLogError(ip, "UploadFoto", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	nId, err := strconv.Atoi(id)
-	if err != nil {
-		models.InsertLogError(ip, "UploadFoto", err)
-		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid ID format"})
-	}
-	tId := int64(nId)
-
-	result, err := UploadFotoFolder(fotoFile, tId, folder)
-	if err != nil {
-		models.InsertLogError(ip, "UploadFoto", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	models.InsertLogError(ip, "UploadFoto", nil)
-	return c.JSON(http.StatusOK, result)
-}
-
 func UploadFotoFolder(file *multipart.FileHeader, id int64, folder string) (models.Response, error) {
 	var res models.Response
 	log.Println("Upload Foto")
