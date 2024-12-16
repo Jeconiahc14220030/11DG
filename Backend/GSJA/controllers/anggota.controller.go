@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -189,7 +190,6 @@ func GETAnggotaByUsername(username string) (models.Response, error) {
 		res.Data = anggota
 		arrayAnggota = append(arrayAnggota, anggota)
 	}
-
 	res.Status = http.StatusOK
 	res.Data = arrayAnggota
 
