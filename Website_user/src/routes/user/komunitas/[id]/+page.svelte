@@ -50,9 +50,14 @@
 			const result = await response.json();
 			console.log('Data dari API:', result);
 
-			if (result.status === 200 && result.data) {
-				// Ambil ID dari objek data
-				idAnggota = result.data.id;
+			if (
+				result.status === 200 &&
+				result.data &&
+				Array.isArray(result.data) &&
+				result.data.length > 0
+			) {
+				// Ambil ID dari objek data pertama
+				idAnggota = result.data[0].id;
 				console.log('ID Anggota:', idAnggota);
 			} else {
 				throw new Error('Data anggota tidak ditemukan.');
@@ -60,10 +65,39 @@
 		} catch (error) {
 			console.error('Error mencari ID anggota:', error);
 			alert('Terjadi kesalahan saat mencari ID anggota.');
+			return; // Hentikan proses lebih lanjut jika ada kesalahan
+		}
+
+		// Validasi idAnggota dan idKomunitas sebelum melanjutkan
+		if (!idAnggota || !idKomunitas) {
+			alert('ID Anggota atau ID Komunitas tidak valid.');
 			return;
 		}
 
-		// Langkah 2: Kirim permintaan POST untuk request komunitas
+		// Langkah 2: Cek apakah anggota sudah pernah mengirim permintaan ke komunitas
+		try {
+			const checkRequestResponse = await fetch(
+				`http://localhost:8080/anggotaKomunitas/checkRequest?id_anggota=${idAnggota}&id_komunitas=${idKomunitas}`
+			);
+
+			if (!checkRequestResponse.ok) {
+				throw new Error('Gagal memeriksa status permintaan.');
+			}
+
+			const checkResult = await checkRequestResponse.json();
+
+			if (checkResult.status === 200 && checkResult.data && checkResult.data.length > 0) {
+				// Jika data ditemukan, berarti sudah pernah melakukan permintaan
+				alert('Anda sudah mengirim permintaan untuk bergabung dengan komunitas ini.');
+				return; // Hentikan proses lebih lanjut
+			}
+		} catch (error) {
+			console.error('Error memeriksa permintaan:', error);
+			alert('Terjadi kesalahan saat memeriksa permintaan.');
+			return;
+		}
+
+		// Langkah 3: Kirim permintaan POST untuk request komunitas
 		const requestData = {
 			id_anggota: idAnggota,
 			id_komunitas: Number(idKomunitas)

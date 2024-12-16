@@ -18,14 +18,12 @@
 			}
 
 			const result = await response.json();
-
-			// Periksa apakah result.data adalah objek (bukan array)
-			if (result.data) {
-				const user = result.data;
-				userId = user.id; // Set userId sesuai dengan hasil pencarian
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
 				console.log('User ID:', userId);
 			} else {
-				console.log('Pengguna tidak ditemukan');
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
@@ -226,10 +224,10 @@
 			document.getElementById('item-description').innerText =
 				`Voucher untuk produk ${voucher.nama_voucher}.`;
 			document.getElementById('item-conditions').innerHTML = `
-            <li>Kondisi pertama untuk voucher ${voucher.nama_voucher}.</li>
-            <li>Kondisi kedua terkait batas waktu voucher.</li>
-            <li>Kondisi ketiga terkait produk yang dapat ditukar.</li>
-        `;
+        <li>Kondisi pertama untuk voucher ${voucher.nama_voucher}.</li>
+        <li>Kondisi kedua terkait batas waktu voucher.</li>
+        <li>Kondisi ketiga terkait produk yang dapat ditukar.</li>
+    `;
 			document.getElementById('expiry-date').innerText = 'Tanggal kedaluwarsa tidak tersedia.';
 			document.getElementById('modal').classList.remove('hidden');
 		}
