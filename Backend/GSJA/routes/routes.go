@@ -81,6 +81,7 @@ func Init() *echo.Echo {
 	e.POST("/anggota/add", controllers.AddAnggota)
 
 	e.POST("renunganharian/add", controllers.AddRenunganHarian)
+	e.PUT("renunganharian/edit/:id", controllers.EditRenunganHarian)
 
 	e.POST("jadwal/add", controllers.AddJadwal) // perlu dipikirkan lagi format tanggal
 
@@ -90,6 +91,7 @@ func Init() *echo.Echo {
 
 	e.POST("voucher/add", controllers.AddVoucher)
 	e.PUT("voucher/edit/:id", controllers.EditVoucher)
+	
 
 	e.POST("carousel/add", controllers.AddCarousel)
 
