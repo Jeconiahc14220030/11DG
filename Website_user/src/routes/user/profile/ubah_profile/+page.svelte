@@ -97,7 +97,7 @@
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
     <header class="flex items-center justify-between p-8 bg-[#F9C067] mb-4 h-16">
         <div class="flex items-center">
-            <a href="/user/profile">
+            <a href="#" on:click|preventDefault="{() => window.history.back()}">
                 <img src="/src/lib/image/return.svg" alt="return" class="w-6 h-6">
             </a>
             <h1 class="ml-2 text-lg md:text-xl font-bold">Ubah Profile</h1>
@@ -122,6 +122,7 @@
                     bind:value={name} 
                     placeholder='{user.name}' 
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                    
                 />
             </div>
             <div>
@@ -153,6 +154,11 @@
             </div>
         </div>
 
+        <!-- Pesan error jika ada masalah -->
+        {#if errorMessage}
+            <div class="text-red-500 text-sm mt-4">{errorMessage}</div>
+        {/if}
+
         <!-- Tombol Simpan -->
         <button on:click={saveProfile} class="bg-[#F9C067] text-white py-2 px-4 mt-6 rounded-full w-full max-w-xs font-semibold">
             Simpan
@@ -168,14 +174,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4-4m-6 6l-6-6m0 0l6 6m-6-6l6 6" />
             </svg>
 
-            <!-- Pesan konfirmasi ubah profil -->
             <p class="text-center text-lg font-semibold text-gray-800 mb-6">Ubah profil berhasil!</p>
 
-            <!-- Tombol aksi "Kembali" -->
             <div class="flex justify-center">
                 <button 
-                    class="px-6 py-2 bg-yellow-400 text-black font-semibold rounded-full hover:bg-yellow-500 transition duration-300"
-                    on:click={handleBack}
+                    class="px-6 py-2 bg-[#F9C067] text-black font-semibold rounded-full"
+                    on:click={closeModal}
                 >
                     Kembali
                 </button>

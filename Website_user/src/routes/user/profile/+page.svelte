@@ -294,13 +294,19 @@
 		<!-- Action Buttons -->
 		<div class="flex justify-center items-center mb-4">
 			<div class="flex space-x-4">
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={editProfile}>Ubah Profil</button
-				>
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={changePassword}
-					>Ganti Password</button
-				>
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={editProfile}>
+					<img src="/src/lib/image/edit.png" alt="Edit Icon" class="w-5 h-5" />
+					<span>Ubah Profil</span>
+				</button>
+				
+				<!-- Tombol Ganti Password dengan Ikon -->
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={changePassword}>
+					<img src="/src/lib/image/key.png" alt="Key Icon" class="w-5 h-5" />
+					<span>Ganti Password</span>
+				</button>
 			</div>
 		</div>
+
 
 		<div class="flex flex-col justify-between items-center p-4">
 			<div class="flex flex-col w-full">
