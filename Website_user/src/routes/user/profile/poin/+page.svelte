@@ -49,14 +49,12 @@
 
 	async function fetchTukarVoucher(idAnggota, idVoucher) {
 		try {
-			// Data yang akan dikirim dalam body permintaan
 			const data = new URLSearchParams();
 			data.append('idAnggota', idAnggota);
 			data.append('idVoucher', idVoucher);
 
 			console.log('Mengirim data:', { idAnggota, idVoucher });
 
-			// Melakukan fetch dengan metode POST
 			const response = await fetch('http://localhost:8080/anggota/tukarvoucher', {
 				method: 'POST',
 				headers: {
@@ -65,19 +63,17 @@
 				body: data
 			});
 
-			// Cek jika respons berhasil
 			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
+				const errorData = await response.json();
+				throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
 			}
 
-			// Parsing hasil respons
 			const result = await response.json();
-
-			// Log atau lakukan sesuatu dengan hasil
 			console.log('Penukaran berhasil:', result);
-			return result; // Kembalikan hasil jika diperlukan
+			return result;
 		} catch (error) {
 			console.error('Gagal menukar voucher:', error);
+			alert(error.message); // Tampilkan pesan error jika gagal
 		}
 	}
 

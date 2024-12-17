@@ -535,14 +535,12 @@ func POSTPenukaranVoucher(voucher models.HistoryPembelianVoucher) (models.Respon
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO history_pembelian_voucher (tanggal, id_anggota, id_voucher) VALUES (NOW, ?, ?)"
+	sqlStatement := "INSERT INTO history_pembelian_voucher (tanggal, id_anggota, id_voucher) VALUES (NOW(), ?, ?)"
 	_, err := con.Exec(sqlStatement, voucher.IdAnggota, voucher.IdVoucher)
 
 	if err != nil {
 		return res, err
 	}
-
-	defer con.Close()
 
 	res.Status = http.StatusCreated
 	res.Message = "Penukaran voucher berhasil ditambahkan"
