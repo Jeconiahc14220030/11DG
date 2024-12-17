@@ -225,7 +225,7 @@
 	>
 		<div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
 			<h2 class="text-xl font-semibold mb-4">Daftar Jadwal</h2>
-			<div id="jadwalList" class="space-y-4">
+			<div id="jadwalList" class="space-y-4" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
 				<!-- List jadwal akan diisi melalui JavaScript -->
 			</div>
 			<button

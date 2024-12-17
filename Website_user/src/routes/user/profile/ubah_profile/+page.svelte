@@ -1,9 +1,73 @@
 <script>
+    import { onMount } from "svelte";
+    let user = {};
     let name = '';
     let birthdate = '';
     let email = '';
     let phone = '';
     let showModal = false;
+
+    let username = '';
+	let userId;
+
+	// Fetch Anggota berdasarkan Username
+	async function fetchAnggotaByUsername() {
+		try {
+			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
+				console.log('User ID:', userId);
+			} else {
+				console.error('Pengguna tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+    // Ambil data user berdasarkan userId
+	async function fetchAnggota() {
+		try {
+			if (!userId) return; // Pastikan userId sudah diatur
+
+			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
+
+			if (!response.ok) {
+				throw new Error(`Http error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			// Cek apakah data ada dan valid
+			if (result.data && result.data.length > 0) {
+				const userData = result.data[0]; // Ambil objek data pertama dari array
+
+				// Menyimpan nilai poin ke sessionStorage
+				sessionStorage.setItem('poin', userData.poin);
+
+				user = {
+					name: userData.nama,
+					id: userData.id,
+					phone: userData.nomor_telepon,
+					email: userData.email,
+					birthdate: userData.tanggal_lahir,
+					points: userData.poin
+				};
+			} else {
+				console.error('Data user tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
 
     function saveProfile() {
         // Tampilkan modal pop-up setelah menyimpan profil
@@ -14,6 +78,20 @@
         // Tutup modal pop-up
         showModal = false;
     }
+
+    // Ambil data setelah komponen mounted
+	onMount(async () => {
+		if (typeof localStorage !== 'undefined') {
+			username = localStorage.getItem('username') || ''; // Ambil username dari localStorage
+		}
+
+		if (username) {
+			await fetchAnggotaByUsername(); // Panggil fetchAnggotaByUsername jika username tersedia
+            fetchAnggota();
+		} else {
+			console.error('Username tidak ditemukan di localStorage');
+		}
+	});
 </script>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
@@ -42,7 +120,7 @@
                     type="text" 
                     id="name" 
                     bind:value={name} 
-                    placeholder="Name" 
+                    placeholder='{user.name}' 
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                 />
             </div>
@@ -51,7 +129,7 @@
                     type="date" 
                     id="birthdate" 
                     bind:value={birthdate} 
-                    placeholder="Tanggal Lahir" 
+                    placeholder='{user.tanggal_lahir}'
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                 />
             </div>
@@ -60,7 +138,7 @@
                     type="email" 
                     id="email" 
                     bind:value={email} 
-                    placeholder="Email" 
+                    placeholder='{user.email}' 
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                 />
             </div>
@@ -69,7 +147,7 @@
                     type="tel" 
                     id="phone" 
                     bind:value={phone} 
-                    placeholder="No telp" 
+                    placeholder='{user.phone}' 
                     class="mt-1 p-2 w-full border border-gray-300 rounded-md"
                 />
             </div>
