@@ -61,7 +61,7 @@ func Init() *echo.Echo {
 
 	e.GET("/kutipanharian", controllers.FetchAllKutipanHarian)
 
-	e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
+	// e.GET("/anggota/:id/riwayatvoucher", controllers.FetchRiwayatVoucherByAnggotaId)
 
 	e.GET("/hf", controllers.FetchAllHf)
 	
@@ -69,7 +69,7 @@ func Init() *echo.Echo {
 
 	e.GET("/jadwal/:id", controllers.FetchJadwalById)
 
-	e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
+	// e.GET("/anggota/:id/absensi", controllers.FetchAbsensiById)
 
 	e.GET(":username", controllers.FetchAnggotaByUsername)
 	e.GET("/roles", controllers.FetchAllRoles)
@@ -81,6 +81,7 @@ func Init() *echo.Echo {
 	e.POST("/anggota/add", controllers.AddAnggota)
 
 	e.POST("renunganharian/add", controllers.AddRenunganHarian)
+	e.PUT("renunganharian/edit/:id", controllers.EditRenunganHarian)
 
 	e.POST("jadwal/add", controllers.AddJadwal) // perlu dipikirkan lagi format tanggal
 
@@ -89,6 +90,8 @@ func Init() *echo.Echo {
 	e.POST("kutipanharian/add", controllers.AddKutipanHarian)
 
 	e.POST("voucher/add", controllers.AddVoucher)
+	e.PUT("voucher/edit/:id", controllers.EditVoucher)
+	
 
 	e.POST("carousel/add", controllers.AddCarousel)
 

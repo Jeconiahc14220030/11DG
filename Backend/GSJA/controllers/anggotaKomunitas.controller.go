@@ -1,6 +1,5 @@
 package controllers
-
-import (
+import(
 	"GSJA/db"
 	"GSJA/models"
 	"github.com/labstack/echo/v4"

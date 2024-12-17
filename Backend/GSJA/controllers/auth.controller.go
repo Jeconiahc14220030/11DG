@@ -11,22 +11,18 @@ import (
 )
 
 func Login(c echo.Context) error {
-	// Struktur untuk menampung data JSON yang diterima
-
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
 	fmt.Println(username)
 	fmt.Println(password)
 
-	// Autentikasi pengguna
 	result, err := AuthenticateUser(username, password)
 	if err != nil {
 		fmt.Println("error 3")
 		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid credentials"})
 	}
 
-	// Respon sukses
 	return c.JSON(http.StatusOK, result)
 }
 
@@ -48,13 +44,13 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 		return res, err
 	}
 
-	// defer con.Close()
+	defer con.Close()
 
-	// if err != nil {
-	// 	fmt.Println("Password does not match:", err)
-	// } else {
-	// 	fmt.Println("Password matches!")
-	// }
+	if err != nil {
+		fmt.Println("Password does not match:", err)
+	} else {
+		fmt.Println("Password matches!")
+	}
 
 	if user.Password == password {
 		fmt.Println("Password cocok")

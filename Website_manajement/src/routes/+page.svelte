@@ -6,27 +6,24 @@
 	async function proseslogin(event) {
 		event.preventDefault();
 
+		const form = new FormData(event.target); // Ambil data dari form
 		try {
-			const formdata = new FormData(document.getElementById('login'));
-
-			const response = await fetch('http://localhost:8080/login', {
-				method: 'POST',
-				body: formdata
+			const response = await fetch("http://localhost:8080/login", {
+				method: "POST",
+				body: form,
 			});
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
-			const login = await response.json();
-			
-			if (login.success) {
-				goto('/admin/dashboard');
-			} else {
-				console.error('Login failed:', login.message || 'Unknown error');
-			}
-		} catch (err) {
-			console.error('Error during login:', err);
+			const result = await response.json();
+			alert(`Login sukses: ${result.message}`);
+
+			goto('/admin/dashboard');
+		} catch (error) {
+			console.error("Error during login:", error);
+			alert("Login gagal. Silakan cek username dan password Anda.");
 		}
 	}
 </script>

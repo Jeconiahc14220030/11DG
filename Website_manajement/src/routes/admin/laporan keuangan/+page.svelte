@@ -134,6 +134,43 @@
 	onMount(() => {
 		fetchdata();
 	});
+
+	let chart;
+
+	onMount(() => {
+		const ctx = document.getElementById('myChart').getContext('2d');
+		chart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: ['2 November', '9 November', '16 November', '23 November', '21 Desember'],
+				datasets: [
+					{
+						label: 'Laporan Keuangan Bulanan',
+						data: [450000, 500000, 450000, 500000, 550000,],
+						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 2,
+						tension: 0.4,
+						fill: true
+					}
+				]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+	});
+
+	import { onDestroy } from 'svelte';
+	onDestroy(() => {
+		if (chart) {
+			chart.destroy();
+		}
+	});
 </script>
 
 <div class="bg-background w-screen h-screen justify-center items-center">

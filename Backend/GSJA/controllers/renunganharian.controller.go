@@ -3,6 +3,8 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	"fmt"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -40,6 +42,7 @@ func GETAllRenunganHarian() (models.Response, error) {
 		err = rows.Scan(
 			&renungan_harian.Id,
 			&renungan_harian.Isi,
+			&renungan_harian.Foto,
 			&renungan_harian.CreatedAt,
 			&renungan_harian.UpdatedAt,
 			&renungan_harian.DeletedAt,
@@ -62,16 +65,23 @@ func GETAllRenunganHarian() (models.Response, error) {
 
 func AddRenunganHarian(c echo.Context) error {
 	isi := c.FormValue("isi")
+	foto, err := c.FormFile("foto")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	namaFoto := foto.Filename
 	
 	renunganHarian := models.RenunganHarian{
 		Isi: isi,
+		Foto: namaFoto,
 	}
 
 	if err := c.Bind(&renunganHarian); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 	}
 
-	result, err := POSTRenunganHarian(renunganHarian)
+	result, err := POSTRenunganHarian(renunganHarian, foto)
 	
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
@@ -80,17 +90,36 @@ func AddRenunganHarian(c echo.Context) error {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func POSTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, error) {
+func POSTRenunganHarian(renunganHarian models.RenunganHarian, foto *multipart.FileHeader) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO renungan_harian (status, isi) VALUES (?, ?)"
+	sqlStatement := "INSERT INTO renungan_harian (isi, foto) VALUES (?, ?)"
 
-	_, err := con.Exec(sqlStatement, renunganHarian.Isi)
+	result, err := con.Exec(sqlStatement, renunganHarian.Isi, renunganHarian.Foto)
 
 	if err != nil {
 		return res, err
+	}
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return res,err
+	}
+
+	folder := "renungan"
+
+	newFotoName := fmt.Sprintf("%s-%d.png", folder, lastID)
+
+	updateSQL := "UPDATE renungan_harian SET foto = ? WHERE id = ?"
+	_, err = con.Exec(updateSQL, newFotoName, lastID)
+	if err != nil {
+		return res, err
+	}
+
+	_, uploadErr := UploadFotoFolder(foto, int64(lastID), folder)
+	if uploadErr != nil {
+		return res, uploadErr
 	}
 
 	res.Status = http.StatusCreated
@@ -131,6 +160,68 @@ func UpdateDeletedAtRenunganHarian(id int) (models.Response, error) {
 
 	res.Status = http.StatusOK
 	res.Message = "Renungan harian berhasil dihapus"
+
+	return res, nil
+}
+
+func EditRenunganHarian(c echo.Context) error {
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid id"})
+	}
+
+	isi := c.FormValue("isi")
+	foto, err := c.FormFile("foto")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	var filename string
+	if err == nil{
+		folder := "renungan"
+		result, uploadErr := UploadFotoFolder(foto, int64(id), folder)
+		if uploadErr != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"message": uploadErr.Error()})
+		}
+		filename = result.Data.(map[string]string)["filename"]
+	}
+
+
+	renunganHarian := models.RenunganHarian{
+		Id : id,
+		Isi: isi,
+		Foto: filename,
+	}
+
+	if err := c.Bind(&renunganHarian); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	result, err := PUTRenunganHarian(renunganHarian)
+	
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func PUTRenunganHarian(renunganHarian models.RenunganHarian) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE renungan_harian SET isi = ?, foto = ? WHERE id = ?"
+
+	_, err := con.Exec(sqlStatement, renunganHarian.Isi, renunganHarian.Foto, renunganHarian.Id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Renungan harian berhasil diupdate"
 
 	return res, nil
 }

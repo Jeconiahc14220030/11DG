@@ -1,4 +1,6 @@
-<script>
+<!-- <script>
+	import { onMount } from 'svelte';
+
 	let dummyData = [
 		{ nama: 'Kelompok A', tanggal: '26 November 2024' },
 		{ nama: 'Kelompok B', tanggal: '26 November 2024' },
@@ -125,4 +127,8 @@
 			</div>
 		</div>
 	</div>
+<<<<<<<<< Temporary merge branch 1
 </div>
+=========
+</div> -->
+>>>>>>>>> Temporary merge branch 2
