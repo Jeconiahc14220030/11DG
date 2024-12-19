@@ -81,12 +81,11 @@
 <div class="flex flex-col items-center items-center justify-center ">
     <img
         src="http://localhost:8080/uploads/profiles/profiles-1.png"
-		id="profile"
         alt="profile"
-        class="w-20 h-20 rounded-full mb-4 mt-32" 
+        class="w-20 h-20 rounded-full mb-4 mt-20 border" 
     />
 
-    <form id="tambahanggota" on:submit={tambahangota} class="flex flex-col items-center">
+    <form id="tambahanggota" on:submit={tambahangota} class="flex flex-col items-center mt-4">
         <div class="flex flex-row space-x-8">
             <div class="flex flex-col space-y-4">
                 <div class="flex flex-col">
