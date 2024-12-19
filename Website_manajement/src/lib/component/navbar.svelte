@@ -28,7 +28,8 @@
 	<div class="flex items-center me-3">
 		<a href="/admin/dashboard">
 			<img
-				src="/src/lib/image/profil.jpg"
+				src="http://localhost:8080/uploads/profiles/profiles-1.png"
+				id="profile"
 				alt="profile"
 				class="w-10 h-10 items-center rounded-full border border-black border-b me-7"
 			/>
