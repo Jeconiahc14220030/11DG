@@ -50,9 +50,14 @@
 			const result = await response.json();
 			console.log('Data dari API:', result);
 
-			if (result.status === 200 && result.data) {
-				// Ambil ID dari objek data
-				idAnggota = result.data.id;
+			if (
+				result.status === 200 &&
+				result.data &&
+				Array.isArray(result.data) &&
+				result.data.length > 0
+			) {
+				// Ambil ID dari objek data pertama
+				idAnggota = result.data[0].id;
 				console.log('ID Anggota:', idAnggota);
 			} else {
 				throw new Error('Data anggota tidak ditemukan.');
@@ -60,10 +65,39 @@
 		} catch (error) {
 			console.error('Error mencari ID anggota:', error);
 			alert('Terjadi kesalahan saat mencari ID anggota.');
+			return; // Hentikan proses lebih lanjut jika ada kesalahan
+		}
+
+		// Validasi idAnggota dan idKomunitas sebelum melanjutkan
+		if (!idAnggota || !idKomunitas) {
+			alert('ID Anggota atau ID Komunitas tidak valid.');
 			return;
 		}
 
-		// Langkah 2: Kirim permintaan POST untuk request komunitas
+		// Langkah 2: Cek apakah anggota sudah pernah mengirim permintaan ke komunitas
+		try {
+			const checkRequestResponse = await fetch(
+				`http://localhost:8080/anggotaKomunitas/checkRequest?id_anggota=${idAnggota}&id_komunitas=${idKomunitas}`
+			);
+
+			if (!checkRequestResponse.ok) {
+				throw new Error('Gagal memeriksa status permintaan.');
+			}
+
+			const checkResult = await checkRequestResponse.json();
+
+			if (checkResult.status === 200 && checkResult.data && checkResult.data.length > 0) {
+				// Jika data ditemukan, berarti sudah pernah melakukan permintaan
+				alert('Anda sudah mengirim permintaan untuk bergabung dengan komunitas ini.');
+				return; // Hentikan proses lebih lanjut
+			}
+		} catch (error) {
+			console.error('Error memeriksa permintaan:', error);
+			alert('Terjadi kesalahan saat memeriksa permintaan.');
+			return;
+		}
+
+		// Langkah 3: Kirim permintaan POST untuk request komunitas
 		const requestData = {
 			id_anggota: idAnggota,
 			id_komunitas: Number(idKomunitas)
@@ -94,8 +128,67 @@
 		}
 	}
 
+	let events = [];
+	let currentMonth = new Date().getMonth(); // Bulan saat ini (0-11)
+	let currentYear = new Date().getFullYear(); // Tahun saat ini
+
+	// Menentukan jumlah hari dalam bulan
+	const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+	// Menampilkan nama bulan sesuai dengan bulan saat ini
+	const monthNames = [
+		'Januari',
+		'Februari',
+		'Maret',
+		'April',
+		'Mei',
+		'Juni',
+		'Juli',
+		'Agustus',
+		'September',
+		'Oktober',
+		'November',
+		'Desember'
+	];
+	const monthName = monthNames[currentMonth];
+
+	// Ambil parameter `id_komunitas` dari URL
+	const idKomunitas = $page.params.id;
+
+	async function fetchJadwal() {
+		try {
+			const response = await fetch('http://localhost:8080/jadwallatihan'); // Ganti URL dengan endpoint yang sesuai
+			const data = await response.json();
+
+			if (response.ok) {
+				// Filter data berdasarkan id_komunitas, bulan, dan tahun saat ini
+				const filteredEvents = data.data.filter((event) => {
+					const eventDate = new Date(event.tanggal);
+					return (
+						event.id_komunitas == idKomunitas && // Filter berdasarkan id_komunitas
+						eventDate.getMonth() === currentMonth && // Filter bulan
+						eventDate.getFullYear() === currentYear // Filter tahun
+					);
+				});
+
+				// Format data yang difilter
+				events = filteredEvents.map((event) => ({
+					date: new Date(event.tanggal).getDate(),
+					description: event.lokasi, // Contoh deskripsi
+					color: 'bg-blue-500', // Warna default
+					id: event.id
+				}));
+			} else {
+				console.error('Gagal memuat data.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
 	onMount(() => {
 		fetchDetail();
+		fetchJadwal();
 	});
 </script>
 
@@ -138,6 +231,50 @@
 				<ul class="list-disc list-inside">
 					<li>{komunitas.snk}</li>
 				</ul>
+			</div>
+
+			<!-- Kalender -->
+			<div class="flex-grow p-4">
+				<div class="bg-white rounded-lg shadow-lg p-6">
+					<!-- Nama Bulan -->
+					<div class="text-center text-xl font-bold mb-4">{monthName} {currentYear}</div>
+
+					<!-- Kalender -->
+					<div class="grid grid-cols-7 gap-2 text-center">
+						<!-- Header Hari -->
+						{#each ['S', 'M', 'T', 'W', 'T', 'F', 'S'] as day}
+							<div class="font-bold">{day}</div>
+						{/each}
+
+						<!-- Tanggal -->
+						{#each Array(daysInMonth) as _, index}
+							<div class="relative p-2 bg-[#F9C067] rounded-lg text-black">
+								{index + 1}
+								<!-- Menampilkan tanda acara di bawah tanggal -->
+								{#each events.filter((event) => event.date === index + 1) as event}
+									<div class="absolute bottom-1 left-1 w-2 h-2 rounded-full {event.color}"></div>
+								{/each}
+							</div>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Keterangan -->
+				<div class="mt-6">
+					<h2 class="font-bold mb-2">Keterangan</h2>
+					<ul class="space-y-2">
+						{#if events.length > 0}
+							{#each events as event}
+								<li class="flex items-center">
+									<div class="w-3 h-3 rounded-full {event.color} mr-2"></div>
+									{event.description}
+								</li>
+							{/each}
+						{:else}
+							<li class="text-gray-500">Belum ada jadwal latihan</li>
+						{/if}
+					</ul>
+				</div>
 			</div>
 
 			<!-- Gambar komunitas -->
@@ -318,3 +455,24 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	.modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.6);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.modal img {
+		width: 300px;
+		height: 300px;
+		background: white;
+		padding: 10px;
+		border-radius: 10px;
+	}
+</style>

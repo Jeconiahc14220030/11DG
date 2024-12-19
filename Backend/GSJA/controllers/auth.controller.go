@@ -44,7 +44,7 @@ func AuthenticateUser(username, password string) (models.Response, error) {
 		return res, err
 	}
 
-	defer con.Close()
+	// defer con.Close()
 
 	if err != nil {
 		fmt.Println("Password does not match:", err)

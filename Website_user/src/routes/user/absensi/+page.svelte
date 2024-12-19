@@ -16,14 +16,12 @@
 			}
 
 			const result = await response.json();
-
-			// Periksa apakah result.data adalah objek (bukan array)
-			if (result.data) {
-				const user = result.data;
-				userId = user.id; // Set userId sesuai dengan hasil pencarian
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
 				console.log('User ID:', userId);
 			} else {
-				console.log('Pengguna tidak ditemukan');
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
@@ -227,7 +225,7 @@
 	>
 		<div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
 			<h2 class="text-xl font-semibold mb-4">Daftar Jadwal</h2>
-			<div id="jadwalList" class="space-y-4">
+			<div id="jadwalList" class="space-y-4" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
 				<!-- List jadwal akan diisi melalui JavaScript -->
 			</div>
 			<button

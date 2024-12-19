@@ -12,7 +12,7 @@
 	}
 
 	let username = localStorage.getItem('username');
-	console.log(username);
+	// console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
 	// Fungsi untuk mengambil anggota berdasarkan username
@@ -26,14 +26,12 @@
 			}
 
 			const result = await response.json();
-
-			// Periksa apakah result.data adalah objek (bukan array)
-			if (result.data) {
-				const user = result.data;
-				userId = user.id; // Set userId sesuai dengan hasil pencarian
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
 				console.log('User ID:', userId);
 			} else {
-				console.log('Pengguna tidak ditemukan');
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
@@ -59,8 +57,8 @@
 			const result = await response.json();
 
 			// Cek apakah data ada dan valid
-			if (result.data) {
-				const userData = result.data; // Ambil objek data langsung
+			if (result.data && result.data.length > 0) {
+				const userData = result.data[0]; // Ambil objek data pertama dari array
 
 				// Menyimpan nilai poin ke sessionStorage
 				sessionStorage.setItem('poin', userData.poin);
@@ -282,7 +280,7 @@
 		<div class="flex flex-col justify-center items-center mb-4">
 			<div class="flex flex-col w-full text-center items-center">
 				<img
-					src="/src/lib/image/pp.jpg"
+					src="http://localhost:8080/uploads/renungan/renungan-2.png"
 					alt="Profile"
 					class="w-10 h-10 md:w-24 md:h-24 rounded-full"
 				/>
@@ -296,13 +294,19 @@
 		<!-- Action Buttons -->
 		<div class="flex justify-center items-center mb-4">
 			<div class="flex space-x-4">
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={editProfile}>Ubah Profil</button
-				>
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl" on:click={changePassword}
-					>Ganti Password</button
-				>
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={editProfile}>
+					<img src="/src/lib/image/edit.png" alt="Edit Icon" class="w-5 h-5" />
+					<span>Ubah Profil</span>
+				</button>
+				
+				<!-- Tombol Ganti Password dengan Ikon -->
+				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={changePassword}>
+					<img src="/src/lib/image/key.png" alt="Key Icon" class="w-5 h-5" />
+					<span>Ganti Password</span>
+				</button>
 			</div>
 		</div>
+
 
 		<div class="flex flex-col justify-between items-center p-4">
 			<div class="flex flex-col w-full">
