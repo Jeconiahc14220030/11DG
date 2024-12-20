@@ -12,7 +12,6 @@
 	}
 
 	let username = localStorage.getItem('username');
-	// console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
 	// Fungsi untuk mengambil anggota berdasarkan username
