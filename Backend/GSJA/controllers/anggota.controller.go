@@ -575,7 +575,7 @@ func EditProfil(c echo.Context) error {
 	}
 
 	// Update the profile in the database
-	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon, filename)
+	result, err := PUTProfilAnggota(id, nama, email, tanggalLahir, nomorTelepon, filename)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -587,6 +587,7 @@ func PUTProfilAnggota(id int, nama string, email string, tanggalLahir string, no
 	var res models.Response
 
 	sqlStatement := "UPDATE anggota SET nama = ?, tanggal_lahir = ?, email = ?, nomor_telepon = ?, foto_profile = ?, updated_at = NOW() WHERE id = ?"
+	fmt.Printf("Nama: %s, Email: %s, Tanggal Lahir: %s, Nomor Telepon: %s\n", nama, email, tanggalLahir, nomorTelepon)
 
 	con := db.CreateCon()
 	_, err := con.Exec(sqlStatement, nama, tanggalLahir, email, nomorTelepon, fotoProfile, id)
