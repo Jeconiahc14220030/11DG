@@ -280,7 +280,7 @@
 		<div class="flex flex-col justify-center items-center mb-4">
 			<div class="flex flex-col w-full text-center items-center">
 				<img
-					src="http://localhost:8080/uploads/renungan/renungan-2.png"
+					src="http://localhost:8080/uploads/profiles/profiles-1.png"
 					alt="Profile"
 					class="w-10 h-10 md:w-24 md:h-24 rounded-full"
 				/>
