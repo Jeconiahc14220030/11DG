@@ -10,6 +10,7 @@
 	let errorMessage = '';
 	let username = ''; // Declare username variable
 	let userId;
+	const BASE_URL = 'http://localhost:8080/uploads/profiles';
 
 	// Fungsi untuk mengambil anggota berdasarkan username
 	async function fetchAnggotaByUsername() {
@@ -41,13 +42,19 @@
 			const response = await fetch(`http://localhost:8080/anggota/${userId}`);
 			if (response.ok) {
 				const result = await response.json();
-				// Pastikan result.data adalah array dan kita mengambil elemen pertama
 				if (result.data && result.data.length > 0) {
 					const data = result.data[0]; // Ambil elemen pertama dari data
 					name = data.nama || '';
 					birthdate = data.tanggal_lahir || '';
 					email = data.email || '';
 					phone = data.nomor_telepon || '';
+
+					// Tambahkan kode ini
+					photo =
+						data.foto_profil && data.foto_profil !== 'dummy'
+							? `${BASE_URL}${data.foto_profil}`
+							: '/src/lib/image/pp.jpg';
+
 					console.log(
 						`Data pengguna berhasil dimuat: Nama: ${data.nama}, Tanggal Lahir: ${data.tanggal_lahir}, Email: ${data.email}, No. Telp: ${data.nomor_telepon}`
 					);
@@ -74,8 +81,10 @@
 		formData.append('tanggal_lahir', birthdate);
 		formData.append('email', email);
 		formData.append('nomor_telepon', phone);
+
+		// Jika ada foto yang dipilih, tambahkan foto ke formData
 		if (photo) {
-			formData.append('photo', photo);
+			formData.append('photo', photo); // Mengirim file gambar yang dipilih
 		}
 
 		try {
@@ -101,7 +110,18 @@
 	}
 
 	function handlePhotoChange(event) {
-		photo = event.target.files[0];
+		// Dapatkan file yang dipilih
+		const file = event.target.files[0];
+
+		// Periksa apakah ada file yang dipilih dan apakah itu file
+		if (file && file instanceof File) {
+			// Simpan file gambar yang dipilih untuk dikirim ke backend
+			photo = file;
+
+			// Tampilkan gambar yang dipilih di UI
+			const objectURL = URL.createObjectURL(file);
+			document.getElementById('profileImage').src = objectURL; // Update src gambar untuk menampilkan gambar yang dipilih
+		}
 	}
 
 	function closeModal() {
@@ -137,7 +157,10 @@
 		<!-- Foto Profil -->
 		<div class="relative mb-4">
 			<img
-				src={photo ? URL.createObjectURL(photo) : '/src/lib/image/pp.jpg'}
+				id="profileImage"
+				src={photo && photo instanceof File
+					? URL.createObjectURL(photo)
+					: 'http://localhost:8080/uploads/profiles/profiles-1.png'}
 				alt="Profile Picture"
 				class="rounded-full w-24 h-24 object-cover"
 			/>
@@ -155,7 +178,7 @@
 					type="text"
 					id="name"
 					bind:value={name}
-					placeholder={user.name}
+					placeholder="Nama"
 					class="mt-1 p-2 w-full border border-gray-300 rounded-md"
 				/>
 			</div>
@@ -164,7 +187,7 @@
 					type="date"
 					id="birthdate"
 					bind:value={birthdate}
-					placeholder={user.tanggal_lahir}
+					placeholder="Tanggal Lahir"
 					class="mt-1 p-2 w-full border border-gray-300 rounded-md"
 				/>
 			</div>
@@ -173,7 +196,7 @@
 					type="email"
 					id="email"
 					bind:value={email}
-					placeholder={user.email}
+					placeholder="Email"
 					class="mt-1 p-2 w-full border border-gray-300 rounded-md"
 				/>
 			</div>
@@ -182,7 +205,7 @@
 					type="tel"
 					id="phone"
 					bind:value={phone}
-					placeholder={user.phone}
+					placeholder="Nomor Telepon"
 					class="mt-1 p-2 w-full border border-gray-300 rounded-md"
 				/>
 			</div>
