@@ -5,6 +5,7 @@
 	let birthdate = '';
 	let email = '';
 	let phone = '';
+	let photo = null; // Variable to store the uploaded photo file
 	let showModal = false;
 	let errorMessage = '';
 	let username = ''; // Declare username variable
@@ -66,24 +67,22 @@
 
 	// Kirim data yang diperbarui
 	async function saveProfile() {
-		const profileData = {};
+		const formData = new FormData();
 
-		if (name) profileData.nama = name;
-		if (birthdate) profileData.tanggal_lahir = birthdate;
-		if (email) profileData.email = email;
-		if (phone) profileData.nomor_telepon = phone;
-
-		// Tambahkan log untuk mengecek data sebelum dikirim
-		console.log('Data yang akan dikirim ke backend:', JSON.stringify(profileData));
+		// Tambahkan data ke formData
+		formData.append('nama', name);
+		formData.append('tanggal_lahir', birthdate);
+		formData.append('email', email);
+		formData.append('nomor_telepon', phone);
+		if (photo) {
+			formData.append('photo', photo);
+		}
 
 		try {
 			console.log('Memulai pengiriman data ke server...');
 			const response = await fetch(`http://localhost:8080/anggota/${userId}/editprofil`, {
 				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(profileData)
+				body: formData
 			});
 
 			if (response.ok) {
@@ -99,6 +98,10 @@
 			errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
 			console.error('Terjadi kesalahan:', error);
 		}
+	}
+
+	function handlePhotoChange(event) {
+		photo = event.target.files[0];
 	}
 
 	function closeModal() {
@@ -134,13 +137,15 @@
 		<!-- Foto Profil -->
 		<div class="relative mb-4">
 			<img
-				src="/src/lib/image/pp.jpg"
+				src={photo ? URL.createObjectURL(photo) : '/src/lib/image/pp.jpg'}
 				alt="Profile Picture"
 				class="rounded-full w-24 h-24 object-cover"
 			/>
-			<button class="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow-lg">
+
+			<label class="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow-lg cursor-pointer">
 				<img src="/src/lib/image/editPP.svg" alt="Edit Icon" class="w-4 h-4" />
-			</button>
+				<input type="file" accept="image/*" class="hidden" on:change={handlePhotoChange} />
+			</label>
 		</div>
 
 		<!-- Form Ubah Profil -->
