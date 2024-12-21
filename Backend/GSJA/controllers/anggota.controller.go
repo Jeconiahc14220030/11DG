@@ -562,8 +562,8 @@ func EditProfil(c echo.Context) error {
 	}
 
 	nama := c.FormValue("nama")
-	email := c.FormValue("email")
 	tanggalLahir := c.FormValue("tanggal_lahir")
+	email := c.FormValue("email")
 	nomorTelepon := c.FormValue("nomor_telepon")
 
 	// Handle file upload for profile photo
@@ -580,7 +580,7 @@ func EditProfil(c echo.Context) error {
 	}
 
 	// Update the profile in the database
-	result, err := PUTProfilAnggota(id, nama, tanggalLahir, email, nomorTelepon, filename)
+	result, err := PUTProfilAnggota(id, nama, email, tanggalLahir,  nomorTelepon, filename)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
