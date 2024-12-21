@@ -11,14 +11,21 @@
 			const response = await fetch(`http://localhost:8080/anggota/${idAnggota}`);
 
 			if (!response.ok) {
-				throw new Error(`Http error! Status: ${response.status}`);
+				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			return result.data; // Return anggota detail
+
+			// Pastikan hasilnya berupa array dan mengambil data anggota pertama
+			if (Array.isArray(result.data) && result.data.length > 0) {
+				return result.data[0]; // Ambil data pertama dari array
+			} else {
+				console.error('Detail anggota tidak ditemukan.');
+				return null;
+			}
 		} catch (error) {
-			console.error(`Gagal mengambil detail anggota (ID: ${idAnggota}):`, error);
-			return null;
+			console.error('Gagal mengambil detail anggota:', error);
+			return null; // Kembalikan null jika terjadi kesalahan
 		}
 	}
 

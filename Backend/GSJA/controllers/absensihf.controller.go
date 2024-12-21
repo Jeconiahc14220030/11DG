@@ -160,8 +160,7 @@ func GetAbsensiHfAnggotaById(id_anggota int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&absensihf.Id,
-			&absensihf.IdAnggota, 
-			// &absensihf.IdJadwal, 
+			&absensihf.IdAnggota,
 			&absensihf.Idhf,
 			&absensihf.Topik,
 			&absensihf.Tanggal,

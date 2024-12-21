@@ -18,14 +18,12 @@
 			}
 
 			const result = await response.json();
-
-			// Periksa apakah result.data adalah objek (bukan array)
-			if (result.data) {
-				const user = result.data;
-				userId = user.id; // Set userId sesuai dengan hasil pencarian
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
 				console.log('User ID:', userId);
 			} else {
-				console.log('Pengguna tidak ditemukan');
+				console.error('Pengguna tidak ditemukan.');
 			}
 		} catch (error) {
 			console.error('Terjadi kesalahan:', error);
@@ -51,14 +49,12 @@
 
 	async function fetchTukarVoucher(idAnggota, idVoucher) {
 		try {
-			// Data yang akan dikirim dalam body permintaan
 			const data = new URLSearchParams();
 			data.append('idAnggota', idAnggota);
 			data.append('idVoucher', idVoucher);
 
 			console.log('Mengirim data:', { idAnggota, idVoucher });
 
-			// Melakukan fetch dengan metode POST
 			const response = await fetch('http://localhost:8080/anggota/tukarvoucher', {
 				method: 'POST',
 				headers: {
@@ -67,19 +63,17 @@
 				body: data
 			});
 
-			// Cek jika respons berhasil
 			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
+				const errorData = await response.json();
+				throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
 			}
 
-			// Parsing hasil respons
 			const result = await response.json();
-
-			// Log atau lakukan sesuatu dengan hasil
 			console.log('Penukaran berhasil:', result);
-			return result; // Kembalikan hasil jika diperlukan
+			return result;
 		} catch (error) {
 			console.error('Gagal menukar voucher:', error);
+			alert(error.message); // Tampilkan pesan error jika gagal
 		}
 	}
 
@@ -226,10 +220,10 @@
 			document.getElementById('item-description').innerText =
 				`Voucher untuk produk ${voucher.nama_voucher}.`;
 			document.getElementById('item-conditions').innerHTML = `
-            <li>Kondisi pertama untuk voucher ${voucher.nama_voucher}.</li>
-            <li>Kondisi kedua terkait batas waktu voucher.</li>
-            <li>Kondisi ketiga terkait produk yang dapat ditukar.</li>
-        `;
+        <li>Kondisi pertama untuk voucher ${voucher.nama_voucher}.</li>
+        <li>Kondisi kedua terkait batas waktu voucher.</li>
+        <li>Kondisi ketiga terkait produk yang dapat ditukar.</li>
+    `;
 			document.getElementById('expiry-date').innerText = 'Tanggal kedaluwarsa tidak tersedia.';
 			document.getElementById('modal').classList.remove('hidden');
 		}
