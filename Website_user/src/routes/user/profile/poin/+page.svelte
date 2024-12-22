@@ -30,14 +30,22 @@
 		}
 	}
 
+	let fotoBaseURL = 'http://localhost:8080/uploads/voucher/';
+
 	async function fetchVouchers() {
 		try {
 			const response = await fetch('http://localhost:8080/voucher');
 			if (response.ok) {
 				const result = await response.json();
 				vouchers = Array.isArray(result.data)
-					? result.data.filter((v) => v.status === 'aktif')
+					? result.data
+							.filter((v) => v.status === 'aktif')
+							.map((v) => ({
+								...v,
+								foto: `${fotoBaseURL}${v.foto}`
+							}))
 					: [];
+				console.log(vouchers);
 			} else {
 				console.error('Gagal mengambil data voucher');
 			}
@@ -141,7 +149,7 @@
 						<img src={voucher.foto} alt={voucher.nama_voucher} class="voucher-img mb-2" />
 						<h3 class="font-semibold text-center">{voucher.nama_voucher}</h3>
 						<div class="mt-4 flex justify-between">
-							<span class="font-bold">{voucher.harga}</span>
+							<span class="font-bold">Rp {voucher.harga}</span>
 							<button
 								class="bg-[#F0A242] text-white rounded px-2 py-1"
 								on:click={() => handleTukar(voucher)}
