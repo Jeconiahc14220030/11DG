@@ -63,31 +63,90 @@
 		}
 	}
 
-	onMount(() => {
-		fetchEvents();
+	let userRoles = [];
+	let rolesData = []; // Menyimpan data roles dari API
+	let username = '';
+	let userId;
+
+	// Fungsi untuk mengambil anggota berdasarkan username
+	async function fetchAnggotaByUsername() {
+		try {
+			const response = await fetch(`http://localhost:8080/${username}`);
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0];
+				userId = user.id;
+			} else {
+				console.error('Pengguna tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	// Fungsi untuk mendapatkan role pengguna
+	async function fetchRoles() {
+		try {
+			const response = await fetch('http://localhost:8080/roles');
+			const data = await response.json();
+			rolesData = data.data;
+
+			if (data.status === 200) {
+				const roleResponse = await fetch('http://localhost:8080/anggotaRoles');
+				const roleData = await roleResponse.json();
+
+				if (roleData.status === 200) {
+					const rolesMap = rolesData.reduce((map, role) => {
+						map[role.id] = role.roles;
+						return map;
+					}, {});
+
+					// Mencocokkan data anggota dengan roles mereka dan filter berdasarkan userId
+					userRoles = roleData.data
+						.filter((userRole) => userRole.id_anggota === userId) // Filter berdasarkan userId
+						.map((userRole) => {
+							const roleName = rolesMap[userRole.id_roles];
+							return {
+								...userRole,
+								roleName: roleName || 'Unknown Role'
+							};
+						});
+				} else {
+					console.error('Error fetching anggotaRoles:', roleData.message);
+				}
+			} else {
+				console.error('Error fetching roles:', data.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	// Menampilkan fitur berdasarkan role
+	onMount(async () => {
+		username = localStorage.getItem('username');
+		await fetchAnggotaByUsername();
+		if (userId) {
+			await fetchRoles(); // Fetch roles setelah mendapatkan userId
+			const acaraElement = document.getElementById('acara');
+
+			if (userRoles.some((role) => role.roleName === 'BPH' || role.roleName === 'Usher')) {
+				// Menampilkan fitur buat jadwal dan acara QR untuk role BPH atau Koordinator
+				document.getElementById('buatjadwal').style.display = 'block';
+				acaraElement.classList.remove('hidden');
+			} else {
+				// Sembunyikan fitur buat jadwal dan acara QR jika bukan BPH atau Koordinator
+				document.getElementById('buatjadwal').style.display = 'none';
+				acaraElement.classList.add('hidden');
+			}
+			await fetchEvents();
+		}
 	});
 </script>
-
-<style>
-	.modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.6);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.modal img {
-		width: 300px;
-		height: 300px;
-		background: white;
-		padding: 10px;
-		border-radius: 10px;
-	}
-</style>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
 	<header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
@@ -95,7 +154,7 @@
 			<h1 class="ml-2 text-lg md:text-xl font-bold">Jadwal</h1>
 		</div>
 		<div class="flex">
-			<a href="/user/jadwal/buat_jadwal" class="p-2">
+			<a href="/user/jadwal/buat_jadwal" id="buatjadwal" class="p-2">
 				<img src="/src/lib/image/create_jadwal.svg" alt="return" class="w-6 h-6" />
 			</a>
 		</div>
@@ -146,9 +205,11 @@
 			</div>
 
 			<!-- Acara -->
-			<div class="mt-6 flex justify-between flex-wrap">
+			<div class="mt-6 flex flex-wrap gap-4" id="acara">
 				{#each events as event}
-					<div class="flex flex-col items-center bg-gray-200 p-4 rounded-lg w-1/2 mb-4">
+					<div
+						class="flex flex-col items-center bg-gray-200 p-4 rounded-lg w-[calc(50%-16px)] mb-4"
+					>
 						<h3 class="font-bold">{event.description}</h3>
 						<p>{event.jenis_ibadah}</p>
 						<p>{event.date} {monthName} {currentYear}</p>
@@ -173,3 +234,24 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	.modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.6);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.modal img {
+		width: 300px;
+		height: 300px;
+		background: white;
+		padding: 10px;
+		border-radius: 10px;
+	}
+</style>

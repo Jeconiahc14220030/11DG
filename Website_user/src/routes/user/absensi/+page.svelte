@@ -4,21 +4,20 @@
 	let username = localStorage.getItem('username');
 	console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
+	let userRoles = []; // Variabel untuk menyimpan role pengguna
 
 	// Fungsi untuk mengambil anggota berdasarkan username
 	async function fetchAnggotaByUsername() {
 		try {
-			// Lakukan permintaan ke API untuk mencari data pengguna berdasarkan username
-			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
-
+			const response = await fetch(`http://localhost:8080/${username}`);
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const result = await response.json();
 			if (result.data && result.data.length > 0) {
-				const user = result.data[0]; // Ambil elemen pertama dari data
-				userId = user.id; // Set userId
+				const user = result.data[0];
+				userId = user.id;
 				console.log('User ID:', userId);
 			} else {
 				console.error('Pengguna tidak ditemukan.');
@@ -28,7 +27,46 @@
 		}
 	}
 
-	// Fungsi untuk menampilkan data absensi
+	// Fungsi untuk mendapatkan role pengguna
+	async function fetchRoles() {
+		try {
+			const response = await fetch('http://localhost:8080/roles'); // API roles
+			const data = await response.json();
+
+			if (data.status === 200) {
+				const rolesData = data.data;
+
+				const roleResponse = await fetch('http://localhost:8080/anggotaRoles'); // API anggota roles
+				const roleData = await roleResponse.json();
+
+				if (roleData.status === 200) {
+					const rolesMap = rolesData.reduce((map, role) => {
+						map[role.id] = role.roles;
+						return map;
+					}, {});
+
+					// Mencocokkan data anggota dengan roles mereka dan filter berdasarkan userId
+					userRoles = roleData.data
+						.filter((userRole) => userRole.id_anggota === userId) // Filter berdasarkan userId
+						.map((userRole) => {
+							const roleName = rolesMap[userRole.id_roles];
+							return {
+								...userRole,
+								roleName: roleName || 'Unknown Role'
+							};
+						});
+				} else {
+					console.error('Error fetching anggotaRoles:', roleData.message);
+				}
+			} else {
+				console.error('Error fetching roles:', data.message);
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	// Fungsi untuk menampilkan absensi
 	function displayAbsensi(absensiItems) {
 		const absensiContainer = document.getElementById('absensi-container');
 
@@ -40,28 +78,28 @@
 		const absensiHTML = absensiItems
 			.map((item) => {
 				return `
-            <div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <p class="font-bold">Tanggal</p>
-                        <p class="font-bold">Topik</p>
-                        <p class="font-bold">Jenis Ibadah</p>
-                    </div>
-                    <div>
-                        <p>: ${formatDate(item.jadwal_tanggal)}</p> <!-- Ganti dengan tanggal jadwal -->
-                        <p>: ${item.jadwal_topik}</p>
-                        <p>: ${item.jadwal_jenis_ibadah}</p>
-                    </div>
-                </div>
-            </div>
-            `;
+			<div class="bg-gray-300 p-4 rounded-xl mb-3 border-2 border-black">
+			  <div class="grid grid-cols-2 gap-2">
+				<div>
+				  <p class="font-bold">Tanggal</p>
+				  <p class="font-bold">Topik</p>
+				  <p class="font-bold">Jenis Ibadah</p>
+				</div>
+				<div>
+				  <p>: ${formatDate(item.jadwal_tanggal)}</p>
+				  <p>: ${item.jadwal_topik}</p>
+				  <p>: ${item.jadwal_jenis_ibadah}</p>
+				</div>
+			  </div>
+			</div>
+		  `;
 			})
 			.join('');
 
 		absensiContainer.innerHTML = absensiHTML;
 	}
 
-	// Perbaikan pada bagian fetchAbsensi
+	// Fungsi untuk fetch absensi
 	async function fetchAbsensi() {
 		try {
 			const responseAbsensi = await fetch(`http://localhost:8080/anggota/${userId}/absensi`);
@@ -91,11 +129,10 @@
 						...absensi,
 						jadwal_topik: jadwalInfo?.topik,
 						jadwal_jenis_ibadah: jadwalInfo?.jenis_ibadah,
-						jadwal_tanggal: jadwalInfo?.tanggal // Pastikan tanggal yang digunakan adalah tanggal dari jadwal
+						jadwal_tanggal: jadwalInfo?.tanggal
 					};
 				});
 
-				// Tampilkan data absensi dengan format tanggal yang benar
 				displayAbsensi(absensiWithJadwal);
 			} else {
 				console.log('Tidak ada data absensi.');
@@ -105,18 +142,18 @@
 		}
 	}
 
-	// Fungsi untuk mengubah format tanggal menjadi YYYY-MM-DD
+	// Fungsi untuk mengubah format tanggal
 	function formatDate(dateString) {
 		const date = new Date(dateString);
 		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan 1 untuk mendapatkan bulan yang benar
+		const month = String(date.getMonth() + 1).padStart(2, '0');
 		const day = String(date.getDate()).padStart(2, '0');
 		return `${year}-${month}-${day}`;
 	}
 
+	// Fungsi untuk fetch jadwal
 	async function fetchJadwal() {
 		try {
-			// Panggil API untuk mendapatkan data jadwal
 			const response = await fetch('http://localhost:8080/jadwal');
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
@@ -124,36 +161,29 @@
 
 			const result = await response.json();
 			if (result.status === 200 && result.data.length > 0) {
-				// Ambil elemen jadwalList dari modal
 				const jadwalList = document.getElementById('jadwalList');
-
-				// Kosongkan list sebelum mengisi
 				jadwalList.innerHTML = '';
 
-				// Tambahkan setiap item jadwal ke dalam modal
 				result.data.forEach((jadwal) => {
 					const item = document.createElement('a');
 					item.className =
 						'block p-4 border rounded shadow-sm bg-gray-100 hover:bg-gray-200 transition';
-					item.href = '/user/absensi/absensi_manual'; // URL tujuan
+					item.href = '/user/absensi/absensi_manual';
 					item.innerHTML = `
-					<p><strong>Tanggal:</strong> ${jadwal.tanggal}</p>
-					<p><strong>Topik:</strong> ${jadwal.topik}</p>
-					<p><strong>Jenis Ibadah:</strong> ${jadwal.jenis_ibadah}</p>
-					<p><strong>Jumlah Poin:</strong> ${jadwal.jumlah_poin}</p>
-				`;
+			  <p><strong>Tanggal:</strong> ${jadwal.tanggal}</p>
+			  <p><strong>Topik:</strong> ${jadwal.topik}</p>
+			  <p><strong>Jenis Ibadah:</strong> ${jadwal.jenis_ibadah}</p>
+			  <p><strong>Jumlah Poin:</strong> ${jadwal.jumlah_poin}</p>
+			`;
 
-					// Tambahkan event listener untuk menyimpan id jadwal yang dipilih
 					item.addEventListener('click', function (e) {
 						sessionStorage.setItem('absensiID', jadwal.id);
-						window.location.href = item.href; // Arahkan ke halaman absensi_manual
+						window.location.href = item.href;
 					});
 
-					// Tambahkan elemen ke dalam daftar
 					jadwalList.appendChild(item);
 				});
 			} else {
-				// Jika tidak ada data, tampilkan pesan kosong
 				jadwalList.innerHTML = '<p>Tidak ada jadwal tersedia.</p>';
 			}
 		} catch (error) {
@@ -161,6 +191,7 @@
 		}
 	}
 
+	// Fungsi untuk membuka modal
 	function bukaModal() {
 		const modal = document.getElementById('jadwalModal');
 		if (!modal) {
@@ -170,8 +201,6 @@
 
 		modal.classList.remove('hidden');
 		modal.classList.add('flex');
-
-		// Panggil fetchJadwal untuk memuat data
 		fetchJadwal();
 	}
 
@@ -183,51 +212,65 @@
 	}
 
 	onMount(async () => {
-		await fetchAnggotaByUsername(); // Dapatkan userId dari username
+		await fetchAnggotaByUsername();
 		if (userId) {
-			// Jika userId ada, ambil data lainnya
+			await fetchRoles(); // Fetch roles setelah mendapatkan userId
+			if (userRoles.some((role) => role.roleName === 'BPH')) {
+				// Menampilkan fitur absensi HF dan manual untuk role BPH atau Koordinator
+				document.getElementById('absenHF').style.display = 'block';
+				document.getElementById('absenManual').style.display = 'block';
+			} else if (userRoles.some((role) => role.roleName === 'FasilitatorHF')) {
+				// Menampilkan fitur absensi HF dan manual untuk role BPH atau Koordinator
+				document.getElementById('absenHF').style.display = 'block';
+				document.getElementById('absenManual').style.display = 'none';
+			} else if (userRoles.some((role) => role.roleName === 'Usher')) {
+				// Menampilkan fitur absensi HF dan manual untuk role BPH atau Koordinator
+				document.getElementById('absenHF').style.display = 'none';
+				document.getElementById('absenManual').style.display = 'block';
+			} else {
+				// Sembunyikan fitur jika bukan BPH atau Koordinator
+				document.getElementById('absenHF').style.display = 'none';
+				document.getElementById('absenManual').style.display = 'none';
+			}
 			fetchAbsensi();
 		}
 	});
 </script>
 
 <div class="h-screen w-screen flex flex-col bg-[#F4F4F4] overflow-x-hidden">
-	<!-- Header -->
 	<header class="flex items-center justify-between p-8 bg-[#F9C067] mb-16 h-16">
 		<div class="flex items-center">
 			<h1 class="ml-2 text-lg md:text-xl font-bold">Absensi</h1>
 		</div>
 		<div class="flex">
-			<a href="/user/absensi/absensi_hf" class="p-2">
+			<a href="/user/absensi/absensi_hf" id="absenHF" class="p-2" style="display: none;">
 				<img src="/src/lib/image/absenHF.svg" alt="Icon absensi HF" class="w-6 h-6" />
 			</a>
-			<button class="p-2" on:click={bukaModal}>
+			<button id="absenManual" class="p-2" style="display: none;" on:click={bukaModal}>
 				<img src="/src/lib/image/absenManual.svg" alt="Icon absensi manual" class="w-6 h-6" />
 			</button>
 		</div>
 	</header>
 
-	<!-- Konten utama -->
 	<div class="flex flex-col flex-grow mx-6 pb-16">
-		<!-- Logo di atas konten -->
 		<div class="flex justify-end -mt-16">
 			<img src="/src/lib/image/logo.png" alt="Logo aplikasi" class="w-16 h-16" />
 		</div>
 
-		<!-- Absensi Items -->
 		<div id="absensi-container"></div>
 	</div>
 
-	<!-- Modal -->
 	<div
 		id="jadwalModal"
 		class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-50 flex items-center justify-center"
 	>
 		<div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
 			<h2 class="text-xl font-semibold mb-4">Daftar Jadwal</h2>
-			<div id="jadwalList" class="space-y-4" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
-				<!-- List jadwal akan diisi melalui JavaScript -->
-			</div>
+			<div
+				id="jadwalList"
+				class="space-y-4"
+				style="max-height: 60vh; overflow-y: auto; padding-right: 8px;"
+			></div>
 			<button
 				on:click={tutupModal}
 				class="mt-6 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
