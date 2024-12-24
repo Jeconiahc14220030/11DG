@@ -22,18 +22,23 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-                <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
-                    <label for="Voucher" style="display: block; margin-bottom: 5px;">Foto Voucher:</label>
-                    <input type="file" id="Voucher" name="Voucher" style="width: 80%;" required>
+            <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
+				<label for="foto_voucher" style="display: block; margin-top: 15px; margin-bottom: 5px;">Foto Voucher :</label>
+                <input type="file" accept=".jpeg, .jpg, .svg, .png" id="foto_voucher" name="foto_voucher" class="swal2-input" style="width: 80%;"" required>
 
-                    <label for="Nama" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher:</label>
-                    <input type="text" id="Nama" name="Nama" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
+                <label for="nama_voucher" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher :</label>
+                <input type="text" id="nama_voucher" name="nama_voucher" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
 
-                    <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point:</label>
-                    <input type="text" id="laporan" name="laporan" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>
-                    <span style="white-space: nowrap;">Point</span>
-                </form>
-            `,
+                <label for="status" style="display: block; margin-top: 15px; margin-bottom: 5px;">Status Voucher :</label>
+                <select id="status" name="status" class="swal2-input" style="width: 80%;">
+                    <option value="aktif">Aktif</option>
+                    <option value="tidak aktif">Tidak Aktif</option>
+                </select>
+
+                <label for="harga" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point :</label>
+                <input type="text" id="harga" name="harga" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>s
+            </form>
+        `,
 			confirmButtonText: 'Submit',
 			confirmButtonColor: '#F0A242',
 			focusConfirm: false,
@@ -41,11 +46,7 @@
 				const formElement = document.getElementById('voucher-form');
 				const formData = new FormData(formElement);
 
-				const voucher = formData.get('Voucher');
-				const nama = formData.get('Nama');
-				const laporan = formData.get('laporan');
-
-				if (!voucher || !nama || !laporan) {
+				if (!formData.get('nama_voucher') || !formData.get('status') || !formData.get('harga')) {
 					Swal.showValidationMessage('Semua input harus diisi');
 					return false;
 				}
@@ -85,18 +86,21 @@
 				popup: 'fixed-swal'
 			},
 			html: `
-                <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
-                    <label for="Voucher" style="display: block; margin-bottom: 5px;">Foto Voucher:</label>
-                    <input type="file" id="Voucher" name="Voucher" style="width: 80%;" required>
+            <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
+                <label for="nama_voucher" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher :</label>
+                <input type="text" id="nama_voucher" name="nama_voucher" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
 
-                    <label for="Nama" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher:</label>
-                    <input type="text" id="Nama" name="Nama" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
+                <label for="status" style="display: block; margin-top: 15px; margin-bottom: 5px;">Status Voucher :</label>
+                <select id="status" name="status" class="swal2-input" style="width: 80%;">
+                    <option value="aktif">Aktif</option>
+                    <option value="tidak aktif">Tidak Aktif</option>
+                </select>
 
-                    <label for="laporan" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point:</label>
-                    <input type="text" id="laporan" name="laporan" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>
-                    <span style="white-space: nowrap;">Point</span>
-                </form>
-            `,
+                <label for="harga" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point :</label>
+                <input type="number" id="harga" name="harga" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>
+                <span style="white-space: nowrap;">Point</span>
+            </form>
+        `,
 			confirmButtonText: 'Submit',
 			confirmButtonColor: '#F0A242',
 			focusConfirm: false,
@@ -104,24 +108,40 @@
 				const formElement = document.getElementById('voucher-form');
 				const formData = new FormData(formElement);
 
-				const voucher = formData.get('Voucher');
-				const nama = formData.get('Nama');
-				const laporan = formData.get('laporan');
+				const namaVoucher = formData.get('nama_voucher');
+				const status = formData.get('status');
+				const harga = formData.get('harga');
 
-				if (!voucher || !nama || !laporan) {
+				if (!namaVoucher || !status || !harga) {
 					Swal.showValidationMessage('Semua input harus diisi');
+					return false;
+				}
+
+				const hargaNumber = parseFloat(harga);
+				if (isNaN(hargaNumber)) {
+					Swal.showValidationMessage('Jumlah Point harus berupa angka');
 					return false;
 				}
 
 				return fetch('http://localhost:8080/voucher/add', {
 					method: 'POST',
-					body: formData
+					body: JSON.stringify({
+						nama_voucher: namaVoucher,
+						status: status,
+						harga: hargaNumber
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
 				})
 					.then((response) => {
-						if (!response.ok) {
-							throw new Error('Gagal menyimpan data');
-						}
-						return response.json();
+						console.log('Response status:', response.status);
+						return response.json().then((data) => {
+							if (!response.ok) {
+								throw new Error(data.message || 'Gagal menyimpan data');
+							}
+							return data;
+						});
 					})
 					.catch((error) => {
 						Swal.showValidationMessage(`Request failed: ${error.message}`);
@@ -141,11 +161,12 @@
 
 	onMount(() => {
 		fetchdata();
+		AOS.init();
 	});
 </script>
 
 <div class="flex items-center justify-center mt-5">
-	<h1 id="isi" class="me-28 text-4xl font-bold">Store</h1>
+	<h1 id="isi" class="text-3xl font-bold flex me-36">Store</h1>
 	<div class="flex relative w-full max-w-lg">
 		<svg
 			class="absolute left-2 top-1.5 w-5 h-5 text-gray-500"
@@ -199,63 +220,69 @@
 	</div>
 </div>
 
-<div class="flex items-center justify-center mt-20">
-	<div class="flex w-2/4 items-center">
-		<div class="flex flex-col space-y-4">
-			<label class="inline-flex items-center">
-				<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" checked />
-				<span class="ml-2 text-gray-700">Makanan</span>
-			</label>
-			<label class="inline-flex items-center">
-				<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
-				<span class="ml-2 text-gray-700">Minuman</span>
-			</label>
-			<label class="inline-flex items-center">
-				<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
-				<span class="ml-2 text-gray-700">Snack</span>
-			</label>
-			<label class="inline-flex items-center">
-				<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
-				<span class="ml-2 text-gray-700">E-Money</span>
-			</label>
-			<label class="inline-flex items-center">
-				<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
-				<span class="ml-2 text-gray-700">Kegiatan</span>
-			</label>
+<div class="flex items-start justify-center mt-5">
+	<div class="flex flex-col items-start mx-20 space-y-2">
+		<label class="inline-flex items-center">
+			<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" checked />
+			<span class="ml-2 text-gray-700">Makanan</span>
+		</label>
+		<label class="inline-flex items-center">
+			<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
+			<span class="ml-2 text-gray-700">Minuman</span>
+		</label>
+		<label class="inline-flex items-center">
+			<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
+			<span class="ml-2 text-gray-700">Snack</span>
+		</label>
+		<label class="inline-flex items-center">
+			<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
+			<span class="ml-2 text-gray-700">E-Money</span>
+		</label>
+		<label class="inline-flex items-center">
+			<input type="checkbox" class="form-checkbox h-5 w-5 text-success rounded" />
+			<span class="ml-2 text-gray-700">Kegiatan</span>
+		</label>
 
-			<button
-				type="submit"
-				class="bg-base text-2xl font-semibold px-3 py-1.5 rounded-lg flex items-center hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400"
-				on:click={create}
+		<button
+			type="submit"
+			class="bg-base text-xl font-semibold px-3 py-1 rounded-lg flex items-center hover:bg-slate-300 hover:border-[1px] hover:border-black ease-in duration-400 mt-2"
+			on:click={create}
+		>
+			<svg
+				class="w-5 h-5 mr-1"
+				xmlns="http://www.w3.org/2000/svg"
+				width="1em"
+				height="1em"
+				viewBox="1 1 25 25"
 			>
-				<svg
-					class="w-15 h-15 mr-0.5 mt-1"
-					xmlns="http://www.w3.org/2000/svg"
-					width="1em"
-					height="1em"
-					viewBox="1 1 25 25"
-				>
-					<path
-						fill="currentColor"
-						d="M4 4a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2a2 2 0 0 1-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 1-2-2a2 2 0 0 1 2-2V6a2 2 0 0 0-2-2zm11.5 3L17 8.5L8.5 17L7 15.5zm-6.69.04c.98 0 1.77.79 1.77 1.77a1.77 1.77 0 0 1-1.77 1.77c-.98 0-1.77-.79-1.77-1.77a1.77 1.77 0 0 1 1.77-1.77m6.38 6.38c.98 0 1.77.79 1.77 1.77a1.77 1.77 0 0 1-1.77 1.77c-.98 0-1.77-.79-1.77-1.77a1.77 1.77 0 0 1 1.77-1.77"
-					/>
-				</svg>
-				<span>Create</span>
-			</button>
-		</div>
+				<path
+					fill="currentColor"
+					d="M4 4a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2a2 2 0 0 1-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 1-2-2a2 2 0 0 1 2-2V6a2 2 0 0 0-2-2zm11.5 3L17 8.5L8.5 17L7 15.5zm-6.69.04c.98 0 1.77.79 1.77 1.77a1.77 1.77 0 0 1-1.77 1.77c-.98 0-1.77-.79-1.77-1.77a1.77 1.77 0 0 1 1.77-1.77m6.38 6.38c.98 0 1.77.79 1.77 1.77a1.77 1.77 0 0 1-1.77 1.77c-.98 0-1.77-.79-1.77-1.77a1.77 1.77 0 0 1 1.77-1.77"
+				/>
+			</svg>
+			<span>Create</span>
+		</button>
+	</div>
 
-		<div class="w-3/4 pl-10">
-			<div class="flex flex-wrap items-center justify-center gap-4 mt-20">
-				{#each voucher as item, i}
-					<div class="max-w-xs bg-white shadow-lg rounded-lg overflow-hidden border border-black">
-						<img class="w-full h-32 object-cover" src="/src/lib/image/profil.jpg" alt="Bakso">
-						<div class="p-4">
-							<button on:click={edit} class="text-gray-700 font-bold">{item.nama_voucher}</button>
-							<p class="text-yellow-500 font-semibold">{item.harga} point</p>
-						</div>
+	<div class="w-1/2">
+		<div class="grid grid-cols-5 gap-4 mt-5">
+			{#each voucher as item, i}
+				<div
+					data-aos="fade-up"
+					data-aos-duration="1500"
+					class="max-w-xs bg-white shadow-lg rounded-lg overflow-hidden border border-black"
+				>
+					<img
+						class="w-full h-32 object-cover"
+						src="http://localhost:8080/uploads/voucher/voucher-8.png"
+						alt="gambar"
+					/>
+					<div class="p-2">
+						<button on:click={edit} class="text-gray-700 font-bold">{item.nama_voucher}</button>
+						<p class="text-yellow-500 font-semibold">{item.harga} point</p>
 					</div>
-				{/each}
-			</div>
+				</div>
+			{/each}
 		</div>
 	</div>
 </div>

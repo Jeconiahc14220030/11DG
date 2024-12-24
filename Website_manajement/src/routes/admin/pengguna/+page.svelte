@@ -55,6 +55,7 @@
 
 	onMount(() => {
 		fetchdata();
+		AOS.init();
 	});
 </script>
 
@@ -178,7 +179,7 @@
 		</button>
 	</div>
 
-	<div class="max-w-4xl mx-auto mt-20 overflow-x-auto flex">
+	<div data-aos="fade-up" data-aos-duration="1500" class="max-w-4xl mx-auto mt-20 overflow-x-auto flex">
 		<table class="w-full bg-white border border-black">
 			<thead>
 				<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">

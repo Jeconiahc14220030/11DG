@@ -183,15 +183,17 @@
 <div class="bg-background w-screen h-screen justify-center items-center">
 	<div class="gap-6 max-w-8xl mx-auto py-6">
 		<div class="bg-white shadow-md rounded-md p-6 max-h-screen overflow-auto">
-			<h1 class="text-4xl font-bold text-center items-center justify-center mb-4 flex">Grafik Bulanan</h1>
-			
-			<div class="grid md:grid-cols-2 gap-6 items-center">
-				<div>
+			<h1 class="text-4xl font-bold text-center items-center justify-center mb-4 flex">
+				Grafik Bulanan
+			</h1>
+
+			<div class="grid md:grid-cols-2 gap-6 items-stretch">
+				<div class="flex items-center">
 					<canvas id="myChart" class="border rounded-md w-full max-h-[500px]"></canvas>
 				</div>
 
-				<div>
-					<table class="min-w-full border-collapse border border-black rounded shadow-md">
+				<div class="flex flex-col">
+					<table class="min-w-full border-collapse border border-black rounded shadow-md flex-grow">
 						<thead>
 							<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
 								<th class="py-3 px-6 text-left text-black">No</th>
@@ -235,7 +237,7 @@
 						</tbody>
 					</table>
 
-					<div class="flex justify-center mt-32">
+					<div class="flex justify-center mt-4">
 						<button on:click={cetaklaporan}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

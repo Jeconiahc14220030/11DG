@@ -11,12 +11,12 @@
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June'],
                 datasets: [{
-                    label: 'Data Tahunan',
-                    data: [12, 19, 3, 5, 2, 3],
+                    label: 'Laporan Bulanan',
+                    data: [65, 59, 80, 81, 56, 55],
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 2,
-                    tension: 0.5,
+                    tension: 0.3,
                     fill: true,
                 }]
             },

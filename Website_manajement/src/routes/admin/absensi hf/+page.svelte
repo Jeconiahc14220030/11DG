@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { onDestroy } from 'svelte';
 
 	let hanyafasilitator = [];
 
@@ -9,10 +9,6 @@
 			const response = await fetch('http://localhost:8080/hf');
 			hanyafasilitator = await response.json();
 			hanyafasilitator = hanyafasilitator.data;
-
-			// const response = await fetch('http://localhost:8080/hf/' + { id });
-			// hanyafasilitator = await response.json();
-			// hanyafasilitator = hanyafasilitator.data;
 		} catch (err) {
 			console.log(err);
 		}
@@ -129,55 +125,47 @@
 		});
 	}
 
+	let chart;
+
+	onMount(() => {
+		const ctx = document.getElementById('myChart').getContext('2d');
+		chart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+				datasets: [
+					{
+						label: 'Laporan Bulanan',
+						data: [65, 59, 80, 81, 56, 55],
+						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 2,
+						tension: 0.4,
+						fill: true
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+	});
+
+	onDestroy(() => {
+		if (chart) {
+			chart.destroy();
+		}
+	});
+
 	onMount(() => {
 		fetchdata();
 	});
-
-	// let chart;
-
-	// onMount(() => {
-	// 	const ctx = document.getElementById('myChart')?.getContext('2d');
-	// 	if (ctx) {
-	// 		chart = new Chart(ctx, {
-	// 			type: 'line',
-	// 			data: {
-	// 				labels: ['January', 'February'],
-	// 				datasets: [
-	// 					{
-	// 						label: 'Data Tahunan',
-	// 						data: [12, 19],
-	// 						backgroundColor: 'rgba(54, 162, 235, 0.2)',
-	// 						borderColor: 'rgba(54, 162, 235, 1)',
-	// 						borderWidth: 2,
-	// 						tension: 0.5,
-	// 						fill: true
-	// 					}
-	// 				]
-	// 			},
-	// 			options: {
-	// 				responsive: true,
-	// 				maintainAspectRatio: false,
-	// 				scales: {
-	// 					y: {
-	// 						beginAtZero: true
-	// 					}
-	// 				}
-	// 			}
-	// 		});
-	// 	} else {
-	// 		console.error('Canvas element not found');
-	// 	}
-	// });
-
-	// onDestroy(() => {
-	// 	if (chart) {
-	// 		chart.destroy();
-	// 	}
-	// });
-
-	function detailhf() {
-		goto('/admin/absensi hf/detail hf');
-	}
 </script>
 
 <div class="bg-background w-screen h-screen justify-center items-center">
@@ -187,13 +175,13 @@
 				Grafik Bulanan
 			</h1>
 
-			<div class="grid md:grid-cols-2 gap-6 items-center">
-				<div>
+			<div class="grid md:grid-cols-2 gap-6 items-stretch">
+				<div class="flex items-center">
 					<canvas id="myChart" class="border rounded-md w-full max-h-[500px]"></canvas>
 				</div>
 
-				<div>
-					<table class="w-full border-collapse border border-black">
+				<div class="flex flex-col">
+					<table class="w-full border-collapse border border-black flex-grow">
 						<thead>
 							<tr class="bg-head text-gray-600 uppercase text-sm leading-normal">
 								<th class="py-3 px-6 text-left text-black w-1/2">Nama Kelompok</th>
@@ -229,7 +217,7 @@
 						</tbody>
 					</table>
 
-					<div class="flex justify-center mt-32">
+					<div class="flex justify-center mt-4">
 						<button on:click={tambahabsensi}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

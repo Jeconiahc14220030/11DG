@@ -92,7 +92,6 @@ func Init() *echo.Echo {
 	e.POST("voucher/add", controllers.AddVoucher)
 	e.PUT("voucher/edit/:id", controllers.EditVoucher)
 	
-
 	e.POST("carousel/add", controllers.AddCarousel)
 
 	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
