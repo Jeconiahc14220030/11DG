@@ -12,7 +12,6 @@
 	}
 
 	let username = localStorage.getItem('username');
-	// console.log(username);
 	let userId; // Variabel userId yang akan diisi setelah mendapatkan data user
 
 	// Fungsi untuk mengambil anggota berdasarkan username
@@ -69,7 +68,10 @@
 					phone: userData.nomor_telepon,
 					email: userData.email,
 					birthdate: userData.tanggal_lahir,
-					points: userData.poin
+					points: userData.poin,
+					photo: userData.foto_profil
+						? `http://localhost:8080/uploads/profiles/${userData.foto_profil}`
+						: 'http://localhost:8080/uploads/profiles/profiles-1.png' // Menambahkan foto profil
 				};
 			} else {
 				console.error('Data user tidak ditemukan.');
@@ -279,11 +281,7 @@
 		<!-- Profile Detail -->
 		<div class="flex flex-col justify-center items-center mb-4">
 			<div class="flex flex-col w-full text-center items-center">
-				<img
-					src="http://localhost:8080/uploads/renungan/renungan-2.png"
-					alt="Profile"
-					class="w-10 h-10 md:w-24 md:h-24 rounded-full"
-				/>
+				<img src={user.photo} alt="Profile" class="w-10 h-10 md:w-24 md:h-24 rounded-full" />
 				<h1 class="text-lg md:text-xl font-bold">{user.name} (ID: {user.id})</h1>
 				<p class="text-[#515151]">{user.phone}</p>
 				<p class="text-[#515151]">{user.email}</p>
@@ -294,19 +292,24 @@
 		<!-- Action Buttons -->
 		<div class="flex justify-center items-center mb-4">
 			<div class="flex space-x-4">
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={editProfile}>
+				<button
+					class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2"
+					on:click={editProfile}
+				>
 					<img src="/src/lib/image/edit.png" alt="Edit Icon" class="w-5 h-5" />
 					<span>Ubah Profil</span>
 				</button>
-				
+
 				<!-- Tombol Ganti Password dengan Ikon -->
-				<button class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2" on:click={changePassword}>
+				<button
+					class="bg-[#F9C067] px-4 py-2 rounded-xl flex items-center space-x-2"
+					on:click={changePassword}
+				>
 					<img src="/src/lib/image/key.png" alt="Key Icon" class="w-5 h-5" />
 					<span>Ganti Password</span>
 				</button>
 			</div>
 		</div>
-
 
 		<div class="flex flex-col justify-between items-center p-4">
 			<div class="flex flex-col w-full">

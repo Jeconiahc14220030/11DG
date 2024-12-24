@@ -9,7 +9,31 @@
 		manfaat: ''
 	};
 
+	let username = ''; // Declare username variable
+	let userId;
 	let showModal = false; // Untuk modal sukses
+
+	// Fungsi untuk mengambil anggota berdasarkan username
+	async function fetchAnggotaByUsername() {
+		try {
+			const response = await fetch(`http://localhost:8080/${username}`); // URL endpoint yang disesuaikan
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			if (result.data && result.data.length > 0) {
+				const user = result.data[0]; // Ambil elemen pertama dari data
+				userId = user.id; // Set userId
+				console.log('User ID:', userId);
+			} else {
+				console.error('Pengguna tidak ditemukan.');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
 
 	async function fetchDetail() {
 		try {
@@ -161,13 +185,19 @@
 			const data = await response.json();
 
 			if (response.ok) {
-				// Filter data berdasarkan id_komunitas, bulan, dan tahun saat ini
+				if (!userId) {
+					console.error('ID Anggota tidak ditemukan!');
+					return;
+				}
+
+				// Filter data berdasarkan id_komunitas, bulan, tahun saat ini, dan id_anggota
 				const filteredEvents = data.data.filter((event) => {
 					const eventDate = new Date(event.tanggal);
 					return (
 						event.id_komunitas == idKomunitas && // Filter berdasarkan id_komunitas
 						eventDate.getMonth() === currentMonth && // Filter bulan
-						eventDate.getFullYear() === currentYear // Filter tahun
+						eventDate.getFullYear() === currentYear && // Filter tahun
+						event.id_anggota == userId // Filter berdasarkan id_anggota
 					);
 				});
 
@@ -186,9 +216,19 @@
 		}
 	}
 
-	onMount(() => {
-		fetchDetail();
-		fetchJadwal();
+	// Ambil data setelah komponen mounted
+	onMount(async () => {
+		if (typeof localStorage !== 'undefined') {
+			username = localStorage.getItem('username') || ''; // Ambil username dari localStorage
+		}
+
+		if (username) {
+			await fetchAnggotaByUsername(); // Panggil fetchAnggotaByUsername jika username tersedia
+			fetchDetail();
+			fetchJadwal();
+		} else {
+			console.error('Username tidak ditemukan di localStorage');
+		}
 	});
 </script>
 

@@ -47,6 +47,7 @@ func Init() *echo.Echo {
 
 	e.GET("/carousel", controllers.FetchAllCarousel)
 	e.GET("/carousel/:id", controllers.FetchCarouselById)
+	e.GET("/carousel/active", controllers.FetchActiveCarousel)
 
 	e.GET("/absensihf", controllers.FetchAllAbsensihf)
 	e.GET("/absensihf/:id", controllers.FetchAbsensihfById)
@@ -93,6 +94,7 @@ func Init() *echo.Echo {
 	e.PUT("voucher/edit/:id", controllers.EditVoucher)
 	
 	e.POST("carousel/add", controllers.AddCarousel)
+	e.PUT("carousel/edit/:id", controllers.EditStatusCarousel)
 
 	e.PUT("anggotaKomunitas/updatestatus", controllers.UpdateRequestStatus)
  

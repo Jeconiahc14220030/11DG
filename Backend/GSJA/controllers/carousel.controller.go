@@ -3,6 +3,9 @@ package controllers
 import (
 	"GSJA/db"
 	"GSJA/models"
+	_"database/sql"
+	"fmt"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -39,10 +42,8 @@ func GETAllCarousel() (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&carousel.Id, 
-			&carousel.Foto1, 
-			&carousel.Foto2, 
-			&carousel.Foto3, 
-			&carousel.Foto4, 
+			&carousel.Foto,
+			&carousel.Status, 
 			&carousel.CreatedAt, 
 			&carousel.UpdatedAt, 
 			&carousel.DeletedAt,
@@ -99,10 +100,8 @@ func GETCarouselById(id int) (models.Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&carousel.Id, 
-			&carousel.Foto1, 
-			&carousel.Foto2, 
-			&carousel.Foto3, 
-			&carousel.Foto4, 
+			&carousel.Foto,
+			&carousel.Status, 
 			&carousel.CreatedAt, 
 			&carousel.UpdatedAt, 
 			&carousel.DeletedAt,
@@ -123,19 +122,18 @@ func GETCarouselById(id int) (models.Response, error) {
 }
 
 func AddCarousel(c echo.Context) error {
-	foto1 := c.FormValue("foto1")
-	foto2 := c.FormValue("foto2")
-	foto3 := c.FormValue("foto3")
-	foto4 := c.FormValue("foto4")
-
-	carousel := models.Carousel{
-		Foto1:        foto1,
-		Foto2:        foto2,
-		Foto3:        foto3,
-		Foto4:        foto4,
+	foto, err := c.FormFile("foto")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 	}
 
-	result, err := POSTCarousel(carousel)
+	
+
+	carousel := models.Carousel{
+		Foto:  foto.Filename,
+	}
+
+	result, err := POSTCarousel(carousel, foto)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -143,16 +141,36 @@ func AddCarousel(c echo.Context) error {
 	return c.JSON(http.StatusCreated, result)
 }
 
-func POSTCarousel(carousel models.Carousel) (models.Response, error) {
+func POSTCarousel(carousel models.Carousel, foto *multipart.FileHeader) (models.Response, error) {
 	var res models.Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO carousel (foto1, foto2, foto3, foto4, status_carousel) VALUES (?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, carousel.Foto1, carousel.Foto2, carousel.Foto3, carousel.Foto4)
+	sqlStatement := "INSERT INTO carousel (foto) VALUES (?)"
+	result, err := con.Exec(sqlStatement, carousel.Foto)
 
 	if err != nil {
 		return res, err
+	}
+
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	folder := "carousel"
+	
+	newFotoName := fmt.Sprintf("%s-%d.png", folder, lastID)
+
+	updateSQL := "UPDATE carousel SET foto = ? WHERE id = ?"
+	_, err = con.Exec(updateSQL, newFotoName, lastID)
+	if err != nil {
+		return res, err
+	}
+
+	_, uploadErr := UploadFotoFolder(foto, int64(lastID), folder)
+	if uploadErr != nil {
+		return res, uploadErr
 	}
 
 	res.Status = http.StatusCreated
@@ -194,4 +212,90 @@ func SoftDeleteCarousel(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, result)
+}
+
+func GetActiveCaraousel() (models.Response, error) {
+	var carousel models.Carousel
+	var arrayCarousel []models.Carousel
+	var response models.Response
+
+	con := db.CreateCon()
+	sqlStatement := "SELECT * FROM carousel WHERE status = 'active'"
+
+	rows, err := con.Query(sqlStatement)
+
+	if err != nil {
+		return response, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(
+			&carousel.Id, 
+			&carousel.Foto,
+			&carousel.Status, 
+			&carousel.CreatedAt, 
+			&carousel.UpdatedAt, 
+			&carousel.DeletedAt,
+		)
+
+		if err != nil {
+			return response, err
+		}
+
+		arrayCarousel = append(arrayCarousel, carousel)
+	}
+
+	response.Status = http.StatusOK
+	response.Message = "OK"
+	response.Data = arrayCarousel
+
+	return response, err
+}
+
+func FetchActiveCarousel(c echo.Context) error {
+	result, err := GetActiveCaraousel()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func EditStatusCarousel(c echo.Context) error {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
+	}
+
+	status := c.FormValue("status")
+
+	result, err := PUTStatusCarousel(id, status)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func PUTStatusCarousel(id int, status string) (models.Response, error) {
+	var res models.Response
+
+	con := db.CreateCon()
+	sqlStatement := "UPDATE carousel SET status = ? WHERE id = ?"
+	_, err := con.Exec(sqlStatement, status, id)
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Carousel status updated successfully"
+
+	return res, nil
 }

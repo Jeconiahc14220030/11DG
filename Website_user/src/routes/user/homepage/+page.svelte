@@ -3,6 +3,7 @@
 
 	let beritaList = [];
 	let renungan = '';
+	let foto = 'http://localhost:8080/uploads/renungan/';
 	let konten = {
 		visi: '',
 		misi: '',
@@ -37,8 +38,23 @@
 			if (response.ok) {
 				const result = await response.json();
 				const data = Array.isArray(result.data) ? result.data : [];
-				// Menampilkan renungan pertama dari hasil yang ada
-				renungan = data.length > 0 ? data[0].isi : 'Tidak ada renungan yang tersedia.';
+				if (data.length > 0) {
+					// Mengurutkan berdasarkan tanggal updated_at terbaru
+					const sortedData = data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+					// Menampilkan renungan terbaru dan nama gambar
+					const renunganTerbaru = sortedData[0];
+					const isiRenungan = renunganTerbaru.isi;
+					const namaGambar = renunganTerbaru.foto;
+
+					// Menggabungkan base URL dengan nama gambar
+					const gambarURL = foto + namaGambar; // URL lengkap gambar
+
+					// Menyimpan isi renungan dan URL gambar
+					renungan = isiRenungan;
+					foto = gambarURL; // Menyimpan URL lengkap gambar dalam variabel foto
+				} else {
+					renungan = 'Tidak ada renungan yang tersedia.';
+				}
 			} else {
 				console.error('Gagal mengambil data renungan');
 				renungan = 'Gagal memuat data.';
@@ -80,10 +96,108 @@
 		}
 	}
 
+	let Carousel = [];
+	let currentIndex = 0; // Indeks gambar yang sedang aktif
+	let alamat = 'http://localhost:8080/uploads/carousel/';
+
+	async function fetchCarousel() {
+		try {
+			const response = await fetch('http://localhost:8080/carousel/active');
+			const data = await response.json();
+
+			if (data.status === 200 && Array.isArray(data.data)) {
+				Carousel = data.data.map((item) => ({
+					id: item.id,
+					foto: alamat + item.foto,
+					status: item.status,
+					created_at: item.created_at,
+					updated_at: item.updated_at
+				}));
+
+				const carouselWrapper = document.getElementById('carousel-wrapper');
+				const carouselIndicators = document.getElementById('carousel-indicators');
+
+				carouselWrapper.innerHTML = '';
+				carouselIndicators.innerHTML = '';
+
+				Carousel.forEach((item, index) => {
+					const carouselItem = document.createElement('div');
+					carouselItem.classList.add('duration-700', 'ease-in-out');
+					if (index === 0) carouselItem.classList.add('block');
+					else carouselItem.classList.add('hidden');
+					carouselItem.setAttribute('data-carousel-item', '');
+
+					const img = document.createElement('img');
+					img.src = item.foto;
+					img.classList.add(
+						'absolute',
+						'block',
+						'w-full',
+						'-translate-x-1/2',
+						'-translate-y-1/2',
+						'top-1/2',
+						'left-1/2'
+					);
+					img.alt = '';
+					carouselItem.appendChild(img);
+					carouselWrapper.appendChild(carouselItem);
+
+					const indicator = document.createElement('button');
+					indicator.type = 'button';
+					indicator.classList.add('w-3', 'h-3', 'rounded-full');
+					indicator.setAttribute('aria-label', `Slide ${index + 1}`);
+					indicator.setAttribute('data-carousel-slide-to', index.toString());
+					if (index === 0) indicator.setAttribute('aria-current', 'true');
+					else indicator.setAttribute('aria-current', 'false');
+					carouselIndicators.appendChild(indicator);
+				});
+
+				const prevButton = document.querySelector('[data-carousel-prev]');
+				const nextButton = document.querySelector('[data-carousel-next]');
+
+				if (prevButton && nextButton) {
+					prevButton.addEventListener('click', () => changeSlide('prev'));
+					nextButton.addEventListener('click', () => changeSlide('next'));
+				}
+
+				setInterval(() => {
+					changeSlide('next');
+				}, 5000);
+			} else {
+				console.error('Gagal mendapatkan data carousel atau data tidak valid');
+			}
+		} catch (error) {
+			console.error('Terjadi kesalahan:', error);
+		}
+	}
+
+	function changeSlide(direction) {
+		const slides = document.querySelectorAll('[data-carousel-item]');
+		if (slides.length === 0) {
+			console.error('Slides tidak ditemukan!');
+			return;
+		}
+
+		slides[currentIndex].classList.add('hidden');
+
+		if (direction === 'next') {
+			currentIndex = (currentIndex + 1) % slides.length;
+		} else if (direction === 'prev') {
+			currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+		}
+
+		slides[currentIndex].classList.remove('hidden');
+
+		const indicators = document.querySelectorAll('[data-carousel-slide-to]');
+		indicators.forEach((indicator) => indicator.setAttribute('aria-current', 'false'));
+		indicators[currentIndex].setAttribute('aria-current', 'true');
+	}
+
 	onMount(() => {
 		fetchBerita();
 		fetchRenungan();
 		fetchKonten();
+		fetchCarousel();
 	});
 </script>
 
@@ -148,7 +262,7 @@
 		<!-- Renungan -->
 		<div
 			class="relative bg-cover bg-center w-full h-64 rounded-lg shadow-lg flex flex-row mt-6"
-			style="background-image: url('/src/lib/image/pemandangan.jpg');"
+			style="background-image: url({foto});"
 		>
 			<!-- Bagian Kiri (Renungan) -->
 			<div
@@ -169,90 +283,20 @@
 			<span class="text-3xl font-bold">Highlight Acara</span>
 		</div>
 
-		<div id="default-carousel" class="relative w-full" data-carousel="slide">
+		<div class="relative w-full" data-carousel="slide">
 			<!-- Carousel wrapper -->
-			<div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-				<!-- Item 1 -->
-				<div class="hidden duration-700 ease-in-out" data-carousel-item>
-					<img
-						src="/src/lib/image/coin.png"
-						class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-						alt="."
-					/>
-				</div>
-				<!-- Item 2 -->
-				<div class="hidden duration-700 ease-in-out" data-carousel-item>
-					<img
-						src="/src/lib/image/coin.png"
-						class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-						alt="."
-					/>
-				</div>
-				<!-- Item 3 -->
-				<div class="hidden duration-700 ease-in-out" data-carousel-item>
-					<img
-						src="/src/lib/image/coin.png"
-						class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-						alt="."
-					/>
-				</div>
-				<!-- Item 4 -->
-				<div class="hidden duration-700 ease-in-out" data-carousel-item>
-					<img
-						src="/src/lib/image/coin.png"
-						class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-						alt="."
-					/>
-				</div>
-				<!-- Item 5 -->
-				<div class="hidden duration-700 ease-in-out" data-carousel-item>
-					<img
-						src="/src/lib/image/coin.png"
-						class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-						alt="."
-					/>
-				</div>
+			<div id="carousel-wrapper" class="relative h-56 overflow-hidden rounded-lg md:h-96">
+				<!-- Dynamic Carousel Items will be inserted here -->
 			</div>
+
 			<!-- Slider indicators -->
 			<div
+				id="carousel-indicators"
 				class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse"
 			>
-				<button
-					type="button"
-					class="w-3 h-3 rounded-full"
-					aria-current="true"
-					aria-label="Slide 1"
-					data-carousel-slide-to="0"
-				></button>
-				<button
-					type="button"
-					class="w-3 h-3 rounded-full"
-					aria-current="false"
-					aria-label="Slide 2"
-					data-carousel-slide-to="1"
-				></button>
-				<button
-					type="button"
-					class="w-3 h-3 rounded-full"
-					aria-current="false"
-					aria-label="Slide 3"
-					data-carousel-slide-to="2"
-				></button>
-				<button
-					type="button"
-					class="w-3 h-3 rounded-full"
-					aria-current="false"
-					aria-label="Slide 4"
-					data-carousel-slide-to="3"
-				></button>
-				<button
-					type="button"
-					class="w-3 h-3 rounded-full"
-					aria-current="false"
-					aria-label="Slide 5"
-					data-carousel-slide-to="4"
-				></button>
+				<!-- Dynamic Indicators will be inserted here -->
 			</div>
+
 			<!-- Slider controls -->
 			<button
 				type="button"
