@@ -23,8 +23,8 @@
 			},
 			html: `
             <form id="voucher-form" style="text-align: left; max-width: 500px; margin: 0 auto;">
-				<label for="foto_voucher" style="display: block; margin-top: 15px; margin-bottom: 5px;">Foto Voucher :</label>
-                <input type="file" accept=".jpeg, .jpg, .svg, .png" id="foto_voucher" name="foto_voucher" class="swal2-input" style="width: 80%;"" required>
+				<label for="foto" style="display: block; margin-top: 15px; margin-bottom: 5px;">Foto Voucher :</label>
+                <input type="file" accept=".jpeg, .jpg, .svg, .png" id="foto" name="foto" class="swal2-input" style="width: 80%;"" required>
 
                 <label for="nama_voucher" style="display: block; margin-top: 15px; margin-bottom: 5px;">Nama Voucher :</label>
                 <input type="text" id="nama_voucher" name="nama_voucher" class="swal2-input" style="width: 80%;" placeholder="Masukkan Nama Voucher" required>
@@ -36,7 +36,7 @@
                 </select>
 
                 <label for="harga" style="display: block; margin-top: 15px; margin-bottom: 5px;">Jumlah Point :</label>
-                <input type="text" id="harga" name="harga" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>s
+                <input type="text" id="harga" name="harga" class="swal2-input" style="flex: 1; margin-right: 5px;" placeholder="Masukkan Point" required>points
             </form>
         `,
 			confirmButtonText: 'Submit',

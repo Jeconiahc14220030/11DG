@@ -327,11 +327,11 @@
 			>
 				<h2 id="isi" class="block font-bold text-2xl">Tambah Gambar Carousel</h2>
 
-				<input
+				 <input
 					id="carouselImageInput1"
 					class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 me-auto"
 					type="file"
-					name="foto1"
+					name="foto"
 					accept=".jpeg, .jpg, .svg, .png"
 					required
 				/>
@@ -340,51 +340,6 @@
 					class="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden"
 				>
 					<span class="text-gray-500">Preview gambar 1 akan muncul di sini</span>
-				</div>
-
-				<input
-					id="carouselImageInput2"
-					class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 me-auto"
-					type="file"
-					name="foto2"
-					accept=".jpeg, .jpg, .svg, .png"
-					required
-				/>
-				<div
-					id="carouselImagePreview2"
-					class="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden"
-				>
-					<span class="text-gray-500">Preview gambar 2 akan muncul di sini</span>
-				</div>
-
-				<input
-					id="carouselImageInput3"
-					class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 me-auto"
-					type="file"
-					name="foto3"
-					accept=".jpeg, .jpg, .svg, .png"
-					required
-				/>
-				<div
-					id="carouselImagePreview3"
-					class="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden"
-				>
-					<span class="text-gray-500">Preview gambar 3 akan muncul di sini</span>
-				</div>
-
-				<input
-					id="carouselImageInput4"
-					class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 me-auto"
-					type="file"
-					name="foto4"
-					accept=".jpeg, .jpg, .svg, .png"
-					required
-				/>
-				<div
-					id="carouselImagePreview4"
-					class="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden"
-				>
-					<span class="text-gray-500">Preview gambar 4 akan muncul di sini</span>
 				</div>
 
 				<div class="flex space-x-4 me-auto">
